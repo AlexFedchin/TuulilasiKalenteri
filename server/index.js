@@ -1,16 +1,38 @@
+require("dotenv").config();
+const minimist = require("minimist");
 const express = require("express");
+const morgan = require("morgan");
 const path = require("path");
+const connectToDatabase = require("./config/db");
+const bookingsRoutes = require("./routes/bookings");
+const authRoutes = require("./routes/auth");
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+// Parse command line arguments to set the environment mode
+const args = minimist(process.argv.slice(2));
+
+// Use node server.js --dev to enable morgan logging in development
+if (args.dev) {
+  app.use(morgan("dev"));
+}
 
 // Serve frontend (in production)
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
+  res.json({ message: "This is a server for the Tuulilasi Pojat Calendar" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+app.use(express.json());
+app.use("/api/bookings", bookingsRoutes);
+app.use("/api/auth", authRoutes);
+
+// Start the server after connecting to the database
+const startServer = async () => {
+  await connectToDatabase();
+  app.listen(3000, () => {
+    console.log(`Server listening on port 3000`);
+  });
+};
+
+startServer();
