@@ -1,4 +1,5 @@
 const Booking = require("../models/booking.js");
+const User = require("../models/user.js");
 
 const getAllBookings = async (req, res) => {
   const { title, date, location } = req.query;
@@ -9,6 +10,20 @@ const getAllBookings = async (req, res) => {
   if (location) filter.location = new RegExp(location, "i");
 
   const bookings = await Booking.find(filter);
+
+  if (!bookings || bookings.length === 0)
+    return res.status(404).send("No bookings found");
+
+  res.json(bookings);
+};
+
+const getOwnBookings = async (req, res) => {
+  console.log("getOwnBookings controller", req.user);
+  const bookings = await Booking.find({ createdBy: req.user.id });
+
+  if (!bookings || bookings.length === 0)
+    return res.status(404).send("No bookings found for this user");
+
   res.json(bookings);
 };
 
@@ -24,7 +39,12 @@ const getBookingById = async (req, res) => {
 
 const createBooking = async (req, res) => {
   const { title, date, location } = req.body;
-  const newBooking = new Booking({ title, date, location });
+  const newBooking = new Booking({
+    title,
+    date,
+    location,
+    createdBy: req.user.id,
+  });
 
   await newBooking.save();
   res.status(201).json(newBooking);
@@ -60,6 +80,7 @@ const deleteBooking = async (req, res) => {
 // Export to be used in routes/bookings.js
 module.exports = {
   getAllBookings,
+  getOwnBookings,
   getBookingById,
   createBooking,
   updateBooking,

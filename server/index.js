@@ -4,8 +4,8 @@ const express = require("express");
 const morgan = require("morgan");
 const path = require("path");
 const connectToDatabase = require("./config/db");
-const bookingsRoutes = require("./routes/bookings");
-const authRoutes = require("./routes/auth");
+const bookingsRoutes = require("./routes/bookingsRouter");
+const authRoutes = require("./routes/authRouter");
 const app = express();
 
 // Parse command line arguments to set the environment mode
