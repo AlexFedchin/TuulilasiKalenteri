@@ -1,9 +1,12 @@
 const Joi = require("joi");
 
 const bookingValidationSchema = Joi.object({
-  title: Joi.string().min(2).max(50).required(),
+  carMake: Joi.string().min(2).max(50).required(),
+  carModel: Joi.string().min(2).max(50).required(),
+  plateNumber: Joi.string().min(2).max(20).required(),
+  insuranceNumber: Joi.string().min(5).max(50).required(),
   date: Joi.date().required(),
-  location: Joi.string().min(2).max(50).required(),
+  duration: Joi.number().min(1).required(),
 });
 
 const validateBookingData = (req, res, next) => {

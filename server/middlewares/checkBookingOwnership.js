@@ -15,7 +15,9 @@ const checkBookingOwnership = async (req, res, next) => {
     ) {
       return res
         .status(403)
-        .json({ error: "You are not authorized to modify this booking" });
+        .json({
+          error: "You are not authorized to view or modify this booking",
+        });
     }
 
     // Attach the booking to the request object for further use

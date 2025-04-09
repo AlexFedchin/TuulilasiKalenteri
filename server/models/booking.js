@@ -2,16 +2,15 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
+    carMake: { type: String, required: true },
+    carModel: { type: String, required: true },
+    plateNumber: { type: String, required: true },
+    insuranceNumber: { type: String, required: true },
     date: { type: Date, required: true },
-    location: {
-      type: String,
-      required: true,
-    },
+    duration: { type: Number, required: true }, // in hours
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+      username: { type: String, required: true },
     },
   },
   {

@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema(
     lastName: { type: String, required: false },
     password: { type: String, required: true },
     role: { type: String, required: true, enum: ["regular", "admin"] },
-    bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
   },
   {
     versionKey: false,
