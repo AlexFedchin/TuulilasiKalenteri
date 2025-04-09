@@ -21,10 +21,6 @@ const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find(filter);
 
-    if (!bookings || bookings.length === 0) {
-      return res.status(404).send("No bookings found");
-    }
-
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -37,13 +33,8 @@ const getOwnBookings = async (req, res) => {
   if (!user) return res.status(404).send("User not found");
 
   const bookings = await Booking.find({
-    createdBy: {
-      id: user._id,
-    },
+    "createdBy.id": user._id,
   });
-
-  if (!bookings || bookings.length === 0)
-    return res.status(404).send("No bookings found for this user");
 
   res.json(bookings);
 };

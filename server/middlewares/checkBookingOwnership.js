@@ -10,14 +10,12 @@ const checkBookingOwnership = async (req, res, next) => {
 
     // Check if the user is the creator of the booking or an admin
     if (
-      booking.createdBy.toString() !== req.user.id &&
+      booking.createdBy.id.toString() !== req.user.id &&
       req.user.role !== "admin"
     ) {
-      return res
-        .status(403)
-        .json({
-          error: "You are not authorized to view or modify this booking",
-        });
+      return res.status(403).json({
+        error: "You are not authorized to view or modify this booking",
+      });
     }
 
     // Attach the booking to the request object for further use
