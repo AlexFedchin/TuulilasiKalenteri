@@ -61,13 +61,41 @@ const login = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "6h" } // Token validity
+      { expiresIn: "1h" } // Token validity
     );
 
-    res.json({ token });
+    res.json({
+      user: {
+        id: user._id,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      },
+      token,
+    });
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-module.exports = { login, register };
+// In-memory token blacklist
+let blacklistedTokens = [];
+
+// Logout logic
+const logout = (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(400).json({ error: "Token is required" });
+  }
+
+  blacklistedTokens.push(token);
+
+  res.status(200).json({ message: "Logged out successfully" });
+};
+
+// Middleware to check if token is blacklisted
+const isTokenBlacklisted = (token) => blacklistedTokens.includes(token);
+
+module.exports = { login, register, logout, isTokenBlacklisted };

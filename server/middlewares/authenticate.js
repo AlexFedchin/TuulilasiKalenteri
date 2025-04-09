@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { isTokenBlacklisted } = require("../controllers/authController");
 
 const authenticate = (allowedRoles) => {
   return (req, res, next) => {
@@ -12,6 +13,10 @@ const authenticate = (allowedRoles) => {
 
     // Extract the token
     const token = authHeader.split(" ")[1];
+
+    if (isTokenBlacklisted(token)) {
+      return res.status(401).json({ error: "Token is invalid or expired" });
+    }
 
     try {
       // Verify the token
