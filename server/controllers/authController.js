@@ -95,7 +95,35 @@ const logout = (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 };
 
+// Verify token logic
+const verifyToken = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Generate new token
+    const newToken = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({
+      user: {
+        id: user._id,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      },
+      token: newToken,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 // Middleware to check if token is blacklisted
 const isTokenBlacklisted = (token) => blacklistedTokens.includes(token);
 
-module.exports = { login, register, logout, isTokenBlacklisted };
+module.exports = { login, register, logout, verifyToken, isTokenBlacklisted };
