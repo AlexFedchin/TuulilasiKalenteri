@@ -1,8 +1,14 @@
 :root {
   --primary: #646cff;
-  --primary-hover: #535bf2;
+  --primary-onhover: #535bf2;
   --accent: #c60000;
-  --accent-hover: #b20000;
-  --background: #ececec;
-  --text: #191919;
+  --accent-onhover: #b20000;
+  --error: #c91a1a;
+  --error-onhover: #9e1616;
+  --success: #38b319;
+  --success-onhover: #24830c;
+  --off-white: #eeeeee;
+  --white: #fafafa;
+  --off-black: #191919;
+  --off-grey: #686868;
 }

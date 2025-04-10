@@ -1,22 +1,26 @@
 import React, { useState } from "react";
-import {
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  MenuItem,
-} from "@mui/material";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useAuth } from "../context/AuthContext.jsx";
+import DefaultContainer from "../components/DefaultContainer.jsx";
+import useScreenSize from "../hooks/useScreenSize.js";
 
 const Authentication = () => {
   const { login } = useAuth();
+  const { isMobile, isTablet } = useScreenSize();
   const [form, setForm] = useState({
     username: "",
     password: "",
     role: "regular",
   });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,23 +45,53 @@ const Authentication = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
-    <Container
-      maxWidth="sm"
+    <DefaultContainer
       sx={{
         maxWidth: "600px",
         height: "100vh",
-        display: "grid",
-        placeItems: "center",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
       }}
     >
-      <Box component="form" onSubmit={handleSubmit}>
-        <Typography variant="h5">Login</Typography>
+      <Box
+        component="img"
+        src="/logo.webp"
+        alt="Logo"
+        draggable="false"
+        loading="lazy"
+        sx={{
+          position: "absolute",
+          top: isMobile ? 16 : 32,
+          maxHeight: "10%",
+          maxWidth: "calc(100% - 32px)",
+        }}
+      />
+
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          maxWidth: "600px",
+          width: "100%",
+        }}
+      >
+        <Typography variant="h3" sx={{ mb: isMobile ? 1 : 3 }}>
+          Login
+        </Typography>
         <TextField
           fullWidth
           label="Username"
           name="username"
-          margin="normal"
+          margin={isMobile ? "dense" : "normal"}
+          size={isMobile ? "small" : "medium"}
           value={form.username}
           onChange={handleChange}
         />
@@ -65,19 +99,47 @@ const Authentication = () => {
           fullWidth
           label="Password"
           name="password"
-          type="password"
-          margin="normal"
+          type={showPassword ? "text" : "password"}
+          margin={isMobile ? "dense" : "normal"}
+          size={isMobile ? "small" : "medium"}
           value={form.password}
           onChange={handleChange}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={togglePasswordVisibility}
+                    edge="end"
+                    sx={{
+                      color: showPassword
+                        ? "var(--accent-color)"
+                        : "var(--off-white-color)",
+                    }}
+                  >
+                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
-        {error && <Typography color="error">{error}</Typography>}
-        <Box mt={2}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Login
-          </Button>
-        </Box>
-      </Box>
-    </Container>
+
+        {error && (
+          <Typography sx={{ color: "var(--error)" }}>{error}</Typography>
+        )}
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={!form.password || !form.username}
+          size={isMobile ? "normal" : isTablet ? "normal" : "large"}
+          sx={{ mt: 2, width: "100%" }}
+        >
+          Login
+        </Button>
+      </form>
+    </DefaultContainer>
   );
 };
 

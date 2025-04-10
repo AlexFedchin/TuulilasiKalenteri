@@ -23,7 +23,17 @@ const CustomAppBar = () => {
   ];
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      sx={{
+        position: "sticky",
+        top: 0,
+        zIndex: 2,
+        backgroundColor: "var(--white)",
+        color: "var(--off-black)",
+        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.05)",
+      }}
+    >
       <Toolbar sx={{ justifyContent: "space-between" }}>
         {/* Left: navigation */}
         <Box>
