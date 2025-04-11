@@ -32,6 +32,10 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             fontSize: isMobile ? "1.25rem" : isTablet ? "1.5rem" : "2rem",
             fontWeight: 600,
           },
+          h4: {
+            fontSize: isMobile ? "1rem" : isTablet ? "1.15rem" : "1.3rem",
+            fontWeight: 500,
+          },
         },
       },
       MuiCard: {
