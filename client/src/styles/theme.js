@@ -21,7 +21,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             color: "var(--off-grey)",
           },
           h1: {
-            fontSize: isMobile ? "2rem" : isTablet ? "2.5rem" : "3rem",
+            fontSize: isMobile ? "3rem" : isTablet ? "3.5rem" : "4rem",
             fontWeight: 800,
           },
           h2: {

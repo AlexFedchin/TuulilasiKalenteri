@@ -14,12 +14,13 @@ import { useAuth } from "../context/AuthContext";
 import DefaultContainer from "../components/DefaultContainer";
 import dayjs from "dayjs";
 import useScreenSize from "../hooks/useScreenSize";
+import Loader from "../components/loader/Loader";
 
 const Calendar = () => {
   const { user, token } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentDate, setCurrentDate] = useState(dayjs());
+  const [currentDate] = useState(dayjs());
   const { isMobile, isTablet } = useScreenSize();
 
   // Fetch bookings on component mount
@@ -192,10 +193,10 @@ const Calendar = () => {
                     className="calendar-cell"
                     key={column.date}
                     sx={{
-                      position: "relative",
                       "&:last-child": {
                         borderRight: "none",
                       },
+                      position: "relative",
                     }}
                   >
                     {/* Render the bookings for each time slot */}
@@ -215,7 +216,13 @@ const Calendar = () => {
   return (
     <DefaultContainer sx={{ maxWidth: "1600px !important" }}>
       <Typography variant="h2">Calendar</Typography>
-      {loading ? <Typography>Loading...</Typography> : renderCalendar()}
+      {loading ? (
+        <Box sx={{ display: "grid", placeItems: "center", height: "66vh" }}>
+          <Loader />
+        </Box>
+      ) : (
+        renderCalendar()
+      )}
     </DefaultContainer>
   );
 };

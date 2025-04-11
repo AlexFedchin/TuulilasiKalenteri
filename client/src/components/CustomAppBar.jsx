@@ -71,9 +71,13 @@ const CustomAppBar = () => {
             component="img"
             src="/logo.webp"
             draggable="false"
+            onClick={() => navigate("/")}
+            alt="Logo"
             sx={{
               maxWidth: isMobile ? "100px" : isTablet ? "125px" : "150px",
               mr: 1,
+              cursor: "pointer",
+              userSelect: "none",
             }}
           />
           {/* Navigation */}
@@ -153,7 +157,7 @@ const CustomAppBar = () => {
             <MenuItem onClick={() => handleLanguageChange("fi")}>
               {t("language.finnish")}
             </MenuItem>
-            <MenuItem onClick={() => handleLanguageChange("ru")}>
+            <MenuItem onClick={() => handleLanguageChange("sv")}>
               {t("language.russian")}
             </MenuItem>
           </Menu>

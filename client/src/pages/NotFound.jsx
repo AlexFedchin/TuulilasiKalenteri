@@ -1,11 +1,19 @@
+import { Typography } from "@mui/material";
+import DefaultContainer from "../components/DefaultContainer";
+
 const NotFound = () => {
   return (
-    <div>
-      <h1>404 Not Found</h1>
-      <p>The page you are looking for does not exist.</p>
-      <p>Please check the URL or return to the homepage.</p>
-      <a href="/">Go to Homepage</a>
-    </div>
+    <DefaultContainer sx={{ height: "calc(100vh - 128px)", gap: 3 }}>
+      <Typography variant="h1" sx={{ color: "var(--accent)", mb: -3 }}>
+        404
+      </Typography>
+      <Typography variant="h2" sx={{ color: "var(--off-black)" }}>
+        Page Not Found
+      </Typography>
+      <Typography variant="body1" sx={{ color: "var(--off-grey)" }}>
+        The page you are looking for does not exist.
+      </Typography>
+    </DefaultContainer>
   );
 };
 
