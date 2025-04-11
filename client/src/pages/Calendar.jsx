@@ -26,9 +26,7 @@ const Calendar = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const url =
-          user.role === "admin" ? "/api/bookings" : "/api/bookings/ownBookings";
-        const response = await fetch(url, {
+        const response = await fetch("/api/bookings", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

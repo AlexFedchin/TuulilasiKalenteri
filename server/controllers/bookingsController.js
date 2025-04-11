@@ -12,31 +12,27 @@ const getAllBookings = async (req, res) => {
   if (insuranceNumber)
     filter.insuranceNumber = new RegExp(insuranceNumber, "i");
   if (date) filter.date = new Date(date);
-  if (userId) {
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).send("User not found");
-    filter["createdBy.id"] = user._id;
-  }
 
   try {
-    const bookings = await Booking.find(filter);
+    if (req.user.role === "admin") {
+      if (userId) {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).send("User not found");
+        filter["createdBy.id"] = user._id;
+      }
+    } else if (req.user.role === "regular") {
+      const user = await User.findById(req.user.id);
+      if (!user) return res.status(404).send("User not found");
+      filter["createdBy.id"] = user._id;
+    } else {
+      return res.status(403).send("Unauthorized");
+    }
 
+    const bookings = await Booking.find(filter);
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
-};
-
-const getOwnBookings = async (req, res) => {
-  const user = await User.findById(req.user.id);
-
-  if (!user) return res.status(404).send("User not found");
-
-  const bookings = await Booking.find({
-    "createdBy.id": user._id,
-  });
-
-  res.json(bookings);
 };
 
 const getBookingById = async (req, res) => {
@@ -121,7 +117,6 @@ const deleteBooking = async (req, res) => {
 // Export to be used in routes/bookings.js
 module.exports = {
   getAllBookings,
-  getOwnBookings,
   getBookingById,
   createBooking,
   updateBooking,

@@ -5,18 +5,14 @@ const {
   createBooking,
   updateBooking,
   deleteBooking,
-  getOwnBookings,
 } = require("../controllers/bookingsController");
 const validateBookingData = require("../middlewares/validateBooking");
 const authenticate = require("../middlewares/authenticate");
 const checkBookingOwnership = require("../middlewares/checkBookingOwnership");
 const router = express.Router();
 
-// Admin Routes (accessible only by admin users)
-router.get("/", authenticate(["admin"]), getAllBookings);
-
 // Public Routes (accessible by any authenticated user)
-router.get("/ownBookings", authenticate(["admin", "regular"]), getOwnBookings);
+router.get("/", authenticate(["admin", "regular"]), getAllBookings);
 
 router.get(
   "/:id",
