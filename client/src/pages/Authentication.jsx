@@ -12,7 +12,7 @@ import DefaultContainer from "../components/DefaultContainer.jsx";
 import useScreenSize from "../hooks/useScreenSize.js";
 
 const Authentication = () => {
-  const { login } = useAuth();
+  const { login, isTokenExpired } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
   const [form, setForm] = useState({
     username: "",
@@ -68,8 +68,8 @@ const Authentication = () => {
         loading="lazy"
         sx={{
           position: "absolute",
-          top: isMobile ? 16 : 32,
-          maxHeight: "10%",
+          top: isMobile ? 64 : 128,
+          maxHeight: isMobile ? "3%" : "4%",
           maxWidth: "calc(100% - 32px)",
         }}
       />
@@ -83,13 +83,23 @@ const Authentication = () => {
           width: "100%",
         }}
       >
-        <Typography variant="h3" sx={{ mb: isMobile ? 1 : 3 }}>
+        <Typography variant="h3" sx={{ mb: isMobile ? 1 : 2 }}>
           Login
         </Typography>
+        {isTokenExpired && (
+          <Typography
+            variant="body2"
+            sx={{ textAlign: "center", mb: isMobile ? 1 : 2 }}
+          >
+            Your session has expired. Please log in again.
+          </Typography>
+        )}
         <TextField
           fullWidth
           label="Username"
           name="username"
+          autoComplete="username"
+          autoFocus
           margin={isMobile ? "dense" : "normal"}
           size={isMobile ? "small" : "medium"}
           value={form.username}
@@ -102,6 +112,7 @@ const Authentication = () => {
           type={showPassword ? "text" : "password"}
           margin={isMobile ? "dense" : "normal"}
           size={isMobile ? "small" : "medium"}
+          autoComplete="current-password"
           value={form.password}
           onChange={handleChange}
           slotProps={{

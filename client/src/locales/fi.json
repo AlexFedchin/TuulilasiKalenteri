@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "home": "Koti",
+    "bookings": "Varaukset",
+    "admin": "Ylläpito"
+  },
+  "menu": {
+    "logout": "Kirjaudu ulos"
+  },
+  "language": {
+    "english": "Englanti",
+    "finnish": "Suomi",
+    "russian": "Venäjä"
+  }
+}

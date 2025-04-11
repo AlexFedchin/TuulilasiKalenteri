@@ -4,6 +4,9 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
   createTheme({
     typography: {
       fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
+      button: {
+        fontSize: isTablet ? "0.75rem" : "0.875rem",
+      },
     },
     components: {
       MuiTypography: {
@@ -92,6 +95,33 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
               color: "var(--off-black)",
               opacity: 0.8,
             },
+          },
+        },
+      },
+      MuiButton: {
+        styleOverrides: {
+          text: {
+            fontSize: isTablet ? "0.75rem" : "0.875rem",
+          },
+        },
+      },
+      MuiListItemText: {
+        styleOverrides: {
+          primary: {
+            fontSize: isMobile ? "0.75rem" : isTablet ? "0.875rem" : "1rem",
+            fontWeight: 400,
+          },
+          secondary: {
+            fontSize: isMobile ? "0.65rem" : isTablet ? "0.75rem" : "0.875rem",
+            fontWeight: 300,
+          },
+        },
+      },
+      MuiListItemIcon: {
+        styleOverrides: {
+          root: {
+            minWidth: isMobile ? "25px" : isTablet ? "30px" : "35px",
+            fontSize: isMobile ? "0.875rem" : isTablet ? "1rem" : "1.25rem",
           },
         },
       },

@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "home": "Home",
+    "bookings": "Bookings",
+    "admin": "Admin"
+  },
+  "menu": {
+    "logout": "Logout"
+  },
+  "language": {
+    "english": "English",
+    "finnish": "Finnish",
+    "russian": "Russian"
+  }
+}

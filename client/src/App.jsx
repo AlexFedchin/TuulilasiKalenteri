@@ -21,7 +21,7 @@ function App() {
   return (
     <Router>
       <ThemeProvider theme={theme}>
-        <CustomAppBar />
+        {user && <CustomAppBar />}
 
         <Routes>
           <Route path="/" element={user ? <Calendar /> : <Authentication />} />
@@ -46,9 +46,6 @@ function App() {
 
           {/* Fallback for unmatched routes */}
           <Route path="*" element={<NotFound to="/" />} />
-
-          {/* API routes */}
-          <Route path="/api/*" element={<NotFound />} />
         </Routes>
       </ThemeProvider>
     </Router>

@@ -12,11 +12,17 @@ export const AuthProvider = ({ children }) => {
     return localStorage.getItem("token") || null;
   });
 
+  const [isTokenExpired, setIsTokenExpired] = useState(() => {
+    return localStorage.getItem("isTokenExpired") || false;
+  });
+
   const login = (userData, jwt) => {
     setUser(userData);
     setToken(jwt);
+    setIsTokenExpired(false);
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("token", jwt);
+    localStorage.setItem("isTokenExpired", false);
   };
 
   const logout = () => {
@@ -28,8 +34,10 @@ export const AuthProvider = ({ children }) => {
     });
     setUser(null);
     setToken(null);
+    setIsTokenExpired(false);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("isTokenExpired");
   };
 
   useEffect(() => {
@@ -50,21 +58,27 @@ export const AuthProvider = ({ children }) => {
         .then((data) => {
           setUser(data.user);
           setToken(data.token);
+          setIsTokenExpired(false);
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("token", data.token);
+          localStorage.setItem("isTokenExpired", false);
         })
         .catch(() => {
           // Clear if invalid/expired
           setUser(null);
           setToken(null);
+          setIsTokenExpired(true);
           localStorage.removeItem("user");
           localStorage.removeItem("token");
+          localStorage.setItem("isTokenExpired", true);
         });
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, token, isTokenExpired, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
