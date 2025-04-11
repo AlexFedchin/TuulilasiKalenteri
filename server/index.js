@@ -27,6 +27,11 @@ app.use(express.json());
 app.use("/api/bookings", bookingsRoutes);
 app.use("/api/auth", authRoutes);
 
+// Catch-all route to show 404 page for unmatched routes
+app.get("/*splat", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
+
 // Start the server after connecting to the database
 const startServer = async () => {
   await connectToDatabase();
