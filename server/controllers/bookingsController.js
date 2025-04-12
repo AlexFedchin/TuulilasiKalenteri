@@ -2,8 +2,16 @@ const Booking = require("../models/booking.js");
 const User = require("../models/user.js");
 
 const getAllBookings = async (req, res) => {
-  const { carMake, carModel, plateNumber, insuranceNumber, date, userId } =
-    req.query;
+  const {
+    carMake,
+    carModel,
+    plateNumber,
+    insuranceNumber,
+    date,
+    userId,
+    startDate,
+    endDate,
+  } = req.query;
   let filter = {};
 
   if (carMake) filter.carMake = new RegExp(carMake, "i");
@@ -11,7 +19,11 @@ const getAllBookings = async (req, res) => {
   if (plateNumber) filter.plateNumber = new RegExp(plateNumber, "i");
   if (insuranceNumber)
     filter.insuranceNumber = new RegExp(insuranceNumber, "i");
-  if (date) filter.date = new Date(date);
+  if (startDate && endDate) {
+    filter.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+  } else if (date) {
+    filter.date = new Date(date);
+  }
 
   try {
     if (req.user.role === "admin") {

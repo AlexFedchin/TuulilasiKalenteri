@@ -9,9 +9,12 @@ import {
   Paper,
   Typography,
   Box,
+  IconButton,
 } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import DefaultContainer from "../components/DefaultContainer";
+import ArrowBackIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForwardIos";
 import dayjs from "dayjs";
 import useScreenSize from "../hooks/useScreenSize";
 import Loader from "../components/loader/Loader";
@@ -20,21 +23,32 @@ const Calendar = () => {
   const { user, token } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentDate] = useState(dayjs());
+  const [currentDate, setCurrentDate] = useState(dayjs());
   const { isMobile, isTablet } = useScreenSize();
 
   // Fetch bookings on component mount
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await fetch("/api/bookings", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const startOfWeek = currentDate
+          .startOf("week")
+          .add(1, "day")
+          .format("YYYY-MM-DD");
+        const endOfWeek = currentDate
+          .endOf("week")
+          .add(1, "day")
+          .format("YYYY-MM-DD");
+
+        const response = await fetch(
+          `/api/bookings?startDate=${startOfWeek}&endDate=${endOfWeek}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const data = await response.json();
         setBookings(data);
-        console.log("Bookings fetched:", data);
       } catch (error) {
         console.error("Error fetching bookings:", error);
       } finally {
@@ -43,7 +57,7 @@ const Calendar = () => {
     };
 
     fetchBookings();
-  }, [user, token]);
+  }, [user, token, currentDate]);
 
   const generateDayColumns = () => {
     const columns = [];
@@ -57,7 +71,7 @@ const Calendar = () => {
           : isTablet
           ? day.format("ddd")
           : day.format("dddd"),
-        dayNumber: day.format("D"),
+        dayNumber: day.format("D.M"),
       });
     }
     return columns;
@@ -73,7 +87,7 @@ const Calendar = () => {
   };
 
   const getBookingForTimeSlot = (date, time) => {
-    const booking = bookings.filter(
+    const booking = bookings?.filter(
       (booking) =>
         dayjs(booking.date).format("YYYY-MM-DD") === date &&
         dayjs(booking.date).hour() === parseInt(time.split(":")[0]) &&
@@ -86,10 +100,26 @@ const Calendar = () => {
     console.log("Booking clicked:", booking);
   };
 
+  const handleDateClick = (date, time) => {
+    console.log("Date and time clicked:", date, time);
+  };
+
+  const handleChangeWeek = (direction) => {
+    if (direction === "next") {
+      setCurrentDate((prevDate) => prevDate.add(7, "day"));
+    } else if (direction === "prev") {
+      setCurrentDate((prevDate) => prevDate.subtract(7, "day"));
+    }
+  };
+
   const renderBookingBox = (booking) => (
     <Box
       key={booking._id}
-      onClick={() => handleBookingBoxClick(booking)}
+      onClick={(e) => {
+        e.stopPropagation;
+        e.preventDefault();
+        handleBookingBoxClick(booking);
+      }}
       sx={{
         position: "absolute",
         top: 0,
@@ -185,18 +215,44 @@ const Calendar = () => {
                   "&:last-child": { borderBottom: "none" },
                 }}
               >
-                <TableCell className="calendar-cell">
+                <TableCell
+                  sx={{
+                    py: "6px",
+                    px: 1.5,
+                    height: "36px",
+                    boxSizing: "border-box",
+                    borderRight: "1px solid rgba(224, 224, 224, 1)",
+                    borderBottom: "none",
+                  }}
+                >
                   <Typography variant="body2">{time}</Typography>
                 </TableCell>
                 {columns.map((column) => (
                   <TableCell
-                    className="calendar-cell"
                     key={column.date}
+                    onClick={() =>
+                      getBookingForTimeSlot(column.date, time).length === 0
+                        ? handleDateClick(column.date, time)
+                        : undefined
+                    }
                     sx={{
                       "&:last-child": {
                         borderRight: "none",
                       },
+                      py: "6px",
+                      px: 1.5,
+                      height: "36px",
+                      boxSizing: "border-box",
+                      borderRight: "1px solid rgba(224, 224, 224, 1)",
+                      borderBottom: "none",
                       position: "relative",
+                      cursor: "pointer",
+                      ...(getBookingForTimeSlot(column.date, time).length ===
+                        0 && {
+                        "&:hover": {
+                          bgcolor: "var(--off-white)",
+                        },
+                      }),
                     }}
                   >
                     {/* Render the bookings for each time slot */}
@@ -214,8 +270,31 @@ const Calendar = () => {
   };
 
   return (
-    <DefaultContainer sx={{ maxWidth: "1600px !important" }}>
-      <Typography variant="h2">Calendar</Typography>
+    <DefaultContainer sx={{ maxWidth: "1600px !important", gap: 3 }}>
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "cenetr",
+          position: "relative",
+        }}
+      >
+        <IconButton
+          onClick={() => handleChangeWeek("prev")}
+          sx={{ position: "absolute", left: 0 }}
+        >
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h2">Calendar</Typography>
+        <IconButton
+          onClick={() => handleChangeWeek("next")}
+          sx={{ position: "absolute", right: 0 }}
+        >
+          <ArrowForwardIcon />
+        </IconButton>
+      </Box>
+
       {loading ? (
         <Box sx={{ display: "grid", placeItems: "center", height: "66vh" }}>
           <Loader />
