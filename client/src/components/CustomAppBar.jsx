@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import LanguageIcon from "@mui/icons-material/Language";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PersonIcon from "@mui/icons-material/Person";
 import AccountIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -29,6 +30,7 @@ const CustomAppBar = () => {
   const { t } = useTranslation();
 
   const handleLogout = () => {
+    setAnchorEl(null);
     logout();
     navigate("/");
   };
@@ -39,7 +41,7 @@ const CustomAppBar = () => {
   };
 
   const navItems = [
-    { label: t("nav.home"), path: "/" },
+    { label: t("nav.calendar"), path: "/" },
     { label: t("nav.bookings"), path: "/bookings" },
     ...(user.role === "admin"
       ? [{ label: t("nav.admin"), path: "/admin" }]
@@ -92,9 +94,6 @@ const CustomAppBar = () => {
                     location.pathname === item.path
                       ? "var(--off-white)"
                       : "transparent",
-                  "&:hover": {
-                    bgcolor: "var(--off-white)",
-                  },
                 }}
               >
                 {item.label}
@@ -123,6 +122,17 @@ const CustomAppBar = () => {
             open={Boolean(anchorEl)}
             onClose={() => setAnchorEl(null)}
           >
+            <MenuItem
+              onClick={() => {
+                setAnchorEl(null);
+                navigate("/my-profile");
+              }}
+            >
+              <ListItemIcon sx={{ color: "inherit" }}>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText>{t("menu.myProfile")}</ListItemText>
+            </MenuItem>
             <MenuItem onClick={handleLogout} sx={{ color: "var(--error)" }}>
               <ListItemIcon sx={{ color: "inherit" }}>
                 <LogoutIcon />
@@ -157,7 +167,7 @@ const CustomAppBar = () => {
             <MenuItem onClick={() => handleLanguageChange("fi")}>
               {t("language.finnish")}
             </MenuItem>
-            <MenuItem onClick={() => handleLanguageChange("sv")}>
+            <MenuItem onClick={() => handleLanguageChange("ru")}>
               {t("language.russian")}
             </MenuItem>
           </Menu>

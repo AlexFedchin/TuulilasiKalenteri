@@ -6,6 +6,7 @@ const path = require("path");
 const connectToDatabase = require("./config/db");
 const bookingsRoutes = require("./routes/bookingsRouter");
 const authRoutes = require("./routes/authRouter");
+const usersRoutes = require("./routes/usersRouter");
 const app = express();
 
 // Parse command line arguments to set the environment mode
@@ -26,6 +27,7 @@ app.get("/api", (req, res) => {
 app.use(express.json());
 app.use("/api/bookings", bookingsRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/users", usersRoutes);
 
 // Catch-all route to show 404 page for unmatched routes
 app.get("/*splat", (req, res) => {

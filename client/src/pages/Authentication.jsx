@@ -13,7 +13,7 @@ import useScreenSize from "../hooks/useScreenSize.js";
 
 const Authentication = () => {
   const { login, isTokenExpired } = useAuth();
-  const { isMobile, isTablet } = useScreenSize();
+  const { isMobile } = useScreenSize();
   const [form, setForm] = useState({
     username: "",
     password: "",
@@ -79,7 +79,7 @@ const Authentication = () => {
         style={{
           display: "flex",
           flexDirection: "column",
-          maxWidth: "600px",
+          maxWidth: isMobile ? "300px" : "600px",
           width: "100%",
         }}
       >
@@ -138,14 +138,16 @@ const Authentication = () => {
         />
 
         {error && (
-          <Typography sx={{ color: "var(--error)" }}>{error}</Typography>
+          <Typography variant="body2" sx={{ color: "var(--error)" }}>
+            {error}
+          </Typography>
         )}
         <Button
           type="submit"
           variant="contained"
           disabled={!form.password || !form.username}
-          size={isMobile ? "normal" : isTablet ? "normal" : "large"}
-          sx={{ mt: 2, width: "100%" }}
+          size={isMobile ? "normal" : "large"}
+          sx={{ mt: isMobile ? 1 : 2, width: "100%" }}
         >
           Login
         </Button>

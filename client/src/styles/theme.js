@@ -41,20 +41,11 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
       MuiCard: {
         styleOverrides: {
           root: {
-            backgroundColor: "rgba(255, 255, 255, 0.01)",
+            backgroundColor: "var(--white)",
             borderRadius: "8px",
             border: "1px solid rgba(255, 255, 255, 0.1)",
-            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-            transition: "all 0.3s ease",
+            boxShadow: "0 0 16px rgba(0, 0, 0, 0.05)",
             textAlign: "left",
-            "&:hover": {
-              boxShadow: "0 8px 40px rgba(0, 0, 0, 0.2)",
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-            },
-            "&:active": {
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-              backgroundColor: "rgba(255, 255, 255, 0.035)",
-            },
           },
         },
       },
@@ -106,6 +97,9 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
         styleOverrides: {
           text: {
             fontSize: isTablet ? "0.75rem" : "0.875rem",
+            "&:hover": {
+              backgroundColor: "var(--off-white)",
+            },
           },
         },
       },

@@ -14,6 +14,7 @@ const Authentication = lazy(() => import("./pages/Authentication"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Bookings = lazy(() => import("./pages/Bookings"));
 const Admin = lazy(() => import("./pages/Admin"));
+const MyProfile = lazy(() => import("./pages/MyProfile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 function App() {
@@ -38,6 +39,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <Bookings />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/my-profile"
+              element={
+                <PrivateRoute>
+                  <MyProfile />
                 </PrivateRoute>
               }
             />

@@ -1,15 +1,16 @@
 {
   "nav": {
-    "home": "Koti",
+    "calendar": "Kalenteri",
     "bookings": "Varaukset",
     "admin": "Ylläpito"
   },
   "menu": {
+    "myProfile": "Profiilini",
     "logout": "Kirjaudu ulos"
   },
   "language": {
-    "english": "Englanti",
+    "english": "English",
     "finnish": "Suomi",
-    "russian": "Venäjä"
+    "russian": "Русский"
   }
 }

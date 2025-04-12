@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import DefaultContainer from "../components/DefaultContainer";
-import ArrowBackIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForwardIos";
 import dayjs from "dayjs";
 import useScreenSize from "../hooks/useScreenSize";
@@ -87,7 +86,9 @@ const Calendar = () => {
   };
 
   const getBookingForTimeSlot = (date, time) => {
-    const booking = bookings?.filter(
+    if (!bookings || bookings.length === 0) return [];
+
+    const booking = bookings.filter(
       (booking) =>
         dayjs(booking.date).format("YYYY-MM-DD") === date &&
         dayjs(booking.date).hour() === parseInt(time.split(":")[0]) &&
@@ -282,14 +283,24 @@ const Calendar = () => {
       >
         <IconButton
           onClick={() => handleChangeWeek("prev")}
-          sx={{ position: "absolute", left: 0 }}
+          sx={{
+            position: "absolute",
+            left: 0,
+            display: "grid",
+            placeItems: "center",
+          }}
         >
-          <ArrowBackIcon />
+          <ArrowForwardIcon sx={{ transform: "rotate(180deg)" }} />
         </IconButton>
         <Typography variant="h2">Calendar</Typography>
         <IconButton
           onClick={() => handleChangeWeek("next")}
-          sx={{ position: "absolute", right: 0 }}
+          sx={{
+            position: "absolute",
+            right: 0,
+            display: "grid",
+            placeItems: "center",
+          }}
         >
           <ArrowForwardIcon />
         </IconButton>

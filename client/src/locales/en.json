@@ -1,15 +1,16 @@
 {
   "nav": {
-    "home": "Home",
+    "calendar": "Calendar",
     "bookings": "Bookings",
     "admin": "Admin"
   },
   "menu": {
+    "myProfile": "My Profile",
     "logout": "Logout"
   },
   "language": {
     "english": "English",
-    "finnish": "Finnish",
-    "russian": "Russian"
+    "finnish": "Suomi",
+    "russian": "Русский"
   }
 }
