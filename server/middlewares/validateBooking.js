@@ -7,13 +7,14 @@ const bookingValidationSchema = Joi.object({
   insuranceNumber: Joi.string().min(5).max(50).required(),
   date: Joi.date().required(),
   duration: Joi.number().min(1).required(),
+  location: Joi.string().length(24).hex(),
 });
 
 const validateBookingData = (req, res, next) => {
   const { error } = bookingValidationSchema.validate(req.body);
   if (error) {
     const errorMessage = error.details.map((error) => error.message).join(", ");
-    return res.status(400).json({ errors: errorMessage });
+    return res.status(400).json({ error: errorMessage });
   }
 
   next();

@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Location = require("../models/location");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -45,9 +46,25 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(204).send("User deleted");
+    console.log(deletedUser);
+    // If the user's role is not admin, remove the user ID from locations' users array
+    if (deletedUser.role !== "admin") {
+      console.log("User is not an admin");
+      const location = await Location.findOne({ users: deletedUser._id });
+      console.log("Found location to remove user from:", location);
+      if (!location)
+        return res.status(404).json({ error: "Location not found" });
+
+      location.users = location.users.filter(
+        (userId) => userId.toString() !== deletedUser._id.toString()
+      );
+      console.log(location.users);
+      await location.save();
+    }
+
+    res.status(204).json({ message: "User deleted" });
   } catch (error) {
-    res.status(400).json({ error: "Invalid user ID" });
+    res.status(400).json({ error });
   }
 };
 

@@ -12,7 +12,7 @@ import DefaultContainer from "../components/DefaultContainer.jsx";
 import useScreenSize from "../hooks/useScreenSize.js";
 
 const Authentication = () => {
-  const { login, isTokenExpired } = useAuth();
+  const { login, isTokenExpired, token } = useAuth();
   const { isMobile } = useScreenSize();
   const [form, setForm] = useState({
     username: "",
@@ -28,9 +28,16 @@ const Authentication = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
       const res = await fetch("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(form),
       });
       const data = await res.json();

@@ -9,8 +9,9 @@ const bookingSchema = new mongoose.Schema(
     date: { type: Date, required: true },
     duration: { type: Number, required: true }, // in hours
     createdBy: {
-      id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-      username: { type: String, required: true },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   {

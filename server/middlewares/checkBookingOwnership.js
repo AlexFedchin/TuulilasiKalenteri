@@ -10,7 +10,7 @@ const checkBookingOwnership = async (req, res, next) => {
 
     // Check if the user is the creator of the booking or an admin
     if (
-      booking.createdBy.id.toString() !== req.user.id &&
+      booking.createdBy.toString() !== req.user.id &&
       req.user.role !== "admin"
     ) {
       return res.status(403).json({

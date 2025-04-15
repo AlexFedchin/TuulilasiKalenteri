@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const { isTokenBlacklisted } = require("../controllers/authController");
+const User = require("../models/user");
 
 const authenticate = (allowedRoles) => {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     // Extract the Authorization header
     const authHeader = req.headers.authorization;
 
@@ -23,6 +24,12 @@ const authenticate = (allowedRoles) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       // Attach the decoded token to the request object for later use
       req.user = decoded; // `decoded` contains data like { id, role }
+
+      // Check if user exists
+      const foundUser = await User.findById(req.user.id);
+      if (!foundUser) {
+        return res.status(401).json({ error: "User does not exist" });
+      }
 
       // Check if the user's role is in the allowed roles
       if (!allowedRoles.includes(req.user.role)) {

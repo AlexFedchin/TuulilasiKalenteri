@@ -1,39 +1,65 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const Location = require("../models/location");
 require("dotenv").config();
 
 // Registration logic
 const register = async (req, res) => {
-  const { username, password, role } = req.body;
-  console.log("Username:", username, "Password:", password, "Role:", role);
-  if (!username || !password || !role) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
-  if (password.length < 8) {
-    return res
-      .status(400)
-      .json({ error: "Password must be at least 8 characters long" });
-  }
-  if (!["regular", "admin"].includes(role)) {
-    return res
-      .status(400)
-      .json({ error: "Role must be either 'regular' or 'admin'" });
-  }
+  const { username, password, role, firstName, lastName, email, location } =
+    req.body;
+
   try {
     // Check if user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).json({ error: "Username already exists" });
+      return res
+        .status(400)
+        .json({ error: "User with this username already exists" });
     }
+
     // Hash the password
-    console.log("Password Hashing...");
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("Hash: ", hashedPassword);
+
     // Create new user
-    const newUser = new User({ username, password: hashedPassword, role });
-    await newUser.save();
-    res.status(201).json({ message: "User registered successfully" });
+    const newUser = new User({
+      username,
+      password: hashedPassword,
+      role,
+      firstName,
+      lastName,
+      email,
+    });
+
+    // Add user's id to the location if not an admin
+    // Admins do not belong to any location
+    if (newUser.role !== "admin") {
+      if (!location) {
+        return res.status(400).json({ error: "Location is required" });
+      }
+
+      // Check if location exists
+      const usersLocation = await Location.findByIdAndUpdate(
+        location,
+        { $addToSet: { users: newUser._id } },
+        { new: true }
+      );
+
+      if (!usersLocation) {
+        return res.status(400).json({ error: "Location not found" });
+      }
+    }
+
+    const savedUser = await newUser.save();
+
+    res.status(201).json({
+      id: savedUser._id,
+      username: savedUser.username,
+      firstName: savedUser.firstName,
+      lastName: savedUser.lastName,
+      email: savedUser.email,
+      role: savedUser.role,
+    });
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -41,7 +67,19 @@ const register = async (req, res) => {
 
 // Login logic
 const login = async (req, res) => {
+  // Blacklist the previously existing token if any
+  const authHeader = req.headers.authorization;
+
+  // Check if the Authorization header is present
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    // Extract the token
+    const token = authHeader.split(" ")[1];
+
+    blacklistedTokens.push(token);
+  }
+
   const { username, password } = req.body;
+
   try {
     // Check if user exists
     const user = await User.findOne({ username });
