@@ -20,6 +20,11 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             fontWeight: 400,
             color: "var(--off-grey)",
           },
+          card: {
+            fontSize: isMobile ? "0.7rem" : isTablet ? "0.75rem" : "0.8rem",
+            lineHeight: 1.45,
+            fontWeight: 400,
+          },
           h1: {
             fontSize: isMobile ? "3rem" : isTablet ? "3.5rem" : "4rem",
             fontWeight: 800,
@@ -34,6 +39,10 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
           },
           h4: {
             fontSize: isMobile ? "1rem" : isTablet ? "1.15rem" : "1.3rem",
+            fontWeight: 500,
+          },
+          h5: {
+            fontSize: isMobile ? "0.8rem" : isTablet ? "0.85rem" : "0.9rem",
             fontWeight: 500,
           },
         },

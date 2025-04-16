@@ -61,7 +61,7 @@ const Calendar = () => {
   const generateDayColumns = () => {
     const columns = [];
     const startOfWeek = currentDate.startOf("week").add(1, "day");
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 5; i++) {
       const day = startOfWeek.add(i, "day");
       columns.push({
         date: day.format("YYYY-MM-DD"),
@@ -78,9 +78,9 @@ const Calendar = () => {
 
   const generateTimeRows = () => {
     const times = [];
-    for (let i = 8; i <= 17; i++) {
+    for (let i = 8; i <= 15; i++) {
       times.push(`${i}:00`);
-      if (i < 17) times.push(`${i}:30`);
+      times.push(`${i}:30`);
     }
     return times;
   };
@@ -127,11 +127,11 @@ const Calendar = () => {
         left: 0,
         width: "100%",
         height: `${booking.duration * 72}px`,
-        backgroundColor: "rgba(0, 123, 255, 0.1)",
-        border: "1px solid rgba(0, 123, 255, 0.5)",
-        borderRadius: "4px",
+        backgroundColor: "rgb(83, 175, 228)",
+        color: "var(--white)",
+        borderRadius: 2,
         boxSizing: "border-box",
-        padding: "4px",
+        padding: 0.5,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -140,11 +140,15 @@ const Calendar = () => {
         zIndex: 10,
       }}
     >
-      <Typography variant="body2">
+      <Typography variant="card" color="inherit">
         {booking.carMake} {booking.carModel}
       </Typography>
-      <Typography variant="body2">{booking.plateNumber}</Typography>
-      <Typography variant="body2">{booking.insuranceNumber}</Typography>
+      <Typography variant="card" color="inherit">
+        {booking.plateNumber}
+      </Typography>
+      <Typography variant="card" color="inherit">
+        {booking.insuranceNumber}
+      </Typography>
     </Box>
   );
 
@@ -153,105 +157,98 @@ const Calendar = () => {
     const times = generateTimeRows();
 
     return (
-      <TableContainer component={Paper}>
-        <Table sx={{ tableLayout: "fixed", width: "100%" }}>
-          <TableHead>
-            <TableRow>
+      <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+        <TableHead>
+          <TableRow>
+            <TableCell
+              sx={{
+                border: "none",
+                py: 0.5,
+                pr: 0.5,
+                pl: 0,
+                width: isMobile ? "36px" : isTablet ? "42px" : "48px",
+                minWidth: isMobile ? "36px" : isTablet ? "42px" : "48px",
+                maxWidth: isMobile ? "36px" : isTablet ? "42px" : "48px",
+                boxSizing: "border-box",
+              }}
+            />
+            {columns.map((column) => (
               <TableCell
+                key={column.date}
+                align="center"
                 sx={{
-                  borderRight: "1px solid rgba(224, 224, 224, 1)",
-                  width: isMobile ? "54px" : isTablet ? "60px" : "70px",
-                  minWidth: "70px",
-                  maxWidth: "70px",
-                  boxSizing: "border-box",
+                  border: "none",
+                  p: 0.5,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
-              />
-              {columns.map((column) => (
-                <TableCell
-                  key={column.date}
-                  align="center"
+              >
+                <Typography
+                  variant="h4"
                   sx={{
-                    borderRight: "1px solid rgba(224, 224, 224, 1)",
-                    "&:last-child": { borderRight: "none" },
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
-                    p: 1,
                   }}
                 >
-                  <Typography
-                    variant="h4"
-                    sx={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {column.dayOfWeek}
-                  </Typography>
-                  <Typography variant="body2">{column.dayNumber}</Typography>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {times.map((time, rowIndex) => (
-              <TableRow
-                key={time}
+                  {column.dayOfWeek}
+                </Typography>
+                <Typography variant="body2">{column.dayNumber}</Typography>
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {times.map((time) => (
+            <TableRow key={time}>
+              <TableCell
                 sx={{
-                  borderBottom:
-                    rowIndex % 2 === 0
-                      ? "1px dashed rgba(224, 224, 224, 1)"
-                      : "1px solid rgba(224, 224, 224, 1)",
-                  py: "6px",
-                  ".calendar-cell": {
-                    py: "6px",
-                    px: 1.5,
-                    height: "36px",
-                    boxSizing: "border-box",
-                    borderRight: "1px solid rgba(224, 224, 224, 1)",
-                    borderBottom: "none",
-                  },
-                  px: 1.5,
-                  "&:last-child": { borderBottom: "none" },
+                  py: 0.5,
+                  pr: 0.5,
+                  pl: 0,
+                  height: "40px",
+                  boxSizing: "border-box",
+                  border: "none",
                 }}
               >
+                <Typography
+                  variant="body2"
+                  sx={{ color: "var(--off-black)", textAlign: "right" }}
+                >
+                  {time}
+                </Typography>
+              </TableCell>
+              {columns.map((column) => (
                 <TableCell
+                  key={column.date}
+                  onClick={() =>
+                    getBookingForTimeSlot(column.date, time).length === 0
+                      ? handleDateClick(column.date, time)
+                      : undefined
+                  }
                   sx={{
-                    py: "6px",
-                    px: 1.5,
-                    height: "36px",
+                    border: "none",
+                    p: 0.5,
+                    height: "40px",
                     boxSizing: "border-box",
-                    borderRight: "1px solid rgba(224, 224, 224, 1)",
-                    borderBottom: "none",
                   }}
                 >
-                  <Typography variant="body2">{time}</Typography>
-                </TableCell>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.date}
-                    onClick={() =>
-                      getBookingForTimeSlot(column.date, time).length === 0
-                        ? handleDateClick(column.date, time)
-                        : undefined
-                    }
+                  <Box
                     sx={{
-                      "&:last-child": {
-                        borderRight: "none",
-                      },
-                      py: "6px",
-                      px: 1.5,
-                      height: "36px",
-                      boxSizing: "border-box",
-                      borderRight: "1px solid rgba(224, 224, 224, 1)",
-                      borderBottom: "none",
                       position: "relative",
                       cursor: "pointer",
+                      bgcolor: "var(--white)",
+                      borderRadius: 2,
+                      boxSizing: "border-box",
+                      height: "100%",
+                      width: "100%",
+                      boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
+                      p: 0.5,
                       ...(getBookingForTimeSlot(column.date, time).length ===
                         0 && {
                         "&:hover": {
-                          bgcolor: "var(--off-white)",
+                          bgcolor: "var(--white-onhover)",
                         },
                       }),
                     }}
@@ -260,13 +257,13 @@ const Calendar = () => {
                     {getBookingForTimeSlot(column.date, time).map((booking) =>
                       renderBookingBox(booking)
                     )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                  </Box>
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     );
   };
 
@@ -311,7 +308,96 @@ const Calendar = () => {
           <Loader />
         </Box>
       ) : (
-        renderCalendar()
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "stretch",
+            gap: 2,
+            flexDirection: isMobile ? "column" : "row",
+          }}
+        >
+          <Box sx={{ disaply: "flex", width: isMobile ? "100%" : "80%" }}>
+            {renderCalendar()}
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1,
+              bgcolor: "var(--white)",
+              boxSizing: "border-box",
+              maxHeight: "687.55px",
+              width: isMobile ? "100%" : "20%",
+              borderRadius: 2,
+              boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
+              my: 0.5,
+              p: 1,
+            }}
+          >
+            <Typography variant="h4" sx={{ textAlign: "center" }}>
+              Notes
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "100%",
+                maxHeight: "100%",
+                height: "100%",
+                bgcolor: "var(--off-white)",
+                borderRadius: 1,
+                boxSizing: "border-box",
+                p: 1,
+                gap: 1,
+                boxShadow: "inset 0 0 8px rgba(0, 0, 0, 0.1)",
+                overflowY: "auto",
+              }}
+            >
+              <Box
+                sx={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  p: 1,
+                  bgcolor: "var(--white)",
+                  color: "var(--off-black)",
+                  borderRadius: 0.5,
+                  textAlign: "left",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 0.5,
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  color="inherit"
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Note title
+                </Typography>
+                <Typography
+                  variant="card"
+                  color="inherit"
+                  sx={{
+                    wordBreak: "break-word",
+                    overflow: "hidden",
+                    hyphens: "auto",
+                  }}
+                >
+                  Note description goes here. This is a sample note. very very
+                  simple one. Trust me.
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       )}
     </DefaultContainer>
   );
