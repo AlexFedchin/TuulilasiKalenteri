@@ -1,8 +1,8 @@
 const Joi = require("joi");
 
 const noteValidationSchema = Joi.object({
-  title: Joi.string().min(2).max(50),
-  description: Joi.string().min(2).max(100),
+  title: Joi.string().min(0).max(50),
+  description: Joi.string().min(0).max(150),
 });
 
 const validateNoteData = (req, res, next) => {

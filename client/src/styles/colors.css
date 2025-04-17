@@ -1,15 +1,15 @@
 :root {
-  --primary: #646cff;
-  --primary-onhover: #535bf2;
+  --primary: #53afe4;
+  --primary-onhover: #368cbe;
   --accent: #c60000;
   --accent-onhover: #b20000;
   --error: #c91a1a;
-  --error-onhover: #9e1616;
+  --error-onhover: #a81818;
   --success: #38b319;
   --success-onhover: #24830c;
   --off-white: #eeeeee;
   --white: #fcfcfc;
-  --white-onhover: #f4f4f4;
+  --white-onhover: #f6f6f6;
   --off-black: #191919;
   --off-grey: #686868;
 }

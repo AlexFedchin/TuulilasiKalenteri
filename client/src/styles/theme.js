@@ -8,6 +8,12 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
         fontSize: isTablet ? "0.75rem" : "0.875rem",
       },
     },
+    palette: {
+      primary: {
+        main: "#53afe4",
+        contrastText: "#fff",
+      },
+    },
     components: {
       MuiTypography: {
         styleOverrides: {
@@ -108,6 +114,11 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             fontSize: isTablet ? "0.75rem" : "0.875rem",
             "&:hover": {
               backgroundColor: "var(--off-white)",
+            },
+          },
+          contained: {
+            "&:hover": {
+              backgroundColor: "var(--primary-onhover)",
             },
           },
         },

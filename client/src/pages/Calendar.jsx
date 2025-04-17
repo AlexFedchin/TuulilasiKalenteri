@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Typography,
   Box,
   IconButton,
@@ -17,6 +15,8 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForwardIos";
 import dayjs from "dayjs";
 import useScreenSize from "../hooks/useScreenSize";
 import Loader from "../components/loader/Loader";
+import Notes from "../components/NotesBlock";
+import BookingBox from "../components/BookingBox";
 
 const Calendar = () => {
   const { user, token } = useAuth();
@@ -113,45 +113,6 @@ const Calendar = () => {
     }
   };
 
-  const renderBookingBox = (booking) => (
-    <Box
-      key={booking._id}
-      onClick={(e) => {
-        e.stopPropagation;
-        e.preventDefault();
-        handleBookingBoxClick(booking);
-      }}
-      sx={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: `${booking.duration * 72}px`,
-        backgroundColor: "rgb(83, 175, 228)",
-        color: "var(--white)",
-        borderRadius: 2,
-        boxSizing: "border-box",
-        padding: 0.5,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        overflow: "hidden",
-        cursor: "pointer",
-        zIndex: 10,
-      }}
-    >
-      <Typography variant="card" color="inherit">
-        {booking.carMake} {booking.carModel}
-      </Typography>
-      <Typography variant="card" color="inherit">
-        {booking.plateNumber}
-      </Typography>
-      <Typography variant="card" color="inherit">
-        {booking.insuranceNumber}
-      </Typography>
-    </Box>
-  );
-
   const renderCalendar = () => {
     const columns = generateDayColumns();
     const times = generateTimeRows();
@@ -219,47 +180,66 @@ const Calendar = () => {
                   {time}
                 </Typography>
               </TableCell>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.date}
-                  onClick={() =>
-                    getBookingForTimeSlot(column.date, time).length === 0
-                      ? handleDateClick(column.date, time)
-                      : undefined
-                  }
-                  sx={{
-                    border: "none",
-                    p: 0.5,
-                    height: "40px",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <Box
+              {columns.map((column) => {
+                const bookingsForSlot = getBookingForTimeSlot(
+                  column.date,
+                  time
+                );
+                const widthNum =
+                  bookingsForSlot.length > 0
+                    ? 100.0 / bookingsForSlot.length
+                    : 100;
+                const bookingWidth = `${widthNum}%`;
+
+                return (
+                  <TableCell
+                    key={column.date}
+                    onClick={() =>
+                      bookingsForSlot.length === 0
+                        ? handleDateClick(column.date, time)
+                        : undefined
+                    }
                     sx={{
-                      position: "relative",
-                      cursor: "pointer",
-                      bgcolor: "var(--white)",
-                      borderRadius: 2,
-                      boxSizing: "border-box",
-                      height: "100%",
-                      width: "100%",
-                      boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
+                      border: "none",
                       p: 0.5,
-                      ...(getBookingForTimeSlot(column.date, time).length ===
-                        0 && {
-                        "&:hover": {
-                          bgcolor: "var(--white-onhover)",
-                        },
-                      }),
+                      height: "40px",
+                      boxSizing: "border-box",
                     }}
                   >
-                    {/* Render the bookings for each time slot */}
-                    {getBookingForTimeSlot(column.date, time).map((booking) =>
-                      renderBookingBox(booking)
-                    )}
-                  </Box>
-                </TableCell>
-              ))}
+                    <Box
+                      sx={{
+                        position: "relative",
+                        cursor: "pointer",
+                        bgcolor: "var(--white)",
+                        borderRadius: 2,
+                        boxSizing: "border-box",
+                        height: "100%",
+                        width: "100%",
+                        boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
+                        p: 0.5,
+                        ...(bookingsForSlot.length === 0 && {
+                          "&:hover": {
+                            bgcolor: "var(--white-onhover)",
+                          },
+                        }),
+                      }}
+                    >
+                      {bookingsForSlot.map((booking, index) => {
+                        const left = `${index * widthNum}%`;
+                        return (
+                          <BookingBox
+                            booking={booking}
+                            left={left}
+                            width={bookingWidth}
+                            onClick={handleBookingBoxClick}
+                            key={booking._id}
+                          />
+                        );
+                      })}
+                    </Box>
+                  </TableCell>
+                );
+              })}
             </TableRow>
           ))}
         </TableBody>
@@ -323,79 +303,13 @@ const Calendar = () => {
           </Box>
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 1,
-              bgcolor: "var(--white)",
               boxSizing: "border-box",
-              maxHeight: "687.55px",
+              maxHeight: "696.55px",
+              py: 0.5,
               width: isMobile ? "100%" : "20%",
-              borderRadius: 2,
-              boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
-              my: 0.5,
-              p: 1,
             }}
           >
-            <Typography variant="h4" sx={{ textAlign: "center" }}>
-              Notes
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                width: "100%",
-                maxHeight: "100%",
-                height: "100%",
-                bgcolor: "var(--off-white)",
-                borderRadius: 1,
-                boxSizing: "border-box",
-                p: 1,
-                gap: 1,
-                boxShadow: "inset 0 0 8px rgba(0, 0, 0, 0.1)",
-                overflowY: "auto",
-              }}
-            >
-              <Box
-                sx={{
-                  width: "100%",
-                  boxSizing: "border-box",
-                  p: 1,
-                  bgcolor: "var(--white)",
-                  color: "var(--off-black)",
-                  borderRadius: 0.5,
-                  textAlign: "left",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 0.5,
-                }}
-              >
-                <Typography
-                  variant="h5"
-                  color="inherit"
-                  sx={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Note title
-                </Typography>
-                <Typography
-                  variant="card"
-                  color="inherit"
-                  sx={{
-                    wordBreak: "break-word",
-                    overflow: "hidden",
-                    hyphens: "auto",
-                  }}
-                >
-                  Note description goes here. This is a sample note. very very
-                  simple one. Trust me.
-                </Typography>
-              </Box>
-            </Box>
+            <Notes />
           </Box>
         </Box>
       )}

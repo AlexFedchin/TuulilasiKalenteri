@@ -96,7 +96,9 @@ const deleteNote = async (req, res) => {
       return res.status(404).json({ error: "Note not found" });
     }
 
-    res.status(204).json({ message: "Note deleted" });
+    res
+      .status(204)
+      .json({ message: "Note deleted", deletedNoteId: deletedNote._id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
