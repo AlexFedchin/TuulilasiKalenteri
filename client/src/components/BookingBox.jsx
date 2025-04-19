@@ -14,8 +14,12 @@ const BookingBox = ({ booking, onClick, left, width }) => {
         top: 0,
         left: left,
         width: width,
-        height: `${booking.duration * 72}px`,
-        backgroundColor: "rgb(83, 175, 228)",
+        height: `${booking.duration * 80 - 8}px`,
+        backgroundColor: booking.isWorkDone
+          ? "var(--success)"
+          : booking.inStock
+          ? "var(--primary)"
+          : "var(--error)",
         boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
         color: "var(--white)",
         borderRadius: 2,

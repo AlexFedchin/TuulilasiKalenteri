@@ -15,15 +15,20 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForwardIos";
 import dayjs from "dayjs";
 import useScreenSize from "../hooks/useScreenSize";
 import Loader from "../components/loader/Loader";
-import Notes from "../components/NotesBlock";
+import Notes from "../components/notes/NotesBlock";
 import BookingBox from "../components/BookingBox";
+import BookingModal from "../components/BookingModal";
 
 const Calendar = () => {
   const { user, token } = useAuth();
+  const { isMobile, isTablet } = useScreenSize();
+
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const { isMobile, isTablet } = useScreenSize();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   // Fetch bookings on component mount
   useEffect(() => {
@@ -98,11 +103,15 @@ const Calendar = () => {
   };
 
   const handleBookingBoxClick = (booking) => {
-    console.log("Booking clicked:", booking);
+    setSelectedBooking(booking);
+    setSelectedDate(null);
+    setIsModalOpen(true);
   };
 
   const handleDateClick = (date, time) => {
-    console.log("Date and time clicked:", date, time);
+    setSelectedDate(dayjs(`${date}T${time}`).format("YYYY-MM-DDTHH:mm"));
+    setSelectedBooking(null);
+    setIsModalOpen(true);
   };
 
   const handleChangeWeek = (direction) => {
@@ -249,6 +258,7 @@ const Calendar = () => {
 
   return (
     <DefaultContainer sx={{ maxWidth: "1600px !important", gap: 3 }}>
+      {/* Header */}
       <Box
         sx={{
           width: "100%",
@@ -312,6 +322,17 @@ const Calendar = () => {
             <Notes />
           </Box>
         </Box>
+      )}
+
+      {/* Booking Modal */}
+      {isModalOpen && (
+        <BookingModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          booking={selectedBooking}
+          date={selectedDate}
+          setBookings={setBookings}
+        />
       )}
     </DefaultContainer>
   );

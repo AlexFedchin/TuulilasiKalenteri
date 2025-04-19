@@ -8,12 +8,6 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
         fontSize: isTablet ? "0.75rem" : "0.875rem",
       },
     },
-    palette: {
-      primary: {
-        main: "#53afe4",
-        contrastText: "#fff",
-      },
-    },
     components: {
       MuiTypography: {
         styleOverrides: {
@@ -68,21 +62,14 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
         styleOverrides: {
           root: {
             borderRadius: "4px",
-            ".MuiOutlinedInput-notchedOutline": {
-              transition: "all 0.2s ease",
-            },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              border: "1px solid var(--off-black)",
+              border: "2px solid var(--primary)",
               opacity: 1,
             },
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              opacity: 0.75,
+            "&:not(.Mui-focused):hover .MuiOutlinedInput-notchedOutline": {
+              opacity: 0.5,
               border: "1px solid var(--off-black) !important",
             },
-          },
-          notchedOutline: {
-            opacity: 0.5,
-            border: "1px solid var(--off-black)",
           },
           input: {
             color: "var(--off-black)",
@@ -91,6 +78,23 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
               WebkitTextFillColor: "var(--off-black) !important",
               transition: "background-color 5000s ease-in-out 0s",
             },
+          },
+        },
+      },
+      MuiSelect: {
+        styleOverrides: {
+          root: {
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              border: "2px solid var(--primary)",
+              opacity: 1,
+            },
+            "&:not(.Mui-focused):hover .MuiOutlinedInput-notchedOutline": {
+              opacity: 0.5,
+              border: "1px solid var(--off-black) !important",
+            },
+          },
+          icon: {
+            color: "var(--off-black)",
           },
         },
       },
@@ -116,9 +120,27 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
               backgroundColor: "var(--off-white)",
             },
           },
-          contained: {
+          submit: {
+            borderRadius: "4px",
+            backgroundColor: "var(--primary)",
+            color: "var(--white)",
+            fontSize: isTablet ? "0.75rem" : "0.875rem",
+            fontWeight: 500,
             "&:hover": {
               backgroundColor: "var(--primary-onhover)",
+            },
+          },
+          cancel: {
+            borderRadius: "4px",
+            backgroundColor: "transparent",
+            border: "1px solid var(--error)",
+            color: "var(--error)",
+            fontSize: isTablet ? "0.75rem" : "0.875rem",
+            fontWeight: 500,
+            "&:hover": {
+              backgroundColor: "var(--error-onhover)",
+              border: "1px solid var(--error-onhover)",
+              color: "var(--white)",
             },
           },
         },

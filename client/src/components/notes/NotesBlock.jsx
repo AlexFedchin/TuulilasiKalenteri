@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import NoteCard from "./NoteCard";
 import EditableNoteCard from "./EditableNoteCard";
-import useScreenSize from "../hooks/useScreenSize";
+import useScreenSize from "../../hooks/useScreenSize";
 
 const Notes = () => {
   const { user, token } = useAuth();
@@ -27,7 +27,10 @@ const Notes = () => {
         return response.json();
       })
       .then((data) => {
-        setNotes(data);
+        const sorted = [...data].sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        ); // <-- Sorting added
+        setNotes(sorted);
       })
       .catch((error) => {
         console.error("Error fetching notes:", error.message);
@@ -64,6 +67,7 @@ const Notes = () => {
       )
     );
   };
+
   const onDeleteNote = (deletedNoteId) => {
     setNotes((prevNotes) =>
       prevNotes.filter((note) => note._id !== deletedNoteId)
@@ -106,14 +110,16 @@ const Notes = () => {
           overflowY: "auto",
         }}
       >
-        {notes.map((note) => (
-          <NoteCard
-            key={note._id}
-            note={note}
-            onUpdateNote={onUpdateNote}
-            onDeleteNote={onDeleteNote}
-          />
-        ))}
+        {notes
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .map((note) => (
+            <NoteCard
+              key={note._id}
+              note={note}
+              onUpdateNote={onUpdateNote}
+              onDeleteNote={onDeleteNote}
+            />
+          ))}
         {isCreating ? (
           <EditableNoteCard
             onSave={handleCreateNote}
@@ -124,6 +130,9 @@ const Notes = () => {
             startIcon={<AddIcon fontSize="small" />}
             onClick={() => setIsCreating(true)}
             sx={{
+              borderRadius: 0.5,
+              py: 0.5,
+              px: 1,
               bgcolor: "var(--white)",
               color: "var(--off-black)",
               width: "100%",

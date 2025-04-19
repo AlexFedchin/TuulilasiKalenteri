@@ -1,10 +1,10 @@
 :root {
-  --primary: #53afe4;
-  --primary-onhover: #368cbe;
+  --primary: #2aa4eb;
+  --primary-onhover: #2690ce;
   --accent: #c60000;
   --accent-onhover: #b20000;
-  --error: #c91a1a;
-  --error-onhover: #a81818;
+  --error: #e63f3f;
+  --error-onhover: #d84c4c;
   --success: #38b319;
   --success-onhover: #24830c;
   --off-white: #eeeeee;

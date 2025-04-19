@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, TextField, IconButton } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
-import useScreenSize from "../hooks/useScreenSize";
+import useScreenSize from "../../hooks/useScreenSize";
 
 const EditableNoteCard = ({
   initialTitle = "",

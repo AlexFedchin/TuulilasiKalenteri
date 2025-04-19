@@ -1,29 +1,53 @@
 const Booking = require("../models/booking.js");
 const User = require("../models/user.js");
 const Location = require("../models/location.js");
+const dayjs = require("dayjs");
 
 const getAllBookings = async (req, res) => {
   const {
-    carMake,
     carModel,
     plateNumber,
+    phoneNumber,
+    eurocode,
+    inStock,
+    warehouseLocation,
+    clientType,
+    payerType,
+    insuranceCompany,
     insuranceNumber,
     date,
-    userId,
     startDate,
     endDate,
+    duration,
+    notes,
+    location,
+    userId,
+    isWorkDone,
   } = req.query;
+
   let filter = {};
 
-  if (carMake) filter.carMake = new RegExp(carMake, "i");
   if (carModel) filter.carModel = new RegExp(carModel, "i");
+  if (isWorkDone !== undefined) filter.isWorkDone = isWorkDone === "true";
   if (plateNumber) filter.plateNumber = new RegExp(plateNumber, "i");
+  if (phoneNumber) filter.phoneNumber = new RegExp(phoneNumber, "i");
+  if (eurocode) filter.eurocode = new RegExp(eurocode, "i");
+  if (inStock !== undefined) filter.inStock = inStock === "true";
+  if (warehouseLocation)
+    filter.warehouseLocation = new RegExp(warehouseLocation, "i");
+  if (clientType) filter.clientType = clientType;
+  if (payerType) filter.payerType = payerType;
+  if (insuranceCompany) filter.insuranceCompany = insuranceCompany;
   if (insuranceNumber)
     filter.insuranceNumber = new RegExp(insuranceNumber, "i");
+  if (duration) filter.duration = Number(duration);
+  if (notes) filter.notes = new RegExp(notes, "i");
+  if (location) filter.location = location;
+
   if (startDate && endDate) {
-    filter.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    filter.date = { $gte: dayjs(startDate), $lte: dayjs(endDate) };
   } else if (date) {
-    filter.date = new Date(date);
+    filter.date = dayjs(date);
   }
 
   try {
@@ -44,6 +68,7 @@ const getAllBookings = async (req, res) => {
     const bookings = await Booking.find(filter);
     res.json(bookings);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -59,45 +84,66 @@ const getBookingById = async (req, res) => {
 };
 
 const createBooking = async (req, res) => {
-  const { carMake, carModel, plateNumber, insuranceNumber, date, duration } =
-    req.body;
-
-  console.log(req.user);
-
-  // Create a new booking
-  const newBooking = new Booking({
-    carMake,
+  const {
     carModel,
+    isWorkDone,
     plateNumber,
+    phoneNumber,
+    eurocode,
+    inStock,
+    warehouseLocation,
+    clientType,
+    payerType,
+    insuranceCompany,
     insuranceNumber,
     date,
     duration,
-    createdBy: req.user.id,
-  });
+    notes,
+    location,
+  } = req.body;
 
-  if (req.user.role === "admin") {
-    if (!req.body.location)
-      res.status(400).json({ error: "Location is required" });
-
-    const location = await Location.findByIdAndUpdate(
-      req.body.location,
-      {
-        $addToSet: { bookings: newBooking._id },
-      },
-      { new: true }
-    );
-
-    if (!location) return res.status(404).json({ error: "Location not found" });
-  } else {
-    const location = await Location.findOne({ users: req.user.id });
-    if (!location) return res.status(404).json({ error: "Location not found" });
-
-    // Add the booking to the user's location
-    location.bookings.push(newBooking._id);
-    await location.save();
-  }
-
+  let bookingLocation = location;
   try {
+    const today = dayjs();
+    today.startOf("day");
+
+    if (date < today && req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ error: "Forbidden: Cannot create past bookings" });
+    }
+
+    if (req.user.role === "admin" && !location) {
+      return res.status(400).json({ error: "Location is required" });
+    } else {
+      const locationObject = await Location.findOne({ users: req.user.id });
+      if (!locationObject)
+        return res.status(404).json({ error: "User's location not found" });
+
+      bookingLocation = locationObject._id;
+    }
+
+    // Create a new booking
+    const newBooking = new Booking({
+      carModel,
+      plateNumber,
+      isWorkDone,
+      phoneNumber,
+      eurocode,
+      inStock,
+      warehouseLocation: inStock ? warehouseLocation : undefined,
+      clientType,
+      payerType,
+      insuranceCompany:
+        payerType === "insurance" ? insuranceCompany : undefined,
+      insuranceNumber: payerType === "insurance" ? insuranceNumber : undefined,
+      date,
+      duration,
+      notes,
+      createdBy: req.user.id,
+      location: bookingLocation,
+    });
+
     await newBooking.save();
     res.status(201).json(newBooking);
   } catch (error) {
@@ -107,20 +153,68 @@ const createBooking = async (req, res) => {
 };
 
 const updateBooking = async (req, res) => {
-  const { carMake, carModel, plateNumber, insuranceNumber, date, duration } =
-    req.body;
+  const {
+    carModel,
+    plateNumber,
+    isWorkDone,
+    phoneNumber,
+    eurocode,
+    inStock,
+    warehouseLocation,
+    clientType,
+    payerType,
+    insuranceCompany,
+    insuranceNumber,
+    date,
+    duration,
+    notes,
+    location,
+  } = req.body;
 
   try {
+    const booking = await Booking.findById(req.params.id);
+
+    const today = dayjs();
+    today.setHours(0, 0, 0, 0);
+
+    if (booking?.date < today && req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ error: "Forbidden: Cannot modify past bookings" });
+    }
+
+    let bookingLocation = location;
+    if (req.user.role === "admin" && !location) {
+      return res.status(400).json({ error: "Location is required" });
+    } else {
+      const locationObject = await Location.findOne({ users: req.user.id });
+      if (!locationObject)
+        return res.status(404).json({ error: "User's location not found" });
+
+      bookingLocation = locationObject._id;
+    }
+
     // Find and update the booking
     const updatedBooking = await Booking.findByIdAndUpdate(
       req.params.id,
       {
-        carMake,
         carModel,
+        isWorkDone,
         plateNumber,
-        insuranceNumber,
+        phoneNumber,
+        eurocode,
+        inStock,
+        warehouseLocation: inStock ? warehouseLocation : undefined,
+        clientType,
+        payerType,
+        insuranceCompany:
+          payerType === "insurance" ? insuranceCompany : undefined,
+        insuranceNumber:
+          payerType === "insurance" ? insuranceNumber : undefined,
         date,
         duration,
+        notes,
+        location: bookingLocation,
       },
       { new: true, runValidators: true }
     );
@@ -130,24 +224,26 @@ const updateBooking = async (req, res) => {
 
     res.json(updatedBooking);
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: "Invalid Booking ID or data" });
   }
 };
 
 const deleteBooking = async (req, res) => {
   try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
+    const today = dayjs();
+
+    today.startOf("day");
+    if (booking?.date < today && req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ error: "Forbidden: Cannot delete past bookings" });
+    }
+
     const deletedBooking = await Booking.findByIdAndDelete(req.params.id);
-
-    const location = await Location.findOne({
-      bookings: deletedBooking._id,
-    });
-
-    if (!location) return res.status(404).json({ error: "Location not found" });
-
-    location.bookings = location.bookings.filter(
-      (bookingId) => bookingId.toString() !== deletedBooking._id.toString()
-    );
-    await location.save();
 
     if (!deletedBooking)
       return res.status(404).json({ error: "Booking not found" });

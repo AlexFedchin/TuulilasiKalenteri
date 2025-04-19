@@ -3,7 +3,12 @@ const Location = require("../models/location");
 // Get all locations
 const getAllLocations = async (req, res) => {
   try {
-    const locations = await Location.find();
+    let locations;
+    if (req.user.role === "admin") {
+      locations = await Location.find();
+    } else {
+      locations = await Location.find({ users: req.user.id });
+    }
     res.status(200).json(locations);
   } catch (error) {
     res.status(500).json({ error: error.message });
