@@ -24,6 +24,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useScreenSize from "../hooks/useScreenSize";
 import { useAuth } from "../context/AuthContext";
+import { alert } from "../utils/alert";
 
 const bookingValidationSchema = Joi.object({
   plateNumber: Joi.string()
@@ -86,15 +87,18 @@ const BookingModal = ({
   open,
   onClose,
   booking,
-  date,
+  date = null,
   location,
   setBookings,
 }) => {
   const { token, user } = useAuth();
   const { isMobile } = useScreenSize();
-  date =
-    dayjs(date).format("YYYY-MM-DDTHH:mm") ||
-    dayjs().format("YYYY-MM-DDTHH:mm");
+  if (date) {
+    date = dayjs(date).format("YYYY-MM-DDTHH:mm");
+  } else if (booking) {
+    date = dayjs(booking?.date).format("YYYY-MM-DDTHH:mm");
+  }
+
   const isEdit = !!booking;
 
   const insuranceCompanies = [
@@ -130,14 +134,13 @@ const BookingModal = ({
     payerType: booking?.payer || "person",
     insuranceCompany: booking?.insuranceCompany || "pohjolaVakuutus",
     insuranceNumber: booking?.insuranceNumber || "",
-    date:
-      booking?.date || date
-        ? dayjs(date).format("YYYY-MM-DDTHH:mm")
-        : dayjs().format("YYYY-MM-DDTHH:mm"),
+    date: dayjs(date).format("YYYY-MM-DDTHH:mm"),
     duration: booking?.duration || 1,
     notes: booking?.notes || "",
     location: booking?.location || location || "",
   });
+
+  console.log(formData.date);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -244,14 +247,25 @@ const BookingModal = ({
       const result = await response.json();
 
       if (!response.ok) {
-        console.error("Server error:", result.error || result.message);
+        alert.error(`Error: ${result.error}`);
         return;
       }
 
-      console.log("Booking saved:", result);
-      setBookings((prev) => [result, ...prev]);
+      if (isEdit) {
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) =>
+            booking._id === result._id ? result : booking
+          )
+        );
+        alert.success("Booking updated successfully!");
+      } else {
+        setBookings((prev) => [result, ...prev]);
+        alert.success("Booking created successfully!");
+      }
+
       onClose();
     } catch (err) {
+      alert.error("Unexpected error occurred");
       console.error("Request failed:", err);
     }
   };
@@ -265,13 +279,23 @@ const BookingModal = ({
         },
       });
       const data = await response.json();
+
       if (!response.ok) {
         console.error("Error deleting booking:", data.error);
         return;
       }
-      console.log("Booking deleted:", data);
+
+      const deletedBookingId = data.deletedBookingId;
+
+      setBookings((prevBookings) =>
+        prevBookings.filter((note) => note._id !== deletedBookingId)
+      );
+
+      alert.success("Booking deleted successfully!");
+
       onClose();
     } catch (err) {
+      alert.error("Unexpected error occurred");
       console.error("Request failed:", err);
     }
   };

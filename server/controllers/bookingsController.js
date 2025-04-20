@@ -175,21 +175,21 @@ const updateBooking = async (req, res) => {
     const booking = await Booking.findById(req.params.id);
 
     const today = dayjs();
-    today.setHours(0, 0, 0, 0);
+    today.startOf("day");
 
     if (booking?.date < today && req.user.role !== "admin") {
       return res
         .status(403)
-        .json({ error: "Forbidden: Cannot modify past bookings" });
+        .json({ error: "You cannot modify past bookings!" });
     }
 
     let bookingLocation = location;
     if (req.user.role === "admin" && !location) {
-      return res.status(400).json({ error: "Location is required" });
+      return res.status(400).json({ error: "Location is required!" });
     } else {
       const locationObject = await Location.findOne({ users: req.user.id });
       if (!locationObject)
-        return res.status(404).json({ error: "User's location not found" });
+        return res.status(404).json({ error: "User's location not found!" });
 
       bookingLocation = locationObject._id;
     }
@@ -225,7 +225,7 @@ const updateBooking = async (req, res) => {
     res.json(updatedBooking);
   } catch (error) {
     console.error(error);
-    res.status(400).json({ error: "Invalid Booking ID or data" });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -236,19 +236,21 @@ const deleteBooking = async (req, res) => {
     if (!booking) return res.status(404).json({ error: "Booking not found" });
     const today = dayjs();
 
-    today.startOf("day");
-    if (booking?.date < today && req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ error: "Forbidden: Cannot delete past bookings" });
-    }
+    // today.startOf("day");
+    // if (booking?.date < today && req.user.role !== "admin") {
+    //   return res
+    //     .status(403)
+    //     .json({ error: "Forbidden: Cannot delete past bookings" });
+    // }
 
     const deletedBooking = await Booking.findByIdAndDelete(req.params.id);
 
     if (!deletedBooking)
       return res.status(404).json({ error: "Booking not found" });
 
-    res.status(204).json({ message: "Booking deleted" });
+    res.status(200).json({
+      deletedBookingId: deletedBooking._id,
+    });
   } catch {
     res.status(400).json({ error: "Invalid Booking ID" });
   }

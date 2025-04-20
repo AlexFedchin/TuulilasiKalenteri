@@ -13,6 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import DefaultContainer from "../components/DefaultContainer";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForwardIos";
 import dayjs from "dayjs";
+import isoWeek from "dayjs/plugin/isoWeek";
 import useScreenSize from "../hooks/useScreenSize";
 import Loader from "../components/loader/Loader";
 import Notes from "../components/notes/NotesBlock";
@@ -22,6 +23,7 @@ import BookingModal from "../components/BookingModal";
 const Calendar = () => {
   const { user, token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
+  dayjs.extend(isoWeek);
 
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,14 +36,8 @@ const Calendar = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const startOfWeek = currentDate
-          .startOf("week")
-          .add(1, "day")
-          .format("YYYY-MM-DD");
-        const endOfWeek = currentDate
-          .endOf("week")
-          .add(1, "day")
-          .format("YYYY-MM-DD");
+        const startOfWeek = currentDate.startOf("isoWeek").format("YYYY-MM-DD");
+        const endOfWeek = currentDate.endOf("isoWeek").format("YYYY-MM-DD");
 
         const response = await fetch(
           `/api/bookings?startDate=${startOfWeek}&endDate=${endOfWeek}`,
@@ -65,7 +61,7 @@ const Calendar = () => {
 
   const generateDayColumns = () => {
     const columns = [];
-    const startOfWeek = currentDate.startOf("week").add(1, "day");
+    const startOfWeek = currentDate.startOf("isoWeek");
     for (let i = 0; i < 5; i++) {
       const day = startOfWeek.add(i, "day");
       columns.push({

@@ -8,6 +8,8 @@ import useScreenSize from "./hooks/useScreenSize";
 import createCustomTheme from "./styles/theme";
 import { ThemeProvider } from "@mui/material";
 import { lazy, Suspense } from "react";
+import { useSnackbar } from "notistack";
+import { setUseSnackbarRef } from "./utils/alert";
 import Loader from "./components/loader/Loader";
 
 const Authentication = lazy(() => import("./pages/Authentication"));
@@ -21,6 +23,8 @@ function App() {
   const { isMobile, isTablet } = useScreenSize();
   const { user } = useAuth();
   const theme = createCustomTheme({ isMobile, isTablet });
+  const snackbar = useSnackbar();
+  setUseSnackbarRef(snackbar);
 
   return (
     <Router>
