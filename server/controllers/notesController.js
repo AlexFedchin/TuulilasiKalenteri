@@ -6,6 +6,7 @@ const getAllNotes = async (req, res) => {
     const notes = await Note.find({ createdBy: req.user.id });
     res.status(200).json(notes);
   } catch (error) {
+    console.error("Error getting all notes:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -25,6 +26,7 @@ const getNoteById = async (req, res) => {
 
     res.status(200).json(note);
   } catch (error) {
+    console.error("Error getting note by ID:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -40,13 +42,13 @@ const createNote = async (req, res) => {
     try {
       savedNote = await note.save();
     } catch (error) {
-      console.error("Error saving note:", error);
       return res.status(500).json({ error: "Failed to save note" });
     }
 
     res.status(201).json(savedNote);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Error creating note:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -73,7 +75,8 @@ const updateNote = async (req, res) => {
 
     res.status(200).json(updatedNote);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Error updating note:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -98,6 +101,7 @@ const deleteNote = async (req, res) => {
 
     res.status(200).json({ deletedNoteId: deletedNote._id });
   } catch (error) {
+    console.error("Error deleting note:", error);
     res.status(500).json({ error: error.message });
   }
 };

@@ -46,7 +46,7 @@ const register = async (req, res) => {
       );
 
       if (!usersLocation) {
-        return res.status(400).json({ error: "Location not found" });
+        return res.status(404).json({ error: "Location not found" });
       }
     }
 
@@ -60,8 +60,9 @@ const register = async (req, res) => {
       email: savedUser.email,
       role: savedUser.role,
     });
-  } catch (err) {
-    res.status(500).json({ error: "Internal server error" });
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -113,13 +114,16 @@ const login = async (req, res) => {
       },
       token,
     });
-  } catch (err) {
-    res.status(500).json({ error: "Internal server error" });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
 // In-memory token blacklist
 let blacklistedTokens = [];
+// Middleware to check if token is blacklisted
+const isTokenBlacklisted = (token) => blacklistedTokens.includes(token);
 
 // Logout logic
 const logout = (req, res) => {
@@ -158,12 +162,10 @@ const verifyToken = async (req, res) => {
       },
       token: newToken,
     });
-  } catch (err) {
-    res.status(500).json({ error: "Internal server error" });
+  } catch (error) {
+    console.error("Error during token verification:", error);
+    res.status(500).json({ error: error.message });
   }
 };
-
-// Middleware to check if token is blacklisted
-const isTokenBlacklisted = (token) => blacklistedTokens.includes(token);
 
 module.exports = { login, register, logout, verifyToken, isTokenBlacklisted };

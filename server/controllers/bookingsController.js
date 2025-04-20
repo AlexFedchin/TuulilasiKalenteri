@@ -68,8 +68,8 @@ const getAllBookings = async (req, res) => {
     const bookings = await Booking.find(filter);
     res.json(bookings);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error getting all bookings:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -79,7 +79,8 @@ const getBookingById = async (req, res) => {
     if (!event) return res.status(404).json({ error: "Booking not found" });
     res.json(event);
   } catch {
-    res.status(400).json({ error: "Invalid event ID" });
+    console.error("Error getting booking by ID:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -108,9 +109,7 @@ const createBooking = async (req, res) => {
     today.startOf("day");
 
     if (date < today && req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ error: "Forbidden: Cannot create past bookings" });
+      return res.status(403).json({ error: "You cannot create past bookings" });
     }
 
     if (req.user.role === "admin" && !location) {
@@ -147,7 +146,7 @@ const createBooking = async (req, res) => {
     await newBooking.save();
     res.status(201).json(newBooking);
   } catch (error) {
-    console.error(error);
+    console.error("Error creating booking:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -224,8 +223,8 @@ const updateBooking = async (req, res) => {
 
     res.json(updatedBooking);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: error.message });
+    console.error("Error updating booking:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -234,14 +233,13 @@ const deleteBooking = async (req, res) => {
     const booking = await Booking.findById(req.params.id);
 
     if (!booking) return res.status(404).json({ error: "Booking not found" });
-    const today = dayjs();
 
-    // today.startOf("day");
-    // if (booking?.date < today && req.user.role !== "admin") {
-    //   return res
-    //     .status(403)
-    //     .json({ error: "Forbidden: Cannot delete past bookings" });
-    // }
+    const today = dayjs();
+    today.startOf("day");
+
+    if (booking?.date < today && req.user.role !== "admin") {
+      return res.status(403).json({ error: "You cannot delete past bookings" });
+    }
 
     const deletedBooking = await Booking.findByIdAndDelete(req.params.id);
 
@@ -251,8 +249,9 @@ const deleteBooking = async (req, res) => {
     res.status(200).json({
       deletedBookingId: deletedBooking._id,
     });
-  } catch {
-    res.status(400).json({ error: "Invalid Booking ID" });
+  } catch (error) {
+    console.error("Error deleting booking:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 

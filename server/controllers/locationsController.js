@@ -11,6 +11,7 @@ const getAllLocations = async (req, res) => {
     }
     res.status(200).json(locations);
   } catch (error) {
+    console.error("Error getting all locations:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -19,11 +20,14 @@ const getAllLocations = async (req, res) => {
 const getLocationById = async (req, res) => {
   try {
     const location = await Location.findById(req.params.id);
+
     if (!location) {
-      return res.status(404).json({ message: "Location not found" });
+      return res.status(404).json({ error: "Location not found" });
     }
+
     res.status(200).json(location);
   } catch (error) {
+    console.error("Error getting location by ID:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -36,16 +40,13 @@ const createLocation = async (req, res) => {
 
   try {
     let savedLocation;
-    try {
-      savedLocation = await location.save();
-    } catch (error) {
-      console.error("Error saving location:", error);
-      return res.status(500).json({ error: "Failed to save location" });
-    }
+
+    savedLocation = await location.save();
 
     res.status(201).json(savedLocation);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Error creating location:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -70,7 +71,8 @@ const updateLocation = async (req, res) => {
 
     res.status(200).json(updatedLocation);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Error updating location:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -83,8 +85,9 @@ const deleteLocation = async (req, res) => {
       return res.status(404).json({ error: "Location not found" });
     }
 
-    res.status(204).json({ message: "Location deleted" });
+    res.status(200).json({ deletedLocationId: deletedLocation._id });
   } catch (error) {
+    console.error("Error deleting location:", error);
     res.status(500).json({ error: error.message });
   }
 };

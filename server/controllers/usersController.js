@@ -6,7 +6,8 @@ const getAllUsers = async (req, res) => {
     const users = await User.find({}, "-password");
     res.json(users);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error getting all users:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -34,7 +35,8 @@ const updateUser = async (req, res) => {
     });
     res.json(updatedUser);
   } catch (error) {
-    res.status(400).json({ error: "Invalid user ID or data" });
+    console.error("Error updating user:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -62,9 +64,10 @@ const deleteUser = async (req, res) => {
       await location.save();
     }
 
-    res.status(204).json({ message: "User deleted" });
+    res.status(204).json({ deletedUserId: deletedUser._id });
   } catch (error) {
-    res.status(400).json({ error });
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
