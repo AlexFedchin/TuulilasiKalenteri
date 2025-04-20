@@ -281,6 +281,7 @@ const BookingModal = ({
       const data = await response.json();
 
       if (!response.ok) {
+        alert.error(`Error: ${data.error}`);
         console.error("Error deleting booking:", data.error);
         return;
       }
