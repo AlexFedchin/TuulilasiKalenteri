@@ -70,9 +70,15 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
               opacity: 0.5,
               border: "1px solid var(--off-black) !important",
             },
+            "&.Mui-disabled": {
+              pointerEvents: "none",
+            },
           },
           input: {
+            alignItems: "center",
+            display: "flex",
             color: "var(--off-black)",
+            gap: 8,
             "&:-webkit-autofill": {
               boxShadow: "0 0 0 100px transparent inset !important",
               WebkitTextFillColor: "var(--off-black) !important",
@@ -129,6 +135,12 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             "&:hover": {
               backgroundColor: "var(--primary-onhover)",
             },
+            "&.Mui-disabled": {
+              backgroundColor: "var(--off-white)",
+              color: "var(--off-grey)",
+              opacity: 0.6,
+              cursor: "not-allowed",
+            },
           },
           cancel: {
             borderRadius: "4px",
@@ -141,6 +153,13 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
               backgroundColor: "var(--error-onhover)",
               border: "1px solid var(--error-onhover)",
               color: "var(--white)",
+            },
+            "&.Mui-disabled": {
+              backgroundColor: "transparent",
+              color: "var(--off-grey)",
+              border: "1px solid var(--off-grey)",
+              opacity: 0.6,
+              cursor: "not-allowed",
             },
           },
         },

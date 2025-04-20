@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Table,
   TableBody,
@@ -32,8 +32,19 @@ const Calendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
+  const fetchedDates = useRef([]);
+
+  useEffect(() => {
+    fetchedDates.current = [];
+    console.log("Fetched dates reset");
+  }, []);
+
   // Fetch bookings on component mount
   useEffect(() => {
+    if (fetchedDates.current.includes(currentDate.format("YYYY-MM-DD"))) return;
+
+    console.log(fetchedDates.current);
+
     const fetchBookings = async () => {
       try {
         const startOfWeek = currentDate.startOf("isoWeek").format("YYYY-MM-DD");
@@ -48,7 +59,8 @@ const Calendar = () => {
           }
         );
         const data = await response.json();
-        setBookings(data);
+        setBookings((prev) => [...prev, ...data]);
+        fetchedDates.current.push(currentDate.format("YYYY-MM-DD"));
       } catch (error) {
         console.error("Error fetching bookings:", error);
       } finally {

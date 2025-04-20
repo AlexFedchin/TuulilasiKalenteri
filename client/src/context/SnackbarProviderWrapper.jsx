@@ -11,6 +11,7 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   color: "var(--off-black)",
   borderRadius: "8px",
   boxShadow: "0 0px 16px rgba(0, 0, 0, 0.1)",
+  fontFamily: "Montserrat, sans-serif",
 }));
 
 const SnackbarProviderWrapper = ({ children }) => (

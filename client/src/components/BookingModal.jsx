@@ -14,6 +14,18 @@ import {
   FormHelperText,
 } from "@mui/material";
 import AbcIcon from "@mui/icons-material/Abc";
+import PhoneIcon from "@mui/icons-material/Phone";
+import CarIcon from "@mui/icons-material/DirectionsCar";
+import TagIcon from "@mui/icons-material/Tag";
+import WarehouseIcon from "@mui/icons-material/Warehouse";
+import PersonIcon from "@mui/icons-material/Person";
+import BusinessIcon from "@mui/icons-material/Business";
+import InsuranceIcon from "@mui/icons-material/RequestQuoteOutlined";
+import PaymentIcon from "@mui/icons-material/Payment";
+import DateIcon from "@mui/icons-material/CalendarMonth";
+import DurationIcon from "@mui/icons-material/AccessTime";
+import NotesIcon from "@mui/icons-material/Notes";
+import InsuranceCompanyIcon from "@mui/icons-material/AccountBalance";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
@@ -102,23 +114,71 @@ const BookingModal = ({
   const isEdit = !!booking;
 
   const insuranceCompanies = [
-    { name: "Pohjola Vakuutus", value: "pohjolaVakuutus" },
-    { name: "LähiTapiola-ryhmä", value: "lahiTapiola" },
-    { name: "If Vahinkovakuutus Oyj", value: "ifVakuutus" },
-    { name: "Fennia", value: "fennia" },
-    { name: "Turva", value: "turva" },
-    { name: "Pohjantähti", value: "pohjantahti" },
-    { name: "Alandia", value: "alandia" },
+    {
+      name: "Pohjola Vakuutus",
+      value: "pohjolaVakuutus",
+      logo: "/insurance-companies-logos/pohjola-logo.webp",
+    },
+    {
+      name: "LähiTapiola-ryhmä",
+      value: "lahiTapiola",
+      logo: "/insurance-companies-logos/lahitapiola-logo.webp",
+    },
+    {
+      name: "If Vahinkovakuutus Oyj",
+      value: "ifVakuutus",
+      logo: "/insurance-companies-logos/if-logo.webp",
+    },
+    {
+      name: "Fennia",
+      value: "fennia",
+      logo: "/insurance-companies-logos/fennia-logo.webp",
+    },
+    {
+      name: "Turva",
+      value: "turva",
+      logo: "/insurance-companies-logos/turva-logo.webp",
+    },
+    {
+      name: "Pohjantähti",
+      value: "pohjantahti",
+      logo: "/insurance-companies-logos/pohjantahti-logo.webp",
+    },
+    {
+      name: "Alandia",
+      value: "alandia",
+      logo: "/insurance-companies-logos/alandia-logo.webp",
+    },
     { name: "Muu", value: "muu" },
   ];
   const clientTypes = [
-    { name: "Private Client", value: "private" },
-    { name: "Company Client", value: "company" },
+    {
+      name: "Private Client",
+      value: "private",
+      icon: <PersonIcon fontSize="small" />,
+    },
+    {
+      name: "Company Client",
+      value: "company",
+      icon: <BusinessIcon fontSize="small" />,
+    },
   ];
   const payerTypes = [
-    { name: "Person", value: "person" },
-    { name: "Company", value: "company" },
-    { name: "Insurance Company", value: "insurance" },
+    {
+      name: "Person",
+      value: "person",
+      icon: <PersonIcon fontSize="small" />,
+    },
+    {
+      name: "Company",
+      value: "company",
+      icon: <BusinessIcon fontSize="small" />,
+    },
+    {
+      name: "Insurance Company",
+      value: "insurance",
+      icon: <InsuranceCompanyIcon fontSize="small" />,
+    },
   ];
 
   const [errors, setErrors] = useState({});
@@ -140,7 +200,25 @@ const BookingModal = ({
     location: booking?.location || location || "",
   });
 
-  console.log(formData.date);
+  const isSubmitDisabled = !(
+    // Check if the text fields are not empty
+    (
+      formData.plateNumber &&
+      formData.phoneNumber &&
+      formData.carModel &&
+      formData.eurocode &&
+      formData.clientType &&
+      formData.payerType &&
+      formData.date &&
+      formData.duration &&
+      // Check if warehouseLocation is provided when inStock is true
+      !(formData.inStock && !formData.warehouseLocation) &&
+      !(
+        formData.payerType === "insurance" &&
+        (!formData.insuranceNumber || !formData.insuranceCompany)
+      )
+    )
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -405,6 +483,7 @@ const BookingModal = ({
           {/* Phone number */}
           <Box>
             <Typography variant="h5" sx={labelStyles}>
+              <PhoneIcon fontSize="small" />
               Phone number
             </Typography>
             <TextField
@@ -424,6 +503,7 @@ const BookingModal = ({
           {/* Car model */}
           <Box>
             <Typography variant="h5" sx={labelStyles}>
+              <CarIcon fontSize="small" />
               Car model
             </Typography>
             <TextField
@@ -443,6 +523,7 @@ const BookingModal = ({
           {/* Eurocode */}
           <Box>
             <Typography variant="h5" sx={labelStyles}>
+              <TagIcon fontSize="small" />
               Eurocode
             </Typography>
             <TextField
@@ -470,7 +551,7 @@ const BookingModal = ({
               }}
             >
               <Typography variant="h5" sx={labelStyles}>
-                In stock?
+                In stock
               </Typography>
               <Switch
                 checked={formData["inStock"] || false}
@@ -494,6 +575,7 @@ const BookingModal = ({
             </Box>
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="h5" sx={labelStyles}>
+                <WarehouseIcon fontSize="small" />
                 Location in warehouse
               </Typography>
               <TextField
@@ -515,6 +597,7 @@ const BookingModal = ({
           {/* Client */}
           <Box>
             <Typography variant="h5" sx={labelStyles}>
+              <PersonIcon fontSize="small" />
               Client
             </Typography>
             <FormControl
@@ -529,7 +612,12 @@ const BookingModal = ({
                 onChange={handleChange}
               >
                 {clientTypes.map((client) => (
-                  <MenuItem key={client.value} value={client.value}>
+                  <MenuItem
+                    key={client.value}
+                    value={client.value}
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    {client.icon}
                     {client.name}
                   </MenuItem>
                 ))}
@@ -541,6 +629,7 @@ const BookingModal = ({
           {/* Payer */}
           <Box>
             <Typography variant="h5" sx={labelStyles}>
+              <PaymentIcon fontSize="small" />
               Payer
             </Typography>
             <FormControl
@@ -555,7 +644,12 @@ const BookingModal = ({
                 onChange={handleChange}
               >
                 {payerTypes.map((payer) => (
-                  <MenuItem key={payer.value} value={payer.value}>
+                  <MenuItem
+                    key={payer.value}
+                    value={payer.value}
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    {payer.icon}
                     {payer.name}
                   </MenuItem>
                 ))}
@@ -569,6 +663,7 @@ const BookingModal = ({
             <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" sx={labelStyles}>
+                  <InsuranceCompanyIcon fontSize="small" />
                   Insurance company
                 </Typography>
                 <FormControl
@@ -583,7 +678,25 @@ const BookingModal = ({
                     onChange={handleChange}
                   >
                     {insuranceCompanies.map((company) => (
-                      <MenuItem value={company.value}>{company.name}</MenuItem>
+                      <MenuItem
+                        value={company.value}
+                        key={company.value}
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        {company.logo && (
+                          <Box
+                            component="img"
+                            src={company.logo}
+                            sx={{
+                              width: "auto",
+                              height: "auto",
+                              maxWidth: "24px",
+                            }}
+                          />
+                        )}
+
+                        {company.name}
+                      </MenuItem>
                     ))}
                   </Select>
                   <FormHelperText>{errors["payer"] || ""}</FormHelperText>
@@ -591,6 +704,7 @@ const BookingModal = ({
               </Box>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" sx={labelStyles}>
+                  <InsuranceIcon fontSize="small" />
                   Insurance number
                 </Typography>
                 <TextField
@@ -614,6 +728,7 @@ const BookingModal = ({
             <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" sx={labelStyles}>
+                  <DateIcon fontSize="small" />
                   Date & Time
                 </Typography>
                 <DateTimePicker
@@ -640,6 +755,7 @@ const BookingModal = ({
               </Box>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" sx={labelStyles}>
+                  <DurationIcon fontSize="small" />
                   Duration
                 </Typography>
                 <FormControl
@@ -670,6 +786,7 @@ const BookingModal = ({
           {/* Notes */}
           <Box>
             <Typography variant="h5" sx={labelStyles}>
+              <NotesIcon fontSize="small" />
               Notes
             </Typography>
             <TextField
@@ -688,6 +805,7 @@ const BookingModal = ({
             />
           </Box>
         </Box>
+
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box>
             {isEdit && (
@@ -711,6 +829,7 @@ const BookingModal = ({
             <Button
               startIcon={<DoneIcon />}
               variant="submit"
+              disabled={isSubmitDisabled}
               onClick={handleSubmit}
             >
               {isEdit ? "Update" : "Create"}
