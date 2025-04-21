@@ -10,13 +10,6 @@ const locationSchema = new mongoose.Schema(
         required: true,
       },
     ],
-    bookings: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Booking",
-        required: true,
-      },
-    ],
   },
   {
     versionKey: false,

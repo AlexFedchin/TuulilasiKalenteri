@@ -24,6 +24,7 @@ import InsuranceIcon from "@mui/icons-material/RequestQuoteOutlined";
 import PaymentIcon from "@mui/icons-material/Payment";
 import DateIcon from "@mui/icons-material/CalendarMonth";
 import DurationIcon from "@mui/icons-material/AccessTime";
+import LocationIcon from "@mui/icons-material/LocationPin";
 import NotesIcon from "@mui/icons-material/Notes";
 import InsuranceCompanyIcon from "@mui/icons-material/AccountBalance";
 import CloseIcon from "@mui/icons-material/Close";
@@ -74,11 +75,23 @@ const bookingValidationSchema = Joi.object({
       "turva",
       "pohjantahti",
       "alandia",
-      "muu"
+      "other"
     )
     .when("payerType", {
       is: "insurance",
       then: Joi.required(),
+      otherwise: Joi.allow(""),
+    }),
+  insuranceCompanyName: Joi.string()
+    .min(2)
+    .max(50)
+    .when("payerType", {
+      is: "insurance",
+      then: Joi.when("insuranceCompany", {
+        is: "other",
+        then: Joi.required(),
+        otherwise: Joi.allow(""),
+      }),
       otherwise: Joi.allow(""),
     }),
   insuranceNumber: Joi.string()
@@ -93,6 +106,7 @@ const bookingValidationSchema = Joi.object({
   duration: Joi.number().min(0.5).max(6).required(),
   notes: Joi.string().min(0).max(500).allow(""),
   location: Joi.string().length(24).hex().required().allow(""),
+  checkMade: Joi.boolean().required().default(false),
 });
 
 const BookingModal = ({
@@ -112,6 +126,8 @@ const BookingModal = ({
   }
 
   const isEdit = !!booking;
+  const isAdmin = user?.role === "admin";
+  const isEditable = isAdmin || !dayjs(date).isBefore(dayjs(), "day");
 
   const insuranceCompanies = [
     {
@@ -149,7 +165,7 @@ const BookingModal = ({
       value: "alandia",
       logo: "/insurance-companies-logos/alandia-logo.webp",
     },
-    { name: "Muu", value: "muu" },
+    { name: "Other", value: "other" },
   ];
   const clientTypes = [
     {
@@ -190,15 +206,18 @@ const BookingModal = ({
     eurocode: booking?.eurocode || "",
     inStock: booking?.inStock || false,
     warehouseLocation: booking?.warehouseLocation || "",
-    clientType: booking?.client || "private",
-    payerType: booking?.payer || "person",
+    clientType: booking?.clientType || "private",
+    payerType: booking?.payerType || "person",
     insuranceCompany: booking?.insuranceCompany || "pohjolaVakuutus",
+    insuranceCompanyName: booking?.insuranceCompanyName || "",
     insuranceNumber: booking?.insuranceNumber || "",
     date: dayjs(date).format("YYYY-MM-DDTHH:mmZ"),
     duration: booking?.duration || 1,
     notes: booking?.notes || "",
     location: booking?.location || location || "",
+    checkMade: booking?.checkMade || false,
   });
+  const [locations, setLocations] = useState([]);
 
   const isSubmitDisabled = !(
     // Check if the text fields are not empty
@@ -216,6 +235,11 @@ const BookingModal = ({
       !(
         formData.payerType === "insurance" &&
         (!formData.insuranceNumber || !formData.insuranceCompany)
+      ) &&
+      !(
+        formData.payerType === "insurance" &&
+        formData.insuranceCompany === "other" &&
+        !formData.insuranceCompanyName
       )
     )
   );
@@ -233,10 +257,21 @@ const BookingModal = ({
       if (name === "payerType" && value !== "insurance") {
         updatedData.insuranceNumber = "";
         updatedData.insuranceCompany = "";
+        updatedData.insuranceCompanyName = "";
         setErrors((prevErrors) => {
           const updatedErrors = { ...prevErrors };
           delete updatedErrors.insuranceNumber;
+          delete updatedErrors.insuranceCompanyName;
           delete updatedErrors.insuranceCompany;
+          return updatedErrors;
+        });
+      }
+
+      if (name === "insuranceCompany" && value !== "other") {
+        updatedData.insuranceCompanyName = "";
+        setErrors((prevErrors) => {
+          const updatedErrors = { ...prevErrors };
+          delete updatedErrors.insuranceCompanyName;
           return updatedErrors;
         });
       }
@@ -244,6 +279,7 @@ const BookingModal = ({
       if (name === "payerType" && value === "insurance") {
         updatedData.insuranceCompany = insuranceCompanies[0].value;
         updatedData.insuranceNumber = "";
+        updatedData.insuranceCompanyName = "";
       }
 
       if (name === "inStock") {
@@ -276,10 +312,13 @@ const BookingModal = ({
           console.error("Server error:", data.error);
           return;
         } else {
-          setFormData((prev) => ({
-            ...prev,
-            location: data[0]?._id || "",
-          }));
+          setLocations(data);
+          if (!isEdit && !formData.location) {
+            setFormData((prev) => ({
+              ...prev,
+              location: data[0]?._id || "",
+            }));
+          }
         }
       } catch (error) {
         console.error("Failed to fetch locations:", error);
@@ -443,6 +482,7 @@ const BookingModal = ({
                 </Typography>
                 <TextField
                   size="small"
+                  disabled={!isEditable}
                   fullWidth
                   margin="none"
                   type="text"
@@ -468,6 +508,7 @@ const BookingModal = ({
                 <Switch
                   name="isWorkDone"
                   checked={formData["isWorkDone"] || false}
+                  disabled={!isEditable}
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
@@ -488,6 +529,7 @@ const BookingModal = ({
             <TextField
               size="small"
               fullWidth
+              disabled={!isEditable}
               margin="none"
               type="phone"
               placeholder="+358 40 123 4567"
@@ -508,6 +550,7 @@ const BookingModal = ({
             <TextField
               size="small"
               fullWidth
+              disabled={!isEditable}
               margin="none"
               type="text"
               placeholder="Car model"
@@ -529,6 +572,7 @@ const BookingModal = ({
               size="small"
               fullWidth
               margin="none"
+              disabled={!isEditable}
               type="text"
               placeholder="Eurocode"
               name="eurocode"
@@ -554,6 +598,8 @@ const BookingModal = ({
               </Typography>
               <Switch
                 checked={formData["inStock"] || false}
+                name="inStock"
+                disabled={!isEditable}
                 onChange={(e) => {
                   setFormData((prev) => ({
                     ...prev,
@@ -580,7 +626,7 @@ const BookingModal = ({
               <TextField
                 size="small"
                 fullWidth
-                disabled={!formData["inStock"]}
+                disabled={!formData["inStock"] || !isEditable}
                 margin="none"
                 type="text"
                 placeholder="Location in warehouse"
@@ -607,8 +653,9 @@ const BookingModal = ({
             >
               <Select
                 name="clientType"
-                defaultValue="private"
+                value={formData["clientType"]}
                 onChange={handleChange}
+                disabled={!isEditable}
               >
                 {clientTypes.map((client) => (
                   <MenuItem
@@ -639,8 +686,9 @@ const BookingModal = ({
             >
               <Select
                 name="payerType"
-                defaultValue="person"
+                value={formData["payerType"]}
                 onChange={handleChange}
+                disabled={!isEditable}
               >
                 {payerTypes.map((payer) => (
                   <MenuItem
@@ -657,7 +705,7 @@ const BookingModal = ({
             </FormControl>
           </Box>
 
-          {/* Insurance company & number */}
+          {/* Insurance company, insurance company name & insurance number */}
           {formData["payerType"] === "insurance" ? (
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
               <Box sx={{ flexGrow: 1 }}>
@@ -673,8 +721,9 @@ const BookingModal = ({
                 >
                   <Select
                     name="insuranceCompany"
-                    defaultValue="pohjolaVakuutus"
                     onChange={handleChange}
+                    value={formData["insuranceCompany"]}
+                    disabled={!isEditable}
                   >
                     {insuranceCompanies.map((company) => (
                       <MenuItem
@@ -701,6 +750,29 @@ const BookingModal = ({
                   <FormHelperText>{errors["payer"] || ""}</FormHelperText>
                 </FormControl>
               </Box>
+
+              {formData["insuranceCompany"] === "other" && (
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography variant="h5" sx={labelStyles}>
+                    <InsuranceCompanyIcon fontSize="small" />
+                    Insurance company name
+                  </Typography>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    margin="none"
+                    disabled={!isEditable}
+                    type="text"
+                    placeholder="Insurance company name"
+                    name="insuranceCompanyName"
+                    value={formData["insuranceCompanyName"]}
+                    onChange={handleChange}
+                    error={!!errors["insuranceCompanyName"]}
+                    helperText={errors["insuranceCompanyName"] || ""}
+                  />
+                </Box>
+              )}
+
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" sx={labelStyles}>
                   <InsuranceIcon fontSize="small" />
@@ -711,6 +783,7 @@ const BookingModal = ({
                   fullWidth
                   margin="none"
                   type="text"
+                  disabled={!isEditable}
                   placeholder="Insurance number"
                   name="insuranceNumber"
                   value={formData["insuranceNumber"].toUpperCase()}
@@ -724,7 +797,7 @@ const BookingModal = ({
 
           {/* Date & Duration */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: "-5px" }}>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" sx={labelStyles}>
                   <DateIcon fontSize="small" />
@@ -733,6 +806,7 @@ const BookingModal = ({
                 <DateTimePicker
                   format="DD.MM.YYYY HH:mm"
                   value={dayjs(formData["date"])}
+                  disabled={!isEditable}
                   onChange={(newValue) =>
                     handleChange({
                       target: {
@@ -742,6 +816,7 @@ const BookingModal = ({
                     })
                   }
                   ampm={false}
+                  minDate={isAdmin ? undefined : dayjs().startOf("day")}
                   minTime={dayjs().startOf("day").add(8, "hour")}
                   maxTime={dayjs()
                     .startOf("day")
@@ -770,8 +845,9 @@ const BookingModal = ({
                 >
                   <Select
                     name="duration"
-                    defaultValue={1}
+                    value={formData["duration"]}
                     onChange={handleChange}
+                    disabled={!isEditable}
                   >
                     {[...Array(12)].map((_, i) => {
                       const val = 0.5 + i * 0.5;
@@ -788,6 +864,38 @@ const BookingModal = ({
             </Box>
           </LocalizationProvider>
 
+          {/* Location */}
+          <Box>
+            <Typography variant="h5" sx={labelStyles}>
+              <LocationIcon fontSize="small" />
+              Location
+            </Typography>
+            <FormControl
+              fullWidth
+              size="small"
+              error={!!errors["location"]}
+              sx={{ mb: "-5px" }}
+            >
+              <Select
+                name="location"
+                onChange={handleChange}
+                value={formData["location"]}
+                disabled={!isEditable}
+              >
+                {locations.map((location) => (
+                  <MenuItem
+                    value={location._id}
+                    key={location._id}
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    {location.title}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText>{errors["location"] || ""}</FormHelperText>
+            </FormControl>
+          </Box>
+
           {/* Notes */}
           <Box>
             <Typography variant="h5" sx={labelStyles}>
@@ -801,6 +909,7 @@ const BookingModal = ({
               type="text"
               placeholder="Some additional information..."
               name="notes"
+              disabled={!isEditable}
               value={formData["notes"]}
               onChange={handleChange}
               error={!!errors["notes"]}
@@ -811,36 +920,39 @@ const BookingModal = ({
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Box>
-            {isEdit && (
+        {/* Action Buttons */}
+        {isEditable && (
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box>
+              {isEdit && (
+                <Button
+                  startIcon={<DeleteIcon />}
+                  variant="cancel"
+                  onClick={handleDelete}
+                >
+                  Delete
+                </Button>
+              )}
+            </Box>
+            <Box sx={{ display: "flex", gap: 2 }}>
               <Button
-                startIcon={<DeleteIcon />}
+                startIcon={<CloseIcon />}
                 variant="cancel"
-                onClick={handleDelete}
+                onClick={onClose}
               >
-                Delete
+                Cancel
               </Button>
-            )}
+              <Button
+                startIcon={<DoneIcon />}
+                variant="submit"
+                disabled={isSubmitDisabled}
+                onClick={handleSubmit}
+              >
+                {isEdit ? "Update" : "Create"}
+              </Button>
+            </Box>
           </Box>
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Button
-              startIcon={<CloseIcon />}
-              variant="cancel"
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              startIcon={<DoneIcon />}
-              variant="submit"
-              disabled={isSubmitDisabled}
-              onClick={handleSubmit}
-            >
-              {isEdit ? "Update" : "Create"}
-            </Button>
-          </Box>
-        </Box>
+        )}
       </Box>
     </Modal>
   );

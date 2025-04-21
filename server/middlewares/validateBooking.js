@@ -6,6 +6,7 @@ const bookingValidationSchema = Joi.object({
     .min(2)
     .max(10)
     .required(),
+  isWorkDone: Joi.boolean().required(),
   phoneNumber: Joi.string()
     .pattern(
       /^((04[0-9]{1})(\s?|-?)|050(\s?|-?)|0457(\s?|-?)|[+]?358(\s?|-?)50|0358(\s?|-?)50|00358(\s?|-?)50|[+]?358(\s?|-?)4[0-9]{1}|0358(\s?|-?)4[0-9]{1}|00358(\s?|-?)4[0-9]{1})(\s?|-?)(([0-9]{3,4})(\s|-)?[0-9]{1,4})$/
@@ -36,11 +37,23 @@ const bookingValidationSchema = Joi.object({
       "turva",
       "pohjantahti",
       "alandia",
-      "muu"
+      "other"
     )
     .when("payerType", {
       is: "insurance",
       then: Joi.required(),
+      otherwise: Joi.allow(""),
+    }),
+  insuranceCompanyName: Joi.string()
+    .min(2)
+    .max(50)
+    .when("payerType", {
+      is: "insurance",
+      then: Joi.when("insuranceCompany", {
+        is: "other",
+        then: Joi.required(),
+        otherwise: Joi.allow(""),
+      }),
       otherwise: Joi.allow(""),
     }),
   insuranceNumber: Joi.string()
@@ -55,6 +68,7 @@ const bookingValidationSchema = Joi.object({
   duration: Joi.number().min(0.5).max(6).required(),
   notes: Joi.string().min(0).max(500).allow(""),
   location: Joi.string().length(24).hex().required().allow(""),
+  checkMade: Joi.boolean().required().default(false),
 });
 
 const validateBookingData = (req, res, next) => {

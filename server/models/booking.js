@@ -49,10 +49,20 @@ const bookingSchema = new mongoose.Schema(
         "turva",
         "pohjantahti",
         "alandia",
-        "muu",
+        "other",
       ],
       required: function () {
         return this.payerType === "insurance";
+      },
+    },
+    insuranceCompanyName: {
+      type: String,
+      minlength: 2,
+      maxlength: 50,
+      required: function () {
+        return (
+          this.payerType === "insurance" && this.insuranceCompany === "other"
+        );
       },
     },
     insuranceNumber: {
@@ -75,6 +85,10 @@ const bookingSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    checkMade: {
+      type: Boolean,
+      default: false,
     },
   },
   {

@@ -96,6 +96,7 @@ const createBooking = async (req, res) => {
     clientType,
     payerType,
     insuranceCompany,
+    insuranceCompanyName,
     insuranceNumber,
     date,
     duration,
@@ -105,12 +106,27 @@ const createBooking = async (req, res) => {
 
   let bookingLocation = location;
   try {
+    // Check if the booking is being created in past
     if (dayjs(date).isBefore(dayjs(), "day") && req.user.role !== "admin") {
       return res.status(403).json({ error: "You cannot create past bookings" });
     }
 
-    if (req.user.role === "admin" && !location) {
-      return res.status(400).json({ error: "Location is required" });
+    // Check if the booking ends after 16:00
+    const endTime = dayjs(date).add(duration, "hour");
+    const limitEndTime = dayjs(date)
+      .hour(16)
+      .minute(0)
+      .second(0)
+      .millisecond(0);
+    if (endTime.isAfter(limitEndTime)) {
+      return res.status(400).json({ error: "Booking should end before 16:00" });
+    }
+
+    // Finding and setting the booking's location
+    if (req.user.role === "admin") {
+      if (!location) {
+        return res.status(400).json({ error: "Location is required" });
+      }
     } else {
       const locationObject = await Location.findOne({ users: req.user.id });
       if (!locationObject)
@@ -132,6 +148,10 @@ const createBooking = async (req, res) => {
       payerType,
       insuranceCompany:
         payerType === "insurance" ? insuranceCompany : undefined,
+      insuranceCompanyName:
+        payerType === "insurance" && insuranceCompany === "other"
+          ? insuranceCompanyName
+          : undefined,
       insuranceNumber: payerType === "insurance" ? insuranceNumber : undefined,
       date,
       duration,
@@ -166,6 +186,7 @@ const updateBooking = async (req, res) => {
     clientType,
     payerType,
     insuranceCompany,
+    insuranceCompanyName,
     insuranceNumber,
     date,
     duration,
@@ -185,13 +206,25 @@ const updateBooking = async (req, res) => {
       return res.status(403).json({ error: "You cannot modify past bookings" });
     }
 
+    // Check if the booking ends after 16:00
+    const endTime = dayjs(booking?.date).add(duration, "hour");
+    const limitEndTime = dayjs(booking?.date)
+      .hour(16)
+      .minute(0)
+      .second(0)
+      .millisecond(0);
+    if (endTime.isAfter(limitEndTime)) {
+      return res.status(400).json({ error: "Booking should end before 16:00" });
+    }
+
     let bookingLocation = location;
-    if (req.user.role === "admin" && !location) {
-      return res.status(400).json({ error: "Location is required!" });
+    if (req.user.role === "admin") {
+      if (!location)
+        return res.status(400).json({ error: "Location is required!" });
     } else {
       const locationObject = await Location.findOne({ users: req.user.id });
       if (!locationObject)
-        return res.status(404).json({ error: "User's location not found!" });
+        return res.status(404).json({ error: "User's location not found" });
 
       bookingLocation = locationObject._id;
     }
@@ -211,6 +244,10 @@ const updateBooking = async (req, res) => {
         payerType,
         insuranceCompany:
           payerType === "insurance" ? insuranceCompany : undefined,
+        insuranceCompanyName:
+          payerType === "insurance" && insuranceCompany === "other"
+            ? insuranceCompanyName
+            : undefined,
         insuranceNumber:
           payerType === "insurance" ? insuranceNumber : undefined,
         date,

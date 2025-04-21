@@ -84,6 +84,10 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
               WebkitTextFillColor: "var(--off-black) !important",
               transition: "background-color 5000s ease-in-out 0s",
             },
+            "&.Mui-disabled": {
+              color: "var(--off-black) !important",
+              WebkitTextFillColor: "var(--off-black) !important",
+            },
           },
         },
       },

@@ -36,6 +36,8 @@ const Calendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
+  const isAdmin = user?.role === "admin";
+
   const fetchedDates = useRef([]);
 
   useEffect(() => {
@@ -146,7 +148,7 @@ const Calendar = () => {
 
     const isValidCell = (date, bookings) => {
       const isPastDate = dayjs(date).isBefore(dayjs(), "day");
-      return bookings?.length === 0 && !isPastDate;
+      return bookings?.length === 0 && (!isPastDate || isAdmin);
     };
 
     return (
