@@ -86,7 +86,7 @@ const bookingSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    checkMade: {
+    invoiceMade: {
       type: Boolean,
       default: false,
     },

@@ -23,6 +23,8 @@ const getAllBookings = async (req, res) => {
     location,
     userId,
     isWorkDone,
+    insuranceCompanyName,
+    invoiceMade,
   } = req.query;
 
   let filter = {};
@@ -35,9 +37,13 @@ const getAllBookings = async (req, res) => {
   if (inStock !== undefined) filter.inStock = inStock === "true";
   if (warehouseLocation)
     filter.warehouseLocation = new RegExp(warehouseLocation, "i");
-  if (clientType) filter.clientType = clientType;
-  if (payerType) filter.payerType = payerType;
-  if (insuranceCompany) filter.insuranceCompany = insuranceCompany;
+  if (clientType) filter.clientType = new RegExp(clientType, "i");
+  if (payerType) filter.payerType = new RegExp(payerType, "i");
+  if (insuranceCompany)
+    filter.insuranceCompany = new RegExp(insuranceCompany, "i");
+  if (insuranceCompanyName)
+    filter.insuranceCompanyName = new RegExp(insuranceCompanyName, "i");
+  if (invoiceMade) filter.invoiceMade = invoiceMade === "true";
   if (insuranceNumber)
     filter.insuranceNumber = new RegExp(insuranceNumber, "i");
   if (duration) filter.duration = Number(duration);
@@ -106,6 +112,12 @@ const createBooking = async (req, res) => {
     location,
   } = req.body;
 
+  if (req.user.role === "admin") {
+    const { invoiceMade } = req.body;
+  } else {
+    const invoiceMade = false;
+  }
+
   let bookingLocation = location;
   try {
     // Check if the booking is being created in past
@@ -160,6 +172,7 @@ const createBooking = async (req, res) => {
       notes,
       createdBy: req.user.id,
       location: bookingLocation,
+      invoiceMade,
     });
 
     const savedBooking = await newBooking.save();
@@ -195,6 +208,13 @@ const updateBooking = async (req, res) => {
     notes,
     location,
   } = req.body;
+
+  let invoiceMade;
+  if (req.user.role === "admin") {
+    invoiceMade = req.body.invoiceMade;
+  } else {
+    invoiceMade = undefined;
+  }
 
   try {
     const booking = await Booking.findById(req.params.id);
@@ -232,31 +252,36 @@ const updateBooking = async (req, res) => {
     }
 
     // Find and update the booking
+    const updateFields = {
+      carModel,
+      isWorkDone,
+      plateNumber,
+      phoneNumber,
+      eurocode,
+      inStock,
+      warehouseLocation: inStock ? warehouseLocation : undefined,
+      clientType,
+      payerType,
+      insuranceCompany:
+        payerType === "insurance" ? insuranceCompany : undefined,
+      insuranceCompanyName:
+        payerType === "insurance" && insuranceCompany === "other"
+          ? insuranceCompanyName
+          : undefined,
+      insuranceNumber: payerType === "insurance" ? insuranceNumber : undefined,
+      date,
+      duration,
+      notes,
+      location: bookingLocation,
+    };
+
+    if (invoiceMade !== undefined) {
+      updateFields.invoiceMade = invoiceMade;
+    }
+
     const updatedBooking = await Booking.findByIdAndUpdate(
       req.params.id,
-      {
-        carModel,
-        isWorkDone,
-        plateNumber,
-        phoneNumber,
-        eurocode,
-        inStock,
-        warehouseLocation: inStock ? warehouseLocation : undefined,
-        clientType,
-        payerType,
-        insuranceCompany:
-          payerType === "insurance" ? insuranceCompany : undefined,
-        insuranceCompanyName:
-          payerType === "insurance" && insuranceCompany === "other"
-            ? insuranceCompanyName
-            : undefined,
-        insuranceNumber:
-          payerType === "insurance" ? insuranceNumber : undefined,
-        date,
-        duration,
-        notes,
-        location: bookingLocation,
-      },
+      updateFields,
       { new: true, runValidators: true }
     );
 

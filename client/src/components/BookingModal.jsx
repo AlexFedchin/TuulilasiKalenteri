@@ -106,7 +106,7 @@ const bookingValidationSchema = Joi.object({
   duration: Joi.number().min(0.5).max(6).required(),
   notes: Joi.string().min(0).max(500).allow(""),
   location: Joi.string().length(24).hex().required().allow(""),
-  checkMade: Joi.boolean().required().default(false),
+  invoiceMade: Joi.boolean().required().default(false),
 });
 
 const BookingModal = ({
@@ -215,7 +215,7 @@ const BookingModal = ({
     duration: booking?.duration || 1,
     notes: booking?.notes || "",
     location: booking?.location || location || "",
-    checkMade: booking?.checkMade || false,
+    invoiceMade: booking?.invoiceMade || false,
   });
   const [locations, setLocations] = useState([]);
 

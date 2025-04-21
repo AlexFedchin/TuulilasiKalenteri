@@ -68,7 +68,7 @@ const bookingValidationSchema = Joi.object({
   duration: Joi.number().min(0.5).max(6).required(),
   notes: Joi.string().min(0).max(500).allow(""),
   location: Joi.string().length(24).hex().required().allow(""),
-  checkMade: Joi.boolean().required().default(false),
+  invoiceMade: Joi.boolean().required().default(false),
 });
 
 const validateBookingData = (req, res, next) => {
