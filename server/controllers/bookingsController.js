@@ -112,10 +112,11 @@ const createBooking = async (req, res) => {
     location,
   } = req.body;
 
+  let invoiceMade;
   if (req.user.role === "admin") {
-    const { invoiceMade } = req.body;
+    invoiceMade = req.body.invoiceMade;
   } else {
-    const invoiceMade = false;
+    invoiceMade = false;
   }
 
   let bookingLocation = location;
