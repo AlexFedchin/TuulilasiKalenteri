@@ -25,6 +25,11 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             lineHeight: 1.45,
             fontWeight: 400,
           },
+          bookingBox: {
+            fontSize: isMobile ? "0.6rem" : isTablet ? "0.65rem" : "0.7rem",
+            lineHeight: 1.2,
+            fontWeight: 500,
+          },
           h1: {
             fontSize: isMobile ? "3rem" : isTablet ? "3.5rem" : "4rem",
             fontWeight: 800,
@@ -116,7 +121,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             opacity: 0.5,
             fontSize: isMobile ? "0.8rem" : isTablet ? "0.9rem" : "1rem",
             "&.Mui-focused": {
-              color: "var(--off-black)",
+              color: "var(--primary)",
               opacity: 0.8,
             },
           },

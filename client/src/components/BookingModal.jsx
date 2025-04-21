@@ -118,7 +118,7 @@ const BookingModal = ({
   setBookings,
 }) => {
   const { token, user } = useAuth();
-  const { isMobile } = useScreenSize();
+  const { isMobile, isTablet } = useScreenSize();
   if (date) {
     date = dayjs(date).format("YYYY-MM-DDTHH:mmZ");
   } else if (booking) {
@@ -433,9 +433,9 @@ const BookingModal = ({
           position: "absolute",
           top: "50%",
           left: "50%",
-          transform: "translate(-50%, -50%)",
+          transform: "translate(calc(-50% - 8px), -50%)",
           width: "50%",
-          minWidth: "350px",
+          minWidth: "min(350px, calc(100% - 16px))",
           maxWidth: "800px",
           bgcolor: "var(--white)",
           boxShadow: 24,
@@ -446,18 +446,25 @@ const BookingModal = ({
           flexDirection: "column",
           boxSizing: "border-box",
           gap: 2,
+          mx: 1,
         }}
       >
-        <IconButton
-          onClick={onClose}
-          sx={{ position: "absolute", top: 16, right: 16 }}
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            position: "relative",
+          }}
         >
-          <CloseIcon />
-        </IconButton>
-
-        <Typography variant="h4">
-          {isEdit ? "Edit Booking" : "New Booking"}
-        </Typography>
+          <Typography variant="h4">
+            {isEdit ? "Edit Booking" : "New Booking"}
+          </Typography>
+          <IconButton onClick={onClose} sx={{ position: "absolute", right: 0 }}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
 
         <Divider sx={{ backgroundColor: "var(--off-white)" }} />
 
@@ -865,36 +872,38 @@ const BookingModal = ({
           </LocalizationProvider>
 
           {/* Location */}
-          <Box>
-            <Typography variant="h5" sx={labelStyles}>
-              <LocationIcon fontSize="small" />
-              Location
-            </Typography>
-            <FormControl
-              fullWidth
-              size="small"
-              error={!!errors["location"]}
-              sx={{ mb: "-5px" }}
-            >
-              <Select
-                name="location"
-                onChange={handleChange}
-                value={formData["location"]}
-                disabled={!isEditable}
+          {isAdmin && (
+            <Box>
+              <Typography variant="h5" sx={labelStyles}>
+                <LocationIcon fontSize="small" />
+                Location
+              </Typography>
+              <FormControl
+                fullWidth
+                size="small"
+                error={!!errors["location"]}
+                sx={{ mb: "-5px" }}
               >
-                {locations.map((location) => (
-                  <MenuItem
-                    value={location._id}
-                    key={location._id}
-                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                  >
-                    {location.title}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>{errors["location"] || ""}</FormHelperText>
-            </FormControl>
-          </Box>
+                <Select
+                  name="location"
+                  onChange={handleChange}
+                  value={formData["location"]}
+                  disabled={!isEditable}
+                >
+                  {locations.map((location) => (
+                    <MenuItem
+                      value={location._id}
+                      key={location._id}
+                      sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                    >
+                      {location.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{errors["location"] || ""}</FormHelperText>
+              </FormControl>
+            </Box>
+          )}
 
           {/* Notes */}
           <Box>
@@ -922,7 +931,16 @@ const BookingModal = ({
 
         {/* Action Buttons */}
         {isEditable && (
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: isMobile || isTablet ? "column-reverse" : "row",
+              gap: 2,
+              flexWrap: "wrap",
+            }}
+          >
             <Box>
               {isEdit && (
                 <Button
@@ -934,7 +952,14 @@ const BookingModal = ({
                 </Button>
               )}
             </Box>
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                justifyContent: isMobile || isTablet ? "center" : "flex-end",
+                flexGrow: 1,
+              }}
+            >
               <Button
                 startIcon={<CloseIcon />}
                 variant="cancel"

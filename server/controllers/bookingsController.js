@@ -47,7 +47,9 @@ const getAllBookings = async (req, res) => {
   if (startDate && endDate) {
     filter.date = { $gte: dayjs(startDate), $lte: dayjs(endDate) };
   } else if (date) {
-    filter.date = dayjs(date);
+    const startOfDay = dayjs(date).startOf("day").toDate();
+    const endOfDay = dayjs(date).endOf("day").toDate();
+    filter.date = { $gte: startOfDay, $lt: endOfDay };
   }
 
   try {
