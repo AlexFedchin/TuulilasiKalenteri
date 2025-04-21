@@ -82,14 +82,9 @@ const LocationsCalendar = ({ currentDate, setMode, setSelectedLocation }) => {
     };
 
     if (!fetchedDates.current.includes(currentDate.format("YYYY-MM-DD"))) {
-      console.log(`Fetching bookings for ${currentDate.format("YYYY-MM-DD")}`);
       fetchBookings();
     }
   }, [currentDate, locations, token]);
-
-  useEffect(() => {
-    console.log("Bookings:", bookings);
-  }, [bookings]);
 
   const generateTimeRows = () => {
     const times = [];

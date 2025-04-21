@@ -328,7 +328,7 @@ const BookingModal = ({
     if (user.role === "admin") {
       fetchLocations();
     }
-  }, []);
+  }, [token, user.role, isEdit]);
 
   // Submit function
   const handleSubmit = async () => {
