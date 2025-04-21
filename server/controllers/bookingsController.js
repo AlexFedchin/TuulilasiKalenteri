@@ -105,10 +105,7 @@ const createBooking = async (req, res) => {
 
   let bookingLocation = location;
   try {
-    const today = dayjs();
-    today.startOf("day");
-
-    if (date < today && req.user.role !== "admin") {
+    if (dayjs(date).isBefore(dayjs(), "day") && req.user.role !== "admin") {
       return res.status(403).json({ error: "You cannot create past bookings" });
     }
 
@@ -143,11 +140,17 @@ const createBooking = async (req, res) => {
       location: bookingLocation,
     });
 
-    await newBooking.save();
+    const savedBooking = await newBooking.save();
+
+    if (!savedBooking)
+      return res
+        .status(500)
+        .json({ error: "Error saving booking to database" });
+
     res.status(201).json(newBooking);
   } catch (error) {
     console.error("Error creating booking:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -173,13 +176,13 @@ const updateBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
 
-    const today = dayjs();
-    today.startOf("day");
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
 
-    if (booking?.date < today && req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ error: "You cannot modify past bookings!" });
+    if (
+      dayjs(booking?.date).isBefore(dayjs(), "day") &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ error: "You cannot modify past bookings" });
     }
 
     let bookingLocation = location;
@@ -234,10 +237,10 @@ const deleteBooking = async (req, res) => {
 
     if (!booking) return res.status(404).json({ error: "Booking not found" });
 
-    const today = dayjs();
-    today.startOf("day");
-
-    if (booking?.date < today && req.user.role !== "admin") {
+    if (
+      dayjs(booking?.date).isBefore(dayjs(), "day") &&
+      req.user.role !== "admin"
+    ) {
       return res.status(403).json({ error: "You cannot delete past bookings" });
     }
 

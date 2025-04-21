@@ -106,9 +106,9 @@ const BookingModal = ({
   const { token, user } = useAuth();
   const { isMobile } = useScreenSize();
   if (date) {
-    date = dayjs(date).format("YYYY-MM-DDTHH:mm");
+    date = dayjs(date).format("YYYY-MM-DDTHH:mmZ");
   } else if (booking) {
-    date = dayjs(booking?.date).format("YYYY-MM-DDTHH:mm");
+    date = dayjs(booking?.date).format("YYYY-MM-DDTHH:mmZ");
   }
 
   const isEdit = !!booking;
@@ -194,7 +194,7 @@ const BookingModal = ({
     payerType: booking?.payer || "person",
     insuranceCompany: booking?.insuranceCompany || "pohjolaVakuutus",
     insuranceNumber: booking?.insuranceNumber || "",
-    date: dayjs(date).format("YYYY-MM-DDTHH:mm"),
+    date: dayjs(date).format("YYYY-MM-DDTHH:mmZ"),
     duration: booking?.duration || 1,
     notes: booking?.notes || "",
     location: booking?.location || location || "",
@@ -280,7 +280,6 @@ const BookingModal = ({
             ...prev,
             location: data[0]?._id || "",
           }));
-          console.log("Location set to:", data[0]?._id);
         }
       } catch (error) {
         console.error("Failed to fetch locations:", error);
@@ -436,7 +435,7 @@ const BookingModal = ({
         >
           {/* Plate number & is work done */}
           <Box>
-            <Box sx={{ display: "flex", gap: 3 }}>
+            <Box sx={{ display: "flex", gap: 2 }}>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" sx={labelStyles}>
                   <AbcIcon fontSize="small" />
@@ -541,7 +540,7 @@ const BookingModal = ({
           </Box>
 
           {/* In stock & Location in warehouse */}
-          <Box sx={{ display: "flex", gap: 3 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             <Box
               sx={{
                 flexShrink: 0,
@@ -660,7 +659,7 @@ const BookingModal = ({
 
           {/* Insurance company & number */}
           {formData["payerType"] === "insurance" ? (
-            <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" sx={labelStyles}>
                   <InsuranceCompanyIcon fontSize="small" />
@@ -732,16 +731,22 @@ const BookingModal = ({
                   Date & Time
                 </Typography>
                 <DateTimePicker
-                  format="DD.MM.YYYY hh:mm"
+                  format="DD.MM.YYYY HH:mm"
                   value={dayjs(formData["date"])}
                   onChange={(newValue) =>
                     handleChange({
                       target: {
                         name: "date",
-                        value: dayjs(newValue).format("YYYY-MM-DDTHH:mm"),
+                        value: dayjs(newValue).format("YYYY-MM-DDTHH:mmZ"),
                       },
                     })
                   }
+                  ampm={false}
+                  minTime={dayjs().startOf("day").add(8, "hour")}
+                  maxTime={dayjs()
+                    .startOf("day")
+                    .add(15, "hour")
+                    .add(30, "minute")}
                   slotProps={{
                     textField: {
                       size: "small",

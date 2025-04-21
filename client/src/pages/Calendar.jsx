@@ -13,6 +13,8 @@ import { useAuth } from "../context/AuthContext";
 import DefaultContainer from "../components/DefaultContainer";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForwardIos";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import isoWeek from "dayjs/plugin/isoWeek";
 import useScreenSize from "../hooks/useScreenSize";
 import Loader from "../components/loader/Loader";
@@ -24,6 +26,8 @@ const Calendar = () => {
   const { user, token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
   dayjs.extend(isoWeek);
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
 
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,14 +40,11 @@ const Calendar = () => {
 
   useEffect(() => {
     fetchedDates.current = [];
-    console.log("Fetched dates reset");
   }, []);
 
   // Fetch bookings on component mount
   useEffect(() => {
     if (fetchedDates.current.includes(currentDate.format("YYYY-MM-DD"))) return;
-
-    console.log(fetchedDates.current);
 
     const fetchBookings = async () => {
       try {
@@ -59,7 +60,15 @@ const Calendar = () => {
           }
         );
         const data = await response.json();
-        setBookings((prev) => [...prev, ...data]);
+
+        setBookings((prev) => {
+          const existingIds = new Set(prev.map((booking) => booking._id));
+          const newBookings = data.filter(
+            (booking) => !existingIds.has(booking._id)
+          );
+          return [...prev, ...newBookings];
+        });
+
         fetchedDates.current.push(currentDate.format("YYYY-MM-DD"));
       } catch (error) {
         console.error("Error fetching bookings:", error);
@@ -117,7 +126,8 @@ const Calendar = () => {
   };
 
   const handleDateClick = (date, time) => {
-    setSelectedDate(dayjs(`${date}T${time}`).format("YYYY-MM-DDTHH:mm"));
+    const localDate = dayjs.tz(`${date}T${time}`, "Europe/Helsinki");
+    setSelectedDate(localDate.format("YYYY-MM-DDTHH:mm:ssZ"));
     setSelectedBooking(null);
     setIsModalOpen(true);
   };
@@ -133,6 +143,11 @@ const Calendar = () => {
   const renderCalendar = () => {
     const columns = generateDayColumns();
     const times = generateTimeRows();
+
+    const isValidCell = (date, bookings) => {
+      const isPastDate = dayjs(date).isBefore(dayjs(), "day");
+      return bookings?.length === 0 && !isPastDate;
+    };
 
     return (
       <Table sx={{ tableLayout: "fixed", width: "100%" }}>
@@ -163,16 +178,11 @@ const Calendar = () => {
                 }}
               >
                 <Typography
-                  variant="h4"
-                  sx={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
+                  variant="body2"
+                  sx={{ color: "var(--off-black)", fontWeight: 500 }}
                 >
-                  {column.dayOfWeek}
+                  {column.dayOfWeek}, {column.dayNumber}
                 </Typography>
-                <Typography variant="body2">{column.dayNumber}</Typography>
               </TableCell>
             ))}
           </TableRow>
@@ -212,7 +222,7 @@ const Calendar = () => {
                   <TableCell
                     key={column.date}
                     onClick={() =>
-                      bookingsForSlot.length === 0
+                      isValidCell(column.date, bookingsForSlot)
                         ? handleDateClick(column.date, time)
                         : undefined
                     }
@@ -226,15 +236,19 @@ const Calendar = () => {
                     <Box
                       sx={{
                         position: "relative",
-                        cursor: "pointer",
-                        bgcolor: "var(--white)",
+                        cursor: isValidCell(column.date, bookingsForSlot)
+                          ? "pointer"
+                          : "default",
+                        bgcolor: isValidCell(column.date, bookingsForSlot)
+                          ? "var(--white)"
+                          : "var(--white-onhover)",
                         borderRadius: 2,
                         boxSizing: "border-box",
                         height: "100%",
                         width: "100%",
                         boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
                         p: 0.5,
-                        ...(bookingsForSlot.length === 0 && {
+                        ...(isValidCell(column.date, bookingsForSlot) && {
                           "&:hover": {
                             bgcolor: "var(--white-onhover)",
                           },
