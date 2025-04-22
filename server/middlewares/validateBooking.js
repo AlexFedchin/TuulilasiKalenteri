@@ -2,15 +2,13 @@ const Joi = require("joi");
 
 const bookingValidationSchema = Joi.object({
   plateNumber: Joi.string()
-    .pattern(/^[A-Za-z]{1,3}-[0-9]{1,3}$/)
+    .pattern(/^[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{0,4}$/)
     .min(2)
     .max(10)
     .required(),
   isWorkDone: Joi.boolean().required(),
   phoneNumber: Joi.string()
-    .pattern(
-      /^((04[0-9]{1})(\s?|-?)|050(\s?|-?)|0457(\s?|-?)|[+]?358(\s?|-?)50|0358(\s?|-?)50|00358(\s?|-?)50|[+]?358(\s?|-?)4[0-9]{1}|0358(\s?|-?)4[0-9]{1}|00358(\s?|-?)4[0-9]{1})(\s?|-?)(([0-9]{3,4})(\s|-)?[0-9]{1,4})$/
-    )
+    .pattern(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/)
     .min(10)
     .max(20)
     .required(),

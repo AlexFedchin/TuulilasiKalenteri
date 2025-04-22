@@ -7,7 +7,7 @@ const bookingSchema = new mongoose.Schema(
       required: true,
       minlength: 2,
       maxlength: 10,
-      match: /^[A-Za-z]{1,3}-[0-9]{1,3}$/,
+      match: /^[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{0,4}$/,
     },
     isWorkDone: { type: Boolean, default: false },
     carModel: { type: String, required: true, minlength: 2, maxlength: 25 },
@@ -16,8 +16,7 @@ const bookingSchema = new mongoose.Schema(
       required: true,
       minlength: 10,
       maxlength: 20,
-      match:
-        /^((04[0-9]{1})(\s?|-?)|050(\s?|-?)|0457(\s?|-?)|[+]?358(\s?|-?)50|0358(\s?|-?)50|00358(\s?|-?)50|[+]?358(\s?|-?)4[0-9]{1}|0358(\s?|-?)4[0-9]{1}|00358(\s?|-?)4[0-9]{1})(\s?|-?)(([0-9]{3,4})(\s|-)?[0-9]{1,4})$/,
+      match: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/,
     },
     eurocode: { type: String, required: true, minlength: 2, maxlength: 20 },
     inStock: { type: Boolean, required: true },

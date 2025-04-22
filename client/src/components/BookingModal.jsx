@@ -12,6 +12,7 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  Alert,
 } from "@mui/material";
 import AbcIcon from "@mui/icons-material/Abc";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -21,7 +22,7 @@ import WarehouseIcon from "@mui/icons-material/Warehouse";
 import PersonIcon from "@mui/icons-material/Person";
 import BusinessIcon from "@mui/icons-material/Business";
 import InsuranceIcon from "@mui/icons-material/RequestQuoteOutlined";
-import PaymentIcon from "@mui/icons-material/Payment";
+import PaymentIcon from "@mui/icons-material/Euro";
 import DateIcon from "@mui/icons-material/CalendarMonth";
 import DurationIcon from "@mui/icons-material/AccessTime";
 import LocationIcon from "@mui/icons-material/LocationPin";
@@ -41,15 +42,13 @@ import { alert } from "../utils/alert";
 
 const bookingValidationSchema = Joi.object({
   plateNumber: Joi.string()
-    .pattern(/^[A-Za-z]{1,3}-[0-9]{1,3}$/)
+    .pattern(/^[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{0,4}$/)
     .min(2)
-    .max(10)
+    .max(14)
     .required(),
   isWorkDone: Joi.boolean().required(),
   phoneNumber: Joi.string()
-    .pattern(
-      /^((04[0-9]{1})(\s?|-?)|050(\s?|-?)|0457(\s?|-?)|[+]?358(\s?|-?)50|0358(\s?|-?)50|00358(\s?|-?)50|[+]?358(\s?|-?)4[0-9]{1}|0358(\s?|-?)4[0-9]{1}|00358(\s?|-?)4[0-9]{1})(\s?|-?)(([0-9]{3,4})(\s|-)?[0-9]{1,4})$/
-    )
+    .pattern(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/)
     .min(10)
     .max(20)
     .required(),
@@ -129,6 +128,24 @@ const BookingModal = ({
   const isAdmin = user?.role === "admin";
   const isEditable = isAdmin || !dayjs(date).isBefore(dayjs(), "day");
 
+  const validateFinnishPhoneNumber = (value) => {
+    const finnishPhoneRegex =
+      /^((04[0-9]{1})(\s?|-?)|050(\s?|-?)|0457(\s?|-?)|[+]?358(\s?|-?)50|0358(\s?|-?)50|00358(\s?|-?)50|[+]?358(\s?|-?)4[0-9]{1}|0358(\s?|-?)4[0-9]{1}|00358(\s?|-?)4[0-9]{1})(\s?|-?)(([0-9]{3,4})(\s|-)?[0-9]{1,4})$/;
+    return !finnishPhoneRegex.test(value) && value.length >= 10;
+  };
+  const validateEuropeanPlateNumber = (value) => {
+    const finnishPlateRegex = /^[A-ZÄÖÅ]{2,3}-[0-9]{1,3}$/;
+    const swedishPlateRegex = /^[A-Z]{3}[0-9]{2}[0-9A-Z]{1}$/;
+    const estonianPlateRegex = /^[0-9]{3}\s?[A-Z]{3}$|^[A-Z]{2}\s?[0-9]{3}$/;
+
+    return (
+      !finnishPlateRegex.test(value) &&
+      !swedishPlateRegex.test(value) &&
+      !estonianPlateRegex.test(value) &&
+      value.length >= 5
+    );
+  };
+
   const insuranceCompanies = [
     {
       name: "Pohjola Vakuutus",
@@ -174,7 +191,7 @@ const BookingModal = ({
       icon: <PersonIcon fontSize="small" />,
     },
     {
-      name: "Company Client",
+      name: "Business Client",
       value: "company",
       icon: <BusinessIcon fontSize="small" />,
     },
@@ -186,7 +203,7 @@ const BookingModal = ({
       icon: <PersonIcon fontSize="small" />,
     },
     {
-      name: "Company",
+      name: "Business",
       value: "company",
       icon: <BusinessIcon fontSize="small" />,
     },
@@ -218,6 +235,12 @@ const BookingModal = ({
     invoiceMade: booking?.invoiceMade || false,
   });
   const [locations, setLocations] = useState([]);
+  const [finnishPhoneNumberWarning, setFinnishPhoneNumberWarning] = useState(
+    validateFinnishPhoneNumber(formData.phoneNumber)
+  );
+  const [europeanPlateNumberWarning, setEuropeanPlateNumberWarning] = useState(
+    validateEuropeanPlateNumber(formData.plateNumber)
+  );
 
   const isSubmitDisabled = !(
     // Check if the text fields are not empty
@@ -291,6 +314,16 @@ const BookingModal = ({
           }
           return updatedErrors;
         });
+      }
+
+      // Validate phone number to be finnish
+      if (name === "phoneNumber") {
+        setFinnishPhoneNumberWarning(validateFinnishPhoneNumber(value));
+      }
+
+      // Validate plate number to be european
+      if (name === "plateNumber") {
+        setEuropeanPlateNumberWarning(validateEuropeanPlateNumber(value));
       }
 
       return updatedData;
@@ -500,6 +533,13 @@ const BookingModal = ({
                   error={!!errors["plateNumber"]}
                   helperText={errors["plateNumber"] || ""}
                 />
+                {europeanPlateNumberWarning && (
+                  <Alert severity="warning" sx={{ mt: 1 }}>
+                    This license plate doesn't look like a regular Finnish,
+                    Swedish or Estonian plate number. Please, check it to make
+                    sure it is correct.
+                  </Alert>
+                )}
               </Box>
               <Box
                 sx={{
@@ -539,13 +579,19 @@ const BookingModal = ({
               disabled={!isEditable}
               margin="none"
               type="phone"
-              placeholder="+358 40 123 4567"
+              placeholder="040 123 4567"
               name="phoneNumber"
               value={formData["phoneNumber"]}
               onChange={handleChange}
               error={!!errors["phoneNumber"]}
               helperText={errors["phoneNumber"] || ""}
             />
+            {finnishPhoneNumberWarning && (
+              <Alert severity="warning" sx={{ mt: 1 }}>
+                This phone number doesn't look like regular Finnish phone
+                number. Please, check it to make sure it is correct.
+              </Alert>
+            )}
           </Box>
 
           {/* Car model */}

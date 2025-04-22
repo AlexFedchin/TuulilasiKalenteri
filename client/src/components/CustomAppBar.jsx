@@ -54,9 +54,8 @@ const CustomAppBar = () => {
     <AppBar
       position="static"
       sx={{
-        position: "sticky",
         top: 0,
-        zIndex: 2,
+        zIndex: 5,
         backgroundColor: "var(--white)",
         color: "var(--off-black)",
         boxShadow: "0 8px 16px rgba(0, 0, 0, 0.05)",

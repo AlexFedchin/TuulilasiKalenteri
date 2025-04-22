@@ -75,7 +75,7 @@ const Authentication = () => {
         loading="lazy"
         sx={{
           position: "absolute",
-          top: isMobile ? 64 : 128,
+          top: 64,
           maxHeight: isMobile ? "3%" : "4%",
           maxWidth: "calc(100% - 32px)",
         }}

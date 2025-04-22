@@ -112,13 +112,6 @@ const createBooking = async (req, res) => {
     location,
   } = req.body;
 
-  let invoiceMade;
-  if (req.user.role === "admin") {
-    invoiceMade = req.body.invoiceMade;
-  } else {
-    invoiceMade = false;
-  }
-
   let bookingLocation = location;
   try {
     // Check if the booking is being created in past
@@ -173,7 +166,7 @@ const createBooking = async (req, res) => {
       notes,
       createdBy: req.user.id,
       location: bookingLocation,
-      invoiceMade,
+      invoiceMade: false,
     });
 
     const savedBooking = await newBooking.save();
