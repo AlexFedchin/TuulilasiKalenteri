@@ -151,7 +151,7 @@ const Authentication = () => {
         )}
         <Button
           type="submit"
-          variant="contained"
+          variant="submit"
           disabled={!form.password || !form.username}
           size={isMobile ? "normal" : "large"}
           sx={{ mt: isMobile ? 1 : 2, width: "100%" }}

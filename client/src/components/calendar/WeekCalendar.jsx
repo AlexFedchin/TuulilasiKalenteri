@@ -240,7 +240,7 @@ const WeekCalendar = ({ currentDate, location = null, setMode }) => {
                             : "default",
                           bgcolor: isValidCell(column.date, bookingsForSlot)
                             ? "var(--white)"
-                            : "var(--white-onhover)",
+                            : "var(--light-grey)",
                           borderRadius: 2,
                           boxSizing: "border-box",
                           height: "100%",

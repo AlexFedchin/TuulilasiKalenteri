@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Typography, Box, IconButton } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import DefaultContainer from "../components/DefaultContainer";
@@ -18,7 +18,7 @@ const Calendar = () => {
   dayjs.extend(timezone);
 
   const { isMobile } = useScreenSize();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const isAdmin = user?.role === "admin";
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -54,13 +54,37 @@ const Calendar = () => {
     }
   };
 
+  useEffect(() => {
+    if (user.role === "admin" || mode === "week") return;
+
+    const fetchLocation = async () => {
+      const response = await fetch("api/locations", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.status !== 200) {
+        console.error("Error fetching location:", data);
+        return;
+      }
+      if (data) {
+        setSelectedLocation(data[0]);
+      }
+    };
+
+    fetchLocation();
+  }, [mode, token, user]);
+
   const getHeaderText = () => {
     if (mode === "week") {
       const startOfWeek = currentDate.startOf("isoWeek");
       const endOfWeek = currentDate.endOf("isoWeek");
       return `${startOfWeek.format("DD.MM")} - ${endOfWeek.format("DD.MM")}`;
     } else if (mode === "locations") {
-      return currentDate.format("dddd, MMMM D");
+      return currentDate.format("ddd, MMMM D");
     }
     return "";
   };
@@ -92,7 +116,15 @@ const Calendar = () => {
           alignItems: "cenetr",
         }}
       >
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+            minWidth: "min(100%, 350px)",
+            justifyContent: "space-between",
+          }}
+        >
           <IconButton
             onClick={() => handleChangeDate("prev")}
             sx={{
@@ -102,7 +134,14 @@ const Calendar = () => {
           >
             <ArrowForwardIcon />
           </IconButton>
-          <Typography variant="h3">{getHeaderText()}</Typography>
+          <Box>
+            <Typography variant="h3">{getHeaderText()}</Typography>
+            {selectedLocation && mode === "week" ? (
+              <Typography variant="body2" letterSpacing={2}>
+                {selectedLocation.title}
+              </Typography>
+            ) : null}
+          </Box>
           <IconButton
             onClick={() => handleChangeDate("next")}
             sx={{

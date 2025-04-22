@@ -2,6 +2,13 @@ import { createTheme } from "@mui/material/styles";
 
 const createCustomTheme = ({ isMobile, isTablet }) =>
   createTheme({
+    palette: {
+      primary: {
+        main: "#2aa4eb",
+        contrastText: "#fcfcfc",
+        hover: "#2690ce",
+      },
+    },
     typography: {
       fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
       button: {
@@ -145,7 +152,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
               backgroundColor: "var(--primary-onhover)",
             },
             "&.Mui-disabled": {
-              backgroundColor: "var(--off-white)",
+              backgroundColor: "var(--light-grey)",
               color: "var(--off-grey)",
               opacity: 0.6,
               cursor: "not-allowed",

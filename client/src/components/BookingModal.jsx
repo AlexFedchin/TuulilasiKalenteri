@@ -242,6 +242,7 @@ const BookingModal = ({
     validateEuropeanPlateNumber(formData.plateNumber)
   );
 
+  // Soft check to disable submit button
   const isSubmitDisabled = !(
     // Check if the text fields are not empty
     (
@@ -419,6 +420,7 @@ const BookingModal = ({
     }
   };
 
+  // Deleting a booking
   const handleDelete = async () => {
     try {
       const response = await fetch(`/api/bookings/${booking._id}`, {

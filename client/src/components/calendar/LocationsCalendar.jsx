@@ -238,7 +238,7 @@ const LocationsCalendar = ({ currentDate, setMode, setSelectedLocation }) => {
                             : "default",
                           bgcolor: isValidCell(bookingsForSlot)
                             ? "var(--white)"
-                            : "var(--white-onhover)",
+                            : "var(--light-grey)",
                           borderRadius: 2,
                           boxSizing: "border-box",
                           height: "100%",
