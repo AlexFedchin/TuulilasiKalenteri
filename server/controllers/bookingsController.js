@@ -145,13 +145,13 @@ const createBooking = async (req, res) => {
 
     // Create a new booking
     const newBooking = new Booking({
-      carModel,
-      plateNumber,
+      carModel: carModel.trim(),
+      plateNumber: plateNumber.trim().toUpperCase(),
       isWorkDone,
-      phoneNumber,
-      eurocode,
+      phoneNumber: phoneNumber.trim(),
+      eurocode: eurocode.trim().toUpperCase(),
       inStock,
-      warehouseLocation: inStock ? warehouseLocation : undefined,
+      warehouseLocation: inStock ? warehouseLocation.trim() : undefined,
       clientType,
       payerType,
       insuranceCompany:
@@ -160,10 +160,13 @@ const createBooking = async (req, res) => {
         payerType === "insurance" && insuranceCompany === "other"
           ? insuranceCompanyName
           : undefined,
-      insuranceNumber: payerType === "insurance" ? insuranceNumber : undefined,
+      insuranceNumber:
+        payerType === "insurance"
+          ? insuranceNumber.trim().toUpperCase()
+          : undefined,
       date,
       duration,
-      notes,
+      notes: notes.trim(),
       createdBy: req.user.id,
       location: bookingLocation,
       invoiceMade: false,
@@ -247,13 +250,13 @@ const updateBooking = async (req, res) => {
 
     // Find and update the booking
     const updateFields = {
-      carModel,
+      carModel: carModel.trim(),
       isWorkDone,
-      plateNumber,
-      phoneNumber,
-      eurocode,
+      plateNumber: plateNumber.trim().toUpperCase(),
+      phoneNumber: phoneNumber.trim(),
+      eurocode: eurocode.trim().toUpperCase(),
       inStock,
-      warehouseLocation: inStock ? warehouseLocation : undefined,
+      warehouseLocation: inStock ? warehouseLocation.trim() : undefined,
       clientType,
       payerType,
       insuranceCompany:
@@ -262,10 +265,11 @@ const updateBooking = async (req, res) => {
         payerType === "insurance" && insuranceCompany === "other"
           ? insuranceCompanyName
           : undefined,
-      insuranceNumber: payerType === "insurance" ? insuranceNumber : undefined,
+      insuranceNumber:
+        payerType === "insurance" ? insuranceNumber.trim() : undefined,
       date,
       duration,
-      notes,
+      notes: notes.trim(),
       location: bookingLocation,
     };
 

@@ -19,16 +19,16 @@ const register = async (req, res) => {
     }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password.trim(), 10);
 
     // Create new user
     const newUser = new User({
-      username,
+      username: username.trim(),
       password: hashedPassword,
       role,
-      firstName,
-      lastName,
-      email,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
     });
 
     // Add user's id to the location if not an admin

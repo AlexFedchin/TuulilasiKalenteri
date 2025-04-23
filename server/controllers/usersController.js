@@ -17,7 +17,12 @@ const updateUser = async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      { firstName, lastName, email, password },
+      {
+        firstName: firstName?.trim(),
+        lastName: lastName?.trim(),
+        email: email?.trim(),
+        password: password?.trim(),
+      },
       { new: true, runValidators: true }
     );
 
@@ -33,7 +38,6 @@ const updateUser = async (req, res) => {
       email: updatedUser.email,
       role: updatedUser.role,
     });
-    res.json(updatedUser);
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).json({ error: error.message });
@@ -48,19 +52,16 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    console.log(deletedUser);
     // If the user's role is not admin, remove the user ID from locations' users array
     if (deletedUser.role !== "admin") {
-      console.log("User is not an admin");
       const location = await Location.findOne({ users: deletedUser._id });
-      console.log("Found location to remove user from:", location);
       if (!location)
         return res.status(404).json({ error: "Location not found" });
 
       location.users = location.users.filter(
         (userId) => userId.toString() !== deletedUser._id.toString()
       );
-      console.log(location.users);
+
       await location.save();
     }
 
