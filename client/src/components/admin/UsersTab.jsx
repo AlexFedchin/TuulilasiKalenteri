@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 import Loader from "../loader/Loader";
 import ConfirmModal from "../ConfirmModal";
-import UserModal from "../userModal";
+import UserModal from "../UserModal";
 import UserCard from "./UserCard";
 
 const UsersTab = () => {

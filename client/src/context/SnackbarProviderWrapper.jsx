@@ -28,7 +28,6 @@ const SnackbarProviderWrapper = ({ isMobile, isTablet, children }) => (
     maxSnack={3}
     anchorOrigin={{ vertical: "top", horizontal: "right" }}
     autoHideDuration={3000}
-    preventDuplicate
     Components={{
       success: (props) => (
         <StyledMaterialDesignContent
