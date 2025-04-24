@@ -136,7 +136,14 @@ const WeekCalendar = ({ currentDate, location = null, setMode }) => {
   return (
     <>
       {loading ? (
-        <Box sx={{ display: "grid", placeItems: "center", height: "66vh" }}>
+        <Box
+          sx={{
+            display: "grid",
+            placeItems: "center",
+            height: "66vh",
+            width: "100%",
+          }}
+        >
           <Loader />
         </Box>
       ) : (

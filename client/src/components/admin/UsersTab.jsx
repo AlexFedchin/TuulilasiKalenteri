@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Box, TextField, Card, IconButton } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Card,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../../context/AuthContext";
@@ -140,16 +146,20 @@ const UsersTab = () => {
           sx={{ width: "100%" }}
           value={searchTerm}
           onChange={handleSearchChange}
-          InputProps={{
-            startAdornment: (
-              <SearchIcon sx={{ mr: "7px", color: "var(--off-grey)" }} />
-            ),
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: "var(--off-grey)" }} />
+                </InputAdornment>
+              ),
+            },
           }}
         />
       </Card>
 
       {loading ? (
-        <Loader />
+        <Loader style={{ marginTop: "15vh" }} />
       ) : (
         <>
           <Box

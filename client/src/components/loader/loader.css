@@ -7,15 +7,15 @@
 
 /* From Uiverse.io by AbanoubMagdy1 */
 .loader {
-  --dim: 2.5rem;
+  --dim: 2.1rem;
   width: var(--dim);
   height: var(--dim);
   position: relative;
-  animation: spin988 2s ease-in-out infinite;
+  animation: spin988 2s ease-out infinite;
 }
 
 .loader .circle {
-  --dim: 0.875rem;
+  --dim: 0.7rem;
   width: var(--dim);
   height: var(--dim);
   background-color: var(--off-grey);
@@ -48,16 +48,8 @@
     transform: scale(1) rotate(0);
   }
 
-  25% {
-    transform: scale(1.3) rotate(90deg);
-  }
-
   50% {
     transform: scale(1) rotate(180deg);
-  }
-
-  75% {
-    transform: scale(1.3) rotate(270deg);
   }
 
   100% {

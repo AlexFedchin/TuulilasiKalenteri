@@ -1,8 +1,8 @@
 import "./loader.css";
 
-const Loader = ({ fullScreen = false }) => {
+const Loader = ({ fullScreen = false, style }) => {
   return fullScreen ? (
-    <div className="loader-container">
+    <div className="loader-container" style={style}>
       <div className="loader">
         <div className="circle" />
         <div className="circle" />
@@ -11,7 +11,12 @@ const Loader = ({ fullScreen = false }) => {
       </div>
     </div>
   ) : (
-    <div className="loader" />
+    <div className="loader" style={style}>
+      <div className="circle" />
+      <div className="circle" />
+      <div className="circle" />
+      <div className="circle" />
+    </div>
   );
 };
 
