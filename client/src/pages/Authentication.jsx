@@ -48,7 +48,8 @@ const Authentication = () => {
       login(data.user, data.token);
       setError("");
     } catch (err) {
-      setError("Network error: " + err.message);
+      setError("Something went wrong. Try again later.");
+      console.error("Login error:", err);
     }
   };
 
@@ -136,7 +137,7 @@ const Authentication = () => {
                         : "var(--off-white-color)",
                     }}
                   >
-                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                   </IconButton>
                 </InputAdornment>
               ),

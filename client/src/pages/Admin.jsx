@@ -22,7 +22,7 @@ const Admin = () => {
         <Tab label="Invoices" />
       </Tabs>
 
-      <Box>
+      <Box sx={{ width: "100%" }}>
         {tabIndex === 0 && <UsersTab />}
         {tabIndex === 1 && <LocationsTab />}
         {tabIndex === 2 && <InvoicesTab />}

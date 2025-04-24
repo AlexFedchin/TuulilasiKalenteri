@@ -17,6 +17,9 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(
     fontFamily: "Montserrat, sans-serif",
     maxWidth: isMobile ? "75vw" : isTablet ? "66vw" : "400px",
     marginLeft: "auto",
+    textAlign: "left",
+    wordBreak: "break-word",
+    hyphens: "auto",
   })
 );
 

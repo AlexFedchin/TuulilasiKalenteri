@@ -1,10 +1,29 @@
 const User = require("../models/user");
 const Location = require("../models/location");
+const bcrypt = require("bcrypt");
 
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({}, "-password");
-    res.json(users);
+
+    const usersWithLocations = await Promise.all(
+      users.map(async (user) => {
+        if (user.role === "admin") {
+          return user.toObject();
+        }
+
+        const location = user.location
+          ? await Location.findById(user.location, "_id title")
+          : null;
+
+        return {
+          ...user.toObject(),
+          locationTitle: location?.title || null,
+        };
+      })
+    );
+
+    res.json(usersWithLocations);
   } catch (error) {
     console.error("Error getting all users:", error);
     res.status(500).json({ error: error.message });
@@ -12,17 +31,23 @@ const getAllUsers = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, username } = req.body;
+
+  const updatedUserData = {
+    firstName: firstName?.trim(),
+    lastName: lastName?.trim(),
+    email: email?.trim(),
+    username: username?.trim(),
+  };
+
+  if (password) {
+    updatedUserData.password = await bcrypt.hash(password?.trim(), 10);
+  }
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      {
-        firstName: firstName?.trim(),
-        lastName: lastName?.trim(),
-        email: email?.trim(),
-        password: password?.trim(),
-      },
+      updatedUserData,
       { new: true, runValidators: true }
     );
 
@@ -37,6 +62,7 @@ const updateUser = async (req, res) => {
       lastName: updatedUser.lastName,
       email: updatedUser.email,
       role: updatedUser.role,
+      location: updatedUser.location,
     });
   } catch (error) {
     console.error("Error updating user:", error);

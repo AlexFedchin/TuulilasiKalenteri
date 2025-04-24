@@ -37,6 +37,14 @@ const BookingBox = ({ booking, onClick, left, width }) => {
           : booking.inStock
           ? "var(--primary)"
           : "var(--error)",
+        "&:hover": {
+          backgroundColor: booking.isWorkDone
+            ? "var(--success-onhover)"
+            : booking.inStock
+            ? "var(--primary-onhover)"
+            : "var(--error-onhover)",
+        },
+        transition: "background-color 0.2s ease",
         boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
         color: "var(--white)",
         borderRadius: 2,

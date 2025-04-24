@@ -6,11 +6,11 @@ const {
   verifyToken,
 } = require("../controllers/authController");
 const authenticate = require("../middlewares/authenticate");
-const validateCreateUserData = require("../middlewares/validateCreateUser");
+const validateUserData = require("../middlewares/validateUser");
 const router = express.Router();
 
 router.post("/login", login);
-router.post("/register", validateCreateUserData, register);
+router.post("/register", validateUserData(false), register);
 router.post("/logout", authenticate(["admin", "regular"]), logout);
 router.get("/verify-token", authenticate(["admin", "regular"]), verifyToken);
 

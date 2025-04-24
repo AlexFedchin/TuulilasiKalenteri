@@ -37,6 +37,15 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             lineHeight: 1.2,
             fontWeight: 500,
           },
+          textFieldLabel: {
+            fontWeight: "bold",
+            fontSize: isMobile ? "0.8rem" : isTablet ? "0.85rem" : "0.9rem",
+            color: "var(--off-black)",
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            marginBottom: 4,
+          },
           h1: {
             fontSize: isMobile ? "3rem" : isTablet ? "3.5rem" : "4rem",
             fontWeight: 800,
@@ -50,8 +59,8 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             fontWeight: 600,
           },
           h4: {
-            fontSize: isMobile ? "1rem" : isTablet ? "1.15rem" : "1.3rem",
-            fontWeight: 500,
+            fontSize: isMobile ? "1.1rem" : isTablet ? "1.2rem" : "1.3rem",
+            fontWeight: 550,
           },
           h5: {
             fontSize: isMobile ? "0.8rem" : isTablet ? "0.85rem" : "0.9rem",

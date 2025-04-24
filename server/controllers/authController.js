@@ -6,8 +6,15 @@ require("dotenv").config();
 
 // Registration logic
 const register = async (req, res) => {
-  const { username, password, role, firstName, lastName, email, location } =
-    req.body;
+  const { username, password, role, firstName, lastName, email } = req.body;
+
+  let location = undefined;
+  if (role !== "admin") {
+    location = req.body.location;
+    if (!location) {
+      return res.status(400).json({ error: "Location is required" });
+    }
+  }
 
   try {
     // Check if user already exists
@@ -21,15 +28,20 @@ const register = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password.trim(), 10);
 
-    // Create new user
-    const newUser = new User({
+    const newUserData = {
       username: username.trim(),
       password: hashedPassword,
       role,
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim(),
-    });
+      firstName: firstName?.trim(),
+      lastName: lastName?.trim(),
+      email: email?.trim(),
+    };
+    if (location) {
+      newUserData.location = location.trim();
+    }
+
+    // Create new user
+    const newUser = new User(newUserData);
 
     // Add user's id to the location if not an admin
     // Admins do not belong to any location
@@ -53,12 +65,13 @@ const register = async (req, res) => {
     const savedUser = await newUser.save();
 
     res.status(201).json({
-      id: savedUser._id,
+      _id: savedUser._id,
       username: savedUser.username,
       firstName: savedUser.firstName,
       lastName: savedUser.lastName,
       email: savedUser.email,
       role: savedUser.role,
+      location: savedUser.location,
     });
   } catch (error) {
     console.error("Error during registration:", error);
@@ -111,6 +124,7 @@ const login = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        location: user.location,
       },
       token,
     });

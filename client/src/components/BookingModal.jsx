@@ -325,6 +325,7 @@ const BookingModal = ({
       // Validate plate number to be european
       if (name === "plateNumber") {
         setEuropeanPlateNumberWarning(validateEuropeanPlateNumber(value));
+        updatedData.plateNumber = value.toUpperCase();
       }
 
       return updatedData;
@@ -452,15 +453,6 @@ const BookingModal = ({
     }
   };
 
-  const labelStyles = {
-    fontWeight: "bold",
-    color: "var(--off-black)",
-    display: "flex",
-    alignItems: "center",
-    gap: 0.5,
-    mb: 0.5,
-  };
-
   return (
     <Modal open={open} onClose={onClose}>
       <Box
@@ -518,7 +510,7 @@ const BookingModal = ({
           <Box>
             <Box sx={{ display: "flex", gap: 2 }}>
               <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="h5" sx={labelStyles}>
+                <Typography variant="textFieldLabel">
                   <AbcIcon fontSize="small" />
                   Plate number
                 </Typography>
@@ -551,9 +543,7 @@ const BookingModal = ({
                   flexDirection: "column",
                 }}
               >
-                <Typography variant="h5" sx={labelStyles}>
-                  Work done
-                </Typography>
+                <Typography variant="textFieldLabel">Work done</Typography>
                 <Switch
                   name="isWorkDone"
                   checked={formData["isWorkDone"] || false}
@@ -571,7 +561,7 @@ const BookingModal = ({
 
           {/* Phone number */}
           <Box>
-            <Typography variant="h5" sx={labelStyles}>
+            <Typography variant="textFieldLabel">
               <PhoneIcon fontSize="small" />
               Phone number
             </Typography>
@@ -598,7 +588,7 @@ const BookingModal = ({
 
           {/* Car model */}
           <Box>
-            <Typography variant="h5" sx={labelStyles}>
+            <Typography variant="textFieldLabel">
               <CarIcon fontSize="small" />
               Car model
             </Typography>
@@ -619,7 +609,7 @@ const BookingModal = ({
 
           {/* Eurocode */}
           <Box>
-            <Typography variant="h5" sx={labelStyles}>
+            <Typography variant="textFieldLabel">
               <TagIcon fontSize="small" />
               Eurocode
             </Typography>
@@ -648,9 +638,7 @@ const BookingModal = ({
                 flexDirection: "column",
               }}
             >
-              <Typography variant="h5" sx={labelStyles}>
-                In stock
-              </Typography>
+              <Typography variant="textFieldLabel">In stock</Typography>
               <Switch
                 checked={formData["inStock"] || false}
                 name="inStock"
@@ -674,7 +662,7 @@ const BookingModal = ({
               />
             </Box>
             <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="h5" sx={labelStyles}>
+              <Typography variant="textFieldLabel">
                 <WarehouseIcon fontSize="small" />
                 Location in warehouse
               </Typography>
@@ -696,7 +684,7 @@ const BookingModal = ({
 
           {/* Client */}
           <Box>
-            <Typography variant="h5" sx={labelStyles}>
+            <Typography variant="textFieldLabel">
               <PersonIcon fontSize="small" />
               Client
             </Typography>
@@ -729,7 +717,7 @@ const BookingModal = ({
 
           {/* Payer */}
           <Box>
-            <Typography variant="h5" sx={labelStyles}>
+            <Typography variant="textFieldLabel">
               <PaymentIcon fontSize="small" />
               Payer
             </Typography>
@@ -764,7 +752,7 @@ const BookingModal = ({
           {formData["payerType"] === "insurance" ? (
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
               <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="h5" sx={labelStyles}>
+                <Typography variant="textFieldLabel">
                   <InsuranceCompanyIcon fontSize="small" />
                   Insurance company
                 </Typography>
@@ -808,7 +796,7 @@ const BookingModal = ({
 
               {formData["insuranceCompany"] === "other" && (
                 <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h5" sx={labelStyles}>
+                  <Typography variant="textFieldLabel">
                     <InsuranceCompanyIcon fontSize="small" />
                     Insurance company name
                   </Typography>
@@ -829,7 +817,7 @@ const BookingModal = ({
               )}
 
               <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="h5" sx={labelStyles}>
+                <Typography variant="textFieldLabel">
                   <InsuranceIcon fontSize="small" />
                   Insurance number
                 </Typography>
@@ -854,7 +842,7 @@ const BookingModal = ({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: "-5px" }}>
               <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="h5" sx={labelStyles}>
+                <Typography variant="textFieldLabel">
                   <DateIcon fontSize="small" />
                   Date & Time
                 </Typography>
@@ -889,7 +877,7 @@ const BookingModal = ({
                 />
               </Box>
               <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="h5" sx={labelStyles}>
+                <Typography variant="textFieldLabel">
                   <DurationIcon fontSize="small" />
                   Duration
                 </Typography>
@@ -922,7 +910,7 @@ const BookingModal = ({
           {/* Location */}
           {isAdmin && (
             <Box>
-              <Typography variant="h5" sx={labelStyles}>
+              <Typography variant="textFieldLabel">
                 <LocationIcon fontSize="small" />
                 Location
               </Typography>
@@ -955,7 +943,7 @@ const BookingModal = ({
 
           {/* Notes */}
           <Box>
-            <Typography variant="h5" sx={labelStyles}>
+            <Typography variant="textFieldLabel">
               <NotesIcon fontSize="small" />
               Notes
             </Typography>

@@ -4,19 +4,19 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/usersController");
-const validateUpdateUserData = require("../middlewares/validateUpdateUser");
+const validateUserData = require("../middlewares/validateUser");
 const authenticate = require("../middlewares/authenticate");
 const checkUserOwnership = require("../middlewares/checkUserOwnership");
 const router = express.Router();
 
 // Public Routes (accessible by any authenticated user)
-router.get("/", authenticate(["admin", "regular"]), getAllUsers);
+router.get("/", authenticate(["admin"]), getAllUsers);
 
 router.put(
   "/:id",
   authenticate(["admin", "regular"]),
   checkUserOwnership,
-  validateUpdateUserData,
+  validateUserData(true),
   updateUser
 );
 

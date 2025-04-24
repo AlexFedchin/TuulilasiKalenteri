@@ -10,7 +10,7 @@ const NotFound = () => {
       <Typography variant="h2" sx={{ color: "var(--off-black)" }}>
         Page Not Found
       </Typography>
-      <Typography variant="body1" sx={{ color: "var(--off-grey)" }}>
+      <Typography variant="body2">
         The page you are looking for does not exist.
       </Typography>
     </DefaultContainer>
