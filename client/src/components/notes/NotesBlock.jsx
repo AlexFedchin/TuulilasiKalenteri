@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import NoteCard from "./NoteCard";
 import EditableNoteCard from "./EditableNoteCard";
 import useScreenSize from "../../hooks/useScreenSize";
+import { alert } from "../../utils/alert";
 
 const Notes = () => {
   const { user, token } = useAuth();
@@ -48,14 +49,15 @@ const Notes = () => {
         body: JSON.stringify({ title, description }),
       });
 
-      if (response.ok) {
-        const newNote = await response.json();
-        setNotes((prev) => [newNote, ...prev]);
-        setIsCreating(false);
-      } else {
-        console.error("Failed to create note");
+      if (!response.ok) {
+        throw new Error("Failed to create note");
       }
+      const newNote = await response.json();
+      setNotes((prev) => [newNote, ...prev]);
+      setIsCreating(false);
+      alert.success("Note created successfully");
     } catch (error) {
+      alert.error("Failed to create note");
       console.error("Error creating note:", error);
     }
   };

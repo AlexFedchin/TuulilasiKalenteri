@@ -11,18 +11,31 @@ import useScreenSize from "../hooks/useScreenSize";
 import Notes from "../components/notes/NotesBlock";
 import WeekCalendar from "../components/calendar/WeekCalendar";
 import LocationsCalendar from "../components/calendar/LocationsCalendar";
+import Orders from "../components/orders/OrdersBlock";
 
 const Calendar = () => {
   dayjs.extend(isoWeek);
   dayjs.extend(utc);
   dayjs.extend(timezone);
 
-  const { isMobile } = useScreenSize();
+  const getInitialDate = () => {
+    const today = dayjs();
+
+    const isWeekend = today.day() === 0 || today.day() === 6;
+    if (isWeekend) {
+      return today.day() === 0
+        ? today.subtract(2, "day")
+        : today.subtract(1, "day");
+    }
+    return today;
+  };
+
+  const { isMobile, isTablet } = useScreenSize();
   const { user, token } = useAuth();
   const isAdmin = user?.role === "admin";
-  const [currentDate, setCurrentDate] = useState(dayjs());
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [mode, setMode] = useState(isAdmin ? "locations" : "week");
+  const [currentDate, setCurrentDate] = useState(getInitialDate());
 
   const handleChangeDate = (direction) => {
     if (direction === "next") {
@@ -106,7 +119,9 @@ const Calendar = () => {
   };
 
   return (
-    <DefaultContainer sx={{ maxWidth: "1600px !important", gap: 3 }}>
+    <DefaultContainer
+      sx={{ maxWidth: "1600px !important", gap: isMobile ? 1 : 3 }}
+    >
       {/* Header */}
       <Box
         sx={{
@@ -160,21 +175,49 @@ const Calendar = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "stretch",
-          gap: 2,
-          flexDirection: isMobile ? "column" : "row",
+          gap: 1,
+          flexDirection: isMobile
+            ? "column"
+            : isTablet
+            ? isAdmin
+              ? "column"
+              : "row"
+            : "row",
         }}
       >
-        <Box sx={{ display: "flex", width: isMobile ? "100%" : "80%" }}>
+        <Box
+          sx={{
+            width: isAdmin
+              ? isMobile || isTablet
+                ? "100%"
+                : "64%"
+              : isMobile
+              ? "100%"
+              : "80%",
+          }}
+        >
           {renderCalendar()}
         </Box>
         <Box
           sx={{
+            display: "flex",
+            gap: 1,
+            flexDirection: "row",
+            alignItems: "stretch",
             boxSizing: "border-box",
-            maxHeight: "696.55px",
+            maxHeight: "670.88px",
             py: 0.5,
-            width: isMobile ? "100%" : "20%",
+            width: isAdmin
+              ? isMobile || isTablet
+                ? "100%"
+                : "36%"
+              : isMobile
+              ? "100%"
+              : "20%",
           }}
         >
+          {isAdmin && <Orders />}
+
           <Notes />
         </Box>
       </Box>

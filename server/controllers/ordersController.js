@@ -38,8 +38,11 @@ const createOrder = async (req, res) => {
   const newOrderData = {
     eurocode: eurocode.trim(),
     client: client,
-    notes: notes.trim(),
   };
+
+  if (notes?.trim()) {
+    newOrderData.notes = notes.trim();
+  }
 
   // Add client name if client is "other"
   let clientName = null;
@@ -72,8 +75,11 @@ const updateOrder = async (req, res) => {
   const updatedOrderData = {
     eurocode: eurocode.trim(),
     client,
-    notes: notes.trim(),
   };
+
+  if (notes?.trim()) {
+    updatedOrderData.notes = notes.trim();
+  }
 
   // Add client name if client is "other"
   let clientName = null;

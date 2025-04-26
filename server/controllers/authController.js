@@ -25,6 +25,14 @@ const register = async (req, res) => {
         .json({ error: "User with this username already exists" });
     }
 
+    // Check if user with this email already exists
+    const existingUserEmail = await User.findOne({ email });
+    if (existingUserEmail) {
+      return res
+        .status(400)
+        .json({ error: "Some user is already using this email" });
+    }
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(password.trim(), 10);
 
@@ -45,13 +53,14 @@ const register = async (req, res) => {
 
     // Add user's id to the location if not an admin
     // Admins do not belong to any location
+    let usersLocation = null;
     if (newUser.role !== "admin") {
       if (!location) {
         return res.status(400).json({ error: "Location is required" });
       }
 
       // Check if location exists
-      const usersLocation = await Location.findByIdAndUpdate(
+      usersLocation = await Location.findByIdAndUpdate(
         location,
         { $addToSet: { users: newUser._id } },
         { new: true }
@@ -72,6 +81,7 @@ const register = async (req, res) => {
       email: savedUser.email,
       role: savedUser.role,
       location: savedUser.location,
+      locationTitle: usersLocation.title,
     });
   } catch (error) {
     console.error("Error during registration:", error);

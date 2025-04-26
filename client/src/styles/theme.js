@@ -209,6 +209,19 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
           },
         },
       },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            fontSize: isMobile ? "0.8rem" : isTablet ? "0.85rem" : "0.9rem",
+            fontWeight: 400,
+            color: "var(--off-black)",
+            minHeight: isMobile ? "30px" : isTablet ? "35px" : "40px",
+            height: isMobile ? "30px" : isTablet ? "35px" : "40px",
+            paddingLeft: isMobile ? 12 : isTablet ? 14 : 16,
+            paddingRight: isMobile ? 12 : isTablet ? 14 : 16,
+          },
+        },
+      },
     },
   });
 

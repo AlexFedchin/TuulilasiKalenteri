@@ -29,6 +29,7 @@ const orderValidationSchema = Joi.object({
     .when("client", {
       is: "other",
       then: Joi.required(),
+      otherwise: Joi.allow(""),
     })
     .messages({
       "string.base": "Client name must be a string.",

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Menu, MenuItem, ListItemIcon } from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "../../context/AuthContext";
@@ -8,9 +9,20 @@ import EditableNoteCard from "./EditableNoteCard";
 const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
   const { token } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
+    handleMenuClose();
   };
 
   const handleCancel = () => {
@@ -43,6 +55,7 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
   };
 
   const handleDelete = async () => {
+    handleMenuClose();
     try {
       const response = await fetch(`/api/notes/${note._id}`, {
         method: "DELETE",
@@ -52,10 +65,12 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
       });
       if (response.ok) {
         onDeleteNote(note._id);
+        alert.success("Note deleted successfully");
       } else {
         console.error("Failed to delete the note");
       }
     } catch (error) {
+      alert.error("Failed to delete the note");
       console.error("Error deleting the note:", error);
     }
   };
@@ -81,47 +96,62 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
         flexDirection: "column",
         gap: 0.5,
         position: "relative",
-        "&:hover .note-actions": {
-          opacity: 1,
-        },
       }}
     >
-      {/* Note actions (edit and delete) */}
+      {/* Note actions menu */}
       <Box
-        className="note-actions"
         sx={{
           position: "absolute",
           right: 8,
           top: 8,
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-          opacity: 0,
-          transition: "opacity 0.2s ease-in-out",
         }}
       >
-        <EditIcon
+        <MoreVertIcon
           fontSize="small"
           role="button"
-          onClick={handleEdit}
+          tabIndex={0}
+          aria-controls={open ? "note-menu" : undefined}
+          onClick={handleMenuOpen}
           sx={{
             cursor: "pointer",
             transition: "color 0.2s ease-in-out",
+            outline: "none",
             color: "var(--off-grey)",
             "&:hover": { color: "var(--off-black)" },
           }}
         />
-        <DeleteIcon
-          fontSize="small"
-          role="button"
-          onClick={handleDelete}
-          sx={{
-            cursor: "pointer",
-            transition: "color 0.2s ease-in-out",
-            color: "var(--error)",
-            "&:hover": { color: "var(--error-onhover)" },
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
           }}
-        />
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <MenuItem onClick={handleEdit}>
+            <ListItemIcon sx={{ color: "inherit" }}>
+              <EditIcon fontSize="small" />
+            </ListItemIcon>
+            Edit
+          </MenuItem>
+          <MenuItem
+            onClick={handleDelete}
+            sx={{
+              color: "var(--error)",
+              "&:hover": { color: "var(--error-onhover)" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "inherit" }}>
+              <DeleteIcon fontSize="small" />
+            </ListItemIcon>
+            Delete
+          </MenuItem>
+        </Menu>
       </Box>
 
       {note.title && (
@@ -129,6 +159,7 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
           variant="h5"
           color="inherit"
           sx={{
+            maxWidth: "calc(100% - 20px)",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",

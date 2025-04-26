@@ -15,4 +15,13 @@
   --off-black: #191919;
   --off-grey: #616161;
   --light-grey: #c8c8c8;
+  --light-grey-onhover: #b6b6b6;
+
+  --order-card-pauli: #eebdbd;
+  --order-card-vip: #eee1bd;
+  --order-card-maalarium: #cfeebd;
+  --order-card-tammerwheels: #bdebee;
+  --order-card-colormaster: #bdccee;
+  --order-card-rantaperkionkatu: #e2bdee;
+  --order-card-other: #fcfcfc;
 }
