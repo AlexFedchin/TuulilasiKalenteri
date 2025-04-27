@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -15,11 +15,17 @@ import Loader from "../loader/Loader";
 import BookingModal from "../BookingModal";
 import { useAuth } from "../../context/AuthContext";
 
-const LocationsCalendar = ({ currentDate, setMode, setSelectedLocation }) => {
+const LocationsCalendar = ({
+  currentDate,
+  setMode,
+  setSelectedLocation,
+  searchTerm,
+}) => {
   const { user, token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
 
   const [bookings, setBookings] = useState([]);
+  const [filteredBookings, setFilteredBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [locations, setLocations] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -34,6 +40,35 @@ const LocationsCalendar = ({ currentDate, setMode, setSelectedLocation }) => {
     fetchedDates.current = [];
   }, []);
 
+  // Debounced search function
+  const debounceSearch = useCallback(
+    (term) => {
+      setLoading(true);
+      setTimeout(() => {
+        const lowerCaseTerm = term.toLowerCase();
+        const filtered = bookings.filter((booking) =>
+          Object.values(booking).some(
+            (value) =>
+              typeof value === "string" &&
+              value.toLowerCase().includes(lowerCaseTerm)
+          )
+        );
+        setFilteredBookings(filtered);
+        setLoading(false);
+      }, 500);
+    },
+    [bookings]
+  );
+
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredBookings(bookings);
+      return;
+    }
+    debounceSearch(searchTerm);
+  }, [searchTerm, bookings, debounceSearch]);
+
+  // Fetch locations on mount
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -52,6 +87,7 @@ const LocationsCalendar = ({ currentDate, setMode, setSelectedLocation }) => {
     fetchLocations();
   }, [token]);
 
+  // Fetch bookings for the current date
   useEffect(() => {
     const fetchBookings = async () => {
       setLoading(true);
@@ -97,9 +133,10 @@ const LocationsCalendar = ({ currentDate, setMode, setSelectedLocation }) => {
   };
 
   const getBookingForTimeSlot = (time, location) => {
-    if (!bookings || bookings.length === 0) return [];
+    if (loading || !filteredBookings || filteredBookings.length === 0)
+      return [];
 
-    const booking = bookings.filter(
+    const booking = filteredBookings.filter(
       (booking) =>
         dayjs(booking.date).format("YYYY-MM-DD") ===
           currentDate.format("YYYY-MM-DD") &&

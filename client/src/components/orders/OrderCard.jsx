@@ -6,6 +6,7 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
+  Card,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
@@ -32,7 +33,7 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
         order.client;
 
   return (
-    <Box
+    <Card
       sx={{
         width: "100%",
         boxSizing: "border-box",
@@ -40,7 +41,6 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
         bgcolor: `var(--order-card-${order.client})`,
         color: "var(--off-black)",
         borderRadius: 0.5,
-        textAlign: "left",
         display: "flex",
         flexDirection: "column",
         gap: 0.5,
@@ -117,7 +117,8 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
         sx={{
           overflow: "hidden",
           textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
+          wordBreak: "break-word",
+          maxWidth: "calc(100% - 20px)",
         }}
       >
         {order.eurocode.toUpperCase()}
@@ -153,7 +154,7 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
           </Typography>
         </>
       )}
-    </Box>
+    </Card>
   );
 };
 

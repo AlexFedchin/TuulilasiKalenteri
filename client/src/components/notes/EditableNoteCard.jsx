@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, TextField, IconButton } from "@mui/material";
+import { Box, TextField, IconButton, Card } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import useScreenSize from "../../hooks/useScreenSize";
@@ -17,15 +17,13 @@ const EditableNoteCard = ({
   const isEmpty = !title.trim() && !description.trim();
 
   return (
-    <Box
+    <Card
       sx={{
         width: "100%",
         boxSizing: "border-box",
         p: 1,
-        bgcolor: "var(--white)",
         color: "var(--off-black)",
         borderRadius: 0.5,
-        textAlign: "left",
         display: "flex",
         flexDirection: "column",
         gap: 0.5,
@@ -90,11 +88,11 @@ const EditableNoteCard = ({
         >
           <DoneIcon
             fontSize="small"
-            sx={{ color: isEmpty ? "var(--off-grey)" : "var(--primary)" }}
+            sx={{ color: isEmpty ? "var(--light-grey)" : "var(--primary)" }}
           />
         </IconButton>
       </Box>
-    </Box>
+    </Card>
   );
 };
 

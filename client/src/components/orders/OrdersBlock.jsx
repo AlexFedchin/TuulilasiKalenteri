@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Card, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../../context/AuthContext";
 import useScreenSize from "../../hooks/useScreenSize";
@@ -77,18 +77,15 @@ const Orders = () => {
   };
 
   return (
-    <Box
+    <Card
       sx={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         gap: 1,
-        bgcolor: "var(--white)",
         boxSizing: "border-box",
         maxHeight: "100%",
         width: "100%",
-        borderRadius: 2,
-        boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
         p: 1,
       }}
     >
@@ -161,7 +158,7 @@ const Orders = () => {
           />
         )}
       </Box>
-    </Box>
+    </Card>
   );
 };
 

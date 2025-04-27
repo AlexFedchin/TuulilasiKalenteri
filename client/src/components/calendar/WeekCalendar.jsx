@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -17,11 +17,17 @@ import Loader from "../loader/Loader";
 import BookingModal from "../BookingModal";
 import { useAuth } from "../../context/AuthContext";
 
-const WeekCalendar = ({ currentDate, location = null, setMode }) => {
+const WeekCalendar = ({
+  currentDate,
+  location = null,
+  setMode,
+  searchTerm,
+}) => {
   const { user, token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
 
   const [bookings, setBookings] = useState([]);
+  const [filteredBookings, setFilteredBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -75,6 +81,34 @@ const WeekCalendar = ({ currentDate, location = null, setMode }) => {
     fetchBookings();
   }, [user, token, currentDate, isAdmin, location]);
 
+  // Debounced search function
+  const debounceSearch = useCallback(
+    (term) => {
+      setLoading(true);
+      setTimeout(() => {
+        const lowerCaseTerm = term.toLowerCase();
+        const filtered = bookings.filter((booking) =>
+          Object.values(booking).some(
+            (value) =>
+              typeof value === "string" &&
+              value.toLowerCase().includes(lowerCaseTerm)
+          )
+        );
+        setFilteredBookings(filtered);
+        setLoading(false);
+      }, 500);
+    },
+    [bookings]
+  );
+
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredBookings(bookings);
+      return;
+    }
+    debounceSearch(searchTerm);
+  }, [searchTerm, bookings, debounceSearch]);
+
   const generateDayColumns = () => {
     const columns = [];
     const startOfWeek = currentDate.startOf("isoWeek");
@@ -86,7 +120,7 @@ const WeekCalendar = ({ currentDate, location = null, setMode }) => {
           ? day.format("dd")
           : isTablet
           ? day.format("ddd")
-          : day.format("dddd"),
+          : day.format("ddd"),
         dayNumber: day.format("D.M"),
       });
     }
@@ -103,9 +137,10 @@ const WeekCalendar = ({ currentDate, location = null, setMode }) => {
   };
 
   const getBookingForTimeSlot = (date, time) => {
-    if (!bookings || bookings.length === 0) return [];
+    if (loading || !filteredBookings || filteredBookings.length === 0)
+      return [];
 
-    const booking = bookings.filter(
+    const booking = filteredBookings.filter(
       (booking) =>
         dayjs(booking.date).format("YYYY-MM-DD") === date &&
         dayjs(booking.date).hour() === parseInt(time.split(":")[0]) &&
@@ -143,18 +178,20 @@ const WeekCalendar = ({ currentDate, location = null, setMode }) => {
             <TableCell
               sx={{
                 border: "none",
-                py: 0.5,
-                pr: 0.5,
+                py: 0,
+                pr: 0,
                 pl: 0,
                 width: isMobile ? "36px" : isTablet ? "42px" : "48px",
                 minWidth: isMobile ? "36px" : isTablet ? "42px" : "48px",
                 maxWidth: isMobile ? "36px" : isTablet ? "42px" : "48px",
                 boxSizing: "border-box",
+                textAlign: "center",
               }}
             >
               {isAdmin && (
-                <IconButton>
+                <IconButton sx={{ p: 0.5, alignSelf: "center" }}>
                   <ArrowBackIcon
+                    fontSize="small"
                     onClick={() => setMode("locations")}
                     sx={{ color: "var(--off-black)" }}
                   />

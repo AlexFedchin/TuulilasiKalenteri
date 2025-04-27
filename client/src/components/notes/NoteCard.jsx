@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Typography, Menu, MenuItem, ListItemIcon } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Card,
+} from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -83,12 +90,11 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
       onCancel={handleCancel}
     />
   ) : (
-    <Box
+    <Card
       sx={{
         width: "100%",
         boxSizing: "border-box",
         p: 1,
-        bgcolor: "var(--white)",
         color: "var(--off-black)",
         borderRadius: 0.5,
         textAlign: "left",
@@ -181,7 +187,7 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
           {note.description}
         </Typography>
       )}
-    </Box>
+    </Card>
   );
 };
 

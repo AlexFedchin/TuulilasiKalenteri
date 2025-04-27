@@ -1,12 +1,26 @@
 import { useEffect, useState } from "react";
-import { Typography, Box, IconButton } from "@mui/material";
+import {
+  Typography,
+  Box,
+  IconButton,
+  Card,
+  TextField,
+  InputAdornment,
+} from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import DefaultContainer from "../components/DefaultContainer";
 import ArrowForwardIcon from "@mui/icons-material/KeyboardBackspace";
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import isoWeek from "dayjs/plugin/isoWeek";
+import updateLocale from "dayjs/plugin/updateLocale";
+import "dayjs/locale/fi";
 import useScreenSize from "../hooks/useScreenSize";
 import Notes from "../components/notes/NotesBlock";
 import WeekCalendar from "../components/calendar/WeekCalendar";
@@ -17,6 +31,11 @@ const Calendar = () => {
   dayjs.extend(isoWeek);
   dayjs.extend(utc);
   dayjs.extend(timezone);
+  dayjs.extend(updateLocale);
+
+  dayjs.updateLocale("en", {
+    weekStart: 1,
+  });
 
   const getInitialDate = () => {
     const today = dayjs();
@@ -36,6 +55,12 @@ const Calendar = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [mode, setMode] = useState(isAdmin ? "locations" : "week");
   const [currentDate, setCurrentDate] = useState(getInitialDate());
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearchChange = (event) => {
+    const { value } = event.target;
+    setSearchTerm(value);
+  };
 
   const handleChangeDate = (direction) => {
     if (direction === "next") {
@@ -108,12 +133,14 @@ const Calendar = () => {
         currentDate={currentDate}
         setMode={setMode}
         location={selectedLocation}
+        searchTerm={searchTerm}
       />
     ) : mode === "locations" ? (
       <LocationsCalendar
         currentDate={currentDate}
         setMode={setMode}
         setSelectedLocation={setSelectedLocation}
+        searchTerm={searchTerm}
       />
     ) : null;
   };
@@ -128,9 +155,42 @@ const Calendar = () => {
           width: "100%",
           display: "flex",
           justifyContent: "center",
-          alignItems: "cenetr",
+          alignItems: "ceneter",
+          gap: 8,
         }}
       >
+        {/* Calendar Section */}
+        <Card
+          sx={{
+            p: 1,
+            maxWidth: "300px",
+            width: "25%",
+            boxSizing: "border-box",
+            flexShrink: 1,
+          }}
+        >
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              value={currentDate}
+              format="D MMM YYYY"
+              onChange={(newValue) => {
+                setCurrentDate(newValue);
+              }}
+              shouldDisableDate={(date) => {
+                const day = date.day();
+                return day === 0 || day === 6;
+              }}
+              slotProps={{
+                textField: {
+                  size: "small",
+                  fullWidth: true,
+                  variant: "outlined",
+                },
+              }}
+            />
+          </LocalizationProvider>
+        </Card>
+        {/* Middle Section */}
         <Box
           sx={{
             display: "flex",
@@ -167,6 +227,45 @@ const Calendar = () => {
             <ArrowForwardIcon sx={{ transform: "rotate(180deg)" }} />
           </IconButton>
         </Box>
+        {/* Search Section */}
+        <Card
+          sx={{
+            p: 1,
+            maxWidth: "300px",
+            width: "25%",
+            boxSizing: "border-box",
+            flexShrink: 1,
+          }}
+        >
+          <TextField
+            placeholder="Search..."
+            variant="outlined"
+            fullWidth
+            size="small"
+            sx={{ width: "100%" }}
+            value={searchTerm}
+            onChange={handleSearchChange}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: "var(--off-grey)" }} />
+                  </InputAdornment>
+                ),
+                endAdornment: searchTerm && (
+                  <InputAdornment position="end" sx={{ mr: "-12px" }}>
+                    <IconButton onClick={() => setSearchTerm("")}>
+                      <CloseIcon
+                        fontSize="small"
+                        sx={{ color: "var(--off-grey)" }}
+                      />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Card>
       </Box>
 
       <Box
