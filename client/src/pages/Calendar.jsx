@@ -201,7 +201,7 @@ const Calendar = () => {
             gap: 2,
             alignItems: "center",
             minWidth: isMobile ? "200px" : isTablet ? "275px" : "275px",
-            maxWidth: isMobile ? "250px" : "",
+            maxWidth: isMobile ? "250px" : "unset",
             justifyContent: "space-between",
           }}
         >
@@ -232,6 +232,7 @@ const Calendar = () => {
             <ArrowForwardIcon sx={{ transform: "rotate(180deg)" }} />
           </IconButton>
         </Box>
+
         {/* Desktop Search Section */}
         {!isMobile && (
           <Card
@@ -274,86 +275,69 @@ const Calendar = () => {
           </Card>
         )}
 
+        {/* Mobile calendar and search */}
         {isMobile && (
-          <Box
+          <Card
             sx={{
               display: "flex",
               gap: 1,
               width: "100%",
               alignItems: "center",
               justifyContent: "center",
+              p: 1,
+              boxSizing: "border-box",
             }}
           >
-            <Card
-              sx={{
-                p: 1,
-                maxWidth: "300px",
-                width: "50%",
-                boxSizing: "border-box",
-                flexShrink: 1,
-              }}
-            >
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={currentDate}
-                  format="D MMM YYYY"
-                  onChange={(newValue) => {
-                    setCurrentDate(newValue);
-                  }}
-                  shouldDisableDate={(date) => {
-                    const day = date.day();
-                    return day === 0 || day === 6;
-                  }}
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                      fullWidth: true,
-                      variant: "outlined",
-                    },
-                  }}
-                />
-              </LocalizationProvider>
-            </Card>
-
-            <Card
-              sx={{
-                p: 1,
-                maxWidth: "300px",
-                width: "50%",
-                boxSizing: "border-box",
-                flexShrink: 1,
-              }}
-            >
-              <TextField
-                placeholder="Search..."
-                variant="outlined"
-                fullWidth
-                size="small"
-                sx={{ width: "100%" }}
-                value={searchTerm}
-                onChange={handleSearchChange}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                value={currentDate}
+                format="D.M.YYYY"
+                onChange={(newValue) => {
+                  setCurrentDate(newValue);
+                }}
+                shouldDisableDate={(date) => {
+                  const day = date.day();
+                  return day === 0 || day === 6;
+                }}
                 slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon sx={{ color: "var(--off-grey)" }} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: searchTerm && (
-                      <InputAdornment position="end" sx={{ mr: "-12px" }}>
-                        <IconButton onClick={() => setSearchTerm("")}>
-                          <CloseIcon
-                            fontSize="small"
-                            sx={{ color: "var(--off-grey)" }}
-                          />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
+                  textField: {
+                    size: "small",
+                    fullWidth: true,
+                    variant: "outlined",
                   },
                 }}
               />
-            </Card>
-          </Box>
+            </LocalizationProvider>
+
+            <TextField
+              placeholder="Search..."
+              variant="outlined"
+              fullWidth
+              size="small"
+              sx={{ width: "100%" }}
+              value={searchTerm}
+              onChange={handleSearchChange}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: "var(--off-grey)" }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: searchTerm && (
+                    <InputAdornment position="end" sx={{ mr: "-12px" }}>
+                      <IconButton onClick={() => setSearchTerm("")}>
+                        <CloseIcon
+                          fontSize="small"
+                          sx={{ color: "var(--off-grey)" }}
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Card>
         )}
       </Box>
 

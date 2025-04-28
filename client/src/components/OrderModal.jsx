@@ -11,25 +11,52 @@ import {
   MenuItem,
   FormHelperText,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
-import TagIcon from "@mui/icons-material/Tag";
 import NotesIcon from "@mui/icons-material/Notes";
 import BusinessIcon from "@mui/icons-material/Business";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { useAuth } from "../context/AuthContext";
 import { alert } from "../utils/alert";
 import { clients } from "../utils/clients";
 import Joi from "joi";
+import useScreenSize from "../hooks/useScreenSize";
 
 const orderValidationSchema = Joi.object({
-  eurocode: Joi.string().min(2).max(20).required().messages({
-    "string.base": "Eurocode must be a string.",
-    "string.empty": "Eurocode is required.",
-    "string.min": "Eurocode must be at least 2 characters long.",
-    "string.max": "Eurocode must be at most 20 characters long.",
-    "any.required": "Eurocode is required.",
-  }),
+  products: Joi.array()
+    .items(
+      Joi.object({
+        eurocode: Joi.string().min(2).max(20).required().messages({
+          "string.base": "Eurocode must be a string.",
+          "string.empty": "Eurocode is required.",
+          "string.min": "Eurocode must be at least 2 characters long.",
+          "string.max": "Eurocode must be at most 20 characters long.",
+          "any.required": "Eurocode is required.",
+        }),
+        amount: Joi.number().integer().min(1).required().messages({
+          "number.base": "Amount must be a number.",
+          "number.integer": "Amount must be an integer.",
+          "number.min": "Amount must be at least 1.",
+          "any.required": "Amount is required.",
+        }),
+        price: Joi.number().integer().min(0).required().messages({
+          "number.base": "Price must be a number.",
+          "number.integer": "Price must be an integer.",
+          "number.min": "Price must be at least 0.",
+          "any.required": "Price is required.",
+        }),
+      })
+    )
+    .required()
+    .messages({
+      "array.base": "Products must be an array.",
+      "array.includesRequiredUnknowns":
+        "Each product must have eurocode, amount, and price.",
+      "any.required": "Products are required.",
+    }),
   client: Joi.string()
     .required()
     .valid(
@@ -66,12 +93,17 @@ const orderValidationSchema = Joi.object({
   }),
 });
 
-const UserModal = ({ onClose, order, setOrders }) => {
+const OrderModal = ({ onClose, order, setOrders }) => {
+  const { isMobile, isTablet } = useScreenSize();
   const { token } = useAuth();
   const isEdit = !!order;
 
   const [formData, setFormData] = useState({
-    eurocode: order?.eurocode || "",
+    products: order?.products.map(({ eurocode, amount, price }) => ({
+      eurocode,
+      amount,
+      price,
+    })) || [{ eurocode: "", amount: 1, price: 0 }],
     client: order?.client || clients[0].value,
     clientName: order?.clientName || "",
     notes: order?.notes || "",
@@ -79,18 +111,42 @@ const UserModal = ({ onClose, order, setOrders }) => {
 
   const [errors, setErrors] = useState({});
 
-  const isSubmitDisabled =
-    !formData.eurocode ||
-    !formData.client ||
-    (formData.client === "other" && !formData.clientName);
+  const handleChange = (e, index, field) => {
+    const { value } = e.target;
+    setFormData((prevFormData) => {
+      const updatedProducts = [...prevFormData.products];
+      updatedProducts[index][field] = value;
+      return { ...prevFormData, products: updatedProducts };
+    });
+  };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleAddProduct = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]: value,
+      products: [
+        ...prevFormData.products,
+        { eurocode: "", amount: 1, price: 0 },
+      ],
     }));
   };
+
+  const handleRemoveProduct = (index) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      products: prevFormData.products.filter((_, i) => i !== index),
+    }));
+  };
+
+  const isSubmitDisabled =
+    formData.products.length === 0 ||
+    !formData.products.every(
+      (product) =>
+        product.eurocode.trim() !== "" &&
+        product.amount > 0 &&
+        product.price >= 0
+    ) ||
+    !formData.client.trim() ||
+    (formData.client === "other" && formData.clientName.trim() === "");
 
   const handleSubmit = async () => {
     const { error } = orderValidationSchema.validate(formData, {
@@ -100,7 +156,7 @@ const UserModal = ({ onClose, order, setOrders }) => {
     if (error) {
       const validationErrors = {};
       error.details.forEach((detail) => {
-        validationErrors[detail.path[0]] = detail.message;
+        validationErrors[detail.path.join(".")] = detail.message;
       });
       setErrors(validationErrors);
       console.error("Validation errors:", validationErrors);
@@ -108,15 +164,6 @@ const UserModal = ({ onClose, order, setOrders }) => {
     }
 
     setErrors({});
-
-    // Add only not empty fields to updatedInfo
-    const updatedInfo = {};
-    if (formData.eurocode.trim())
-      updatedInfo.eurocode = formData.eurocode.trim();
-    if (formData.client.trim()) updatedInfo.client = formData.client.trim();
-    if (formData.clientName.trim())
-      updatedInfo.clientName = formData.clientName.trim();
-    if (formData.notes.trim()) updatedInfo.notes = formData.notes.trim();
 
     const endpoint = isEdit ? `/api/orders/${order._id}` : "/api/orders";
     const method = isEdit ? "PUT" : "POST";
@@ -128,7 +175,7 @@ const UserModal = ({ onClose, order, setOrders }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedInfo),
+        body: JSON.stringify(formData),
       });
 
       const result = await response.json();
@@ -140,8 +187,8 @@ const UserModal = ({ onClose, order, setOrders }) => {
       }
 
       if (isEdit) {
-        setOrders((prevOrder) =>
-          prevOrder.map((o) => (o._id === result._id ? result : o))
+        setOrders((prevOrders) =>
+          prevOrders.map((o) => (o._id === result._id ? result : o))
         );
         alert.success("Order updated successfully!");
       } else {
@@ -200,29 +247,8 @@ const UserModal = ({ onClose, order, setOrders }) => {
           component="form"
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
-          {/* Eurocode */}
-          <Box>
-            <Typography variant="textFieldLabel">
-              <TagIcon fontSize="small" />
-              Eurocode
-            </Typography>
-            <TextField
-              size="small"
-              fullWidth
-              margin="none"
-              type="text"
-              placeholder="Eurocode"
-              name="eurocode"
-              value={formData["eurocode"].toUpperCase()}
-              onChange={handleChange}
-              error={!!errors["eurocode"]}
-              helperText={errors["eurocode"] || ""}
-            />
-          </Box>
-
-          {/* Cliet & Client Name */}
+          {/* Client & Client Name */}
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-            {/* Client */}
             <Box sx={{ mb: "-5px", flexGrow: 1 }}>
               <Typography variant="textFieldLabel">
                 <BusinessIcon fontSize="small" />
@@ -233,7 +259,12 @@ const UserModal = ({ onClose, order, setOrders }) => {
                   name="client"
                   size="small"
                   value={formData.client}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      client: e.target.value,
+                    }))
+                  }
                 >
                   {clients.map((client) => (
                     <MenuItem
@@ -268,7 +299,12 @@ const UserModal = ({ onClose, order, setOrders }) => {
                   name="clientName"
                   size="small"
                   value={formData.clientName}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      clientName: e.target.value,
+                    }))
+                  }
                   error={!!errors.clientName}
                   helperText={errors.clientName || ""}
                   fullWidth
@@ -276,6 +312,159 @@ const UserModal = ({ onClose, order, setOrders }) => {
               </Box>
             )}
           </Box>
+
+          {/* Products */}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexDirection: "column",
+              flexWrap: "nowrap",
+              p: 2,
+              pr: 1,
+              pt: 1,
+              mt: 1,
+              borderRadius: 1,
+              border: "1px solid var(--primary)",
+              position: "relative",
+            }}
+          >
+            <Typography
+              variant="textFieldLabel"
+              sx={{
+                position: "absolute",
+                top: -12,
+                left: 12,
+                backgroundColor: "var(--white)",
+                color: "var(--primary)",
+                px: 1,
+                fontWeight: 600,
+              }}
+            >
+              Products
+            </Typography>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                pt: 1,
+                maxHeight: "300px",
+                overflowY: "auto",
+              }}
+            >
+              {formData.products.map((product, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    pr: 1,
+                    alignItems: "center",
+                    flexWrap: "nowrap",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      flexDirection: isMobile || isTablet ? "column" : "row",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <TextField
+                      size="small"
+                      type="text"
+                      fullWidth
+                      label="Eurocode"
+                      name={`products[${index}].eurocode`}
+                      value={product.eurocode}
+                      onChange={(e) => handleChange(e, index, "eurocode")}
+                      error={!!errors[`products.${index}.eurocode`]}
+                      helperText={errors[`products.${index}.eurocode`] || ""}
+                      sx={{
+                        width:
+                          isMobile || isTablet ? "100%" : "calc(50% - 4px)",
+                      }}
+                    />
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 1,
+                        alignItems: "center",
+                        flexWrap: "nowrap",
+                        width:
+                          isMobile || isTablet ? "100%" : "calc(50% - 4px)",
+                      }}
+                    >
+                      <TextField
+                        size="small"
+                        type="number"
+                        label="Amount"
+                        value={product.amount}
+                        onChange={(e) => {
+                          const value = Math.max(1, Number(e.target.value));
+                          handleChange({ target: { value } }, index, "amount");
+                        }}
+                        error={!!errors[`products.${index}.amount`]}
+                        helperText={errors[`products.${index}.amount`] || ""}
+                        sx={{ width: "40%" }}
+                      />
+
+                      <TextField
+                        size="small"
+                        type="number"
+                        label="Price"
+                        value={product.price}
+                        onChange={(e) => {
+                          const value = Math.max(0, Number(e.target.value));
+                          handleChange({ target: { value } }, index, "price");
+                        }}
+                        error={!!errors[`products.${index}.price`]}
+                        helperText={errors[`products.${index}.price`] || ""}
+                        slotProps={{
+                          input: {
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                €
+                              </InputAdornment>
+                            ),
+                          },
+                        }}
+                        sx={{ width: "60%" }}
+                      />
+                    </Box>
+                  </Box>
+
+                  <IconButton
+                    onClick={() => handleRemoveProduct(index)}
+                    disabled={formData.products.length === 1}
+                    sx={{
+                      p: 0,
+                      color: "var(--error)",
+                      "&:hover": { color: "var(--error-onhover)" },
+                    }}
+                  >
+                    <RemoveCircleIcon />
+                  </IconButton>
+                </Box>
+              ))}
+            </Box>
+
+            <Button
+              onClick={handleAddProduct}
+              startIcon={<AddCircleIcon />}
+              variant="outlined"
+              sx={{ mr: 1 }}
+            >
+              Add Product
+            </Button>
+          </Box>
+
           {/* Notes */}
           <Box>
             <Typography variant="textFieldLabel">
@@ -289,10 +478,12 @@ const UserModal = ({ onClose, order, setOrders }) => {
               type="text"
               placeholder="Some additional information..."
               name="notes"
-              value={formData["notes"]}
-              onChange={handleChange}
-              error={!!errors["notes"]}
-              helperText={errors["notes"] || ""}
+              value={formData.notes}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, notes: e.target.value }))
+              }
+              error={!!errors.notes}
+              helperText={errors.notes || ""}
               multiline
               rows={4}
             />
@@ -307,8 +498,8 @@ const UserModal = ({ onClose, order, setOrders }) => {
           <Button
             onClick={handleSubmit}
             variant="submit"
-            disabled={isSubmitDisabled}
             startIcon={<DoneIcon />}
+            disabled={isSubmitDisabled}
           >
             {isEdit ? "Update" : "Create"}
           </Button>
@@ -318,4 +509,4 @@ const UserModal = ({ onClose, order, setOrders }) => {
   );
 };
 
-export default UserModal;
+export default OrderModal;

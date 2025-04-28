@@ -2,7 +2,13 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
-    eurocode: { type: String, required: true, minlength: 2, maxlength: 20 },
+    products: [
+      {
+        eurocode: { type: String, required: true, minlength: 2, maxlength: 20 },
+        amount: { type: Number, required: true, min: 1 },
+        price: { type: Number, required: true, min: 0 },
+      },
+    ],
     client: {
       type: String,
       required: true,

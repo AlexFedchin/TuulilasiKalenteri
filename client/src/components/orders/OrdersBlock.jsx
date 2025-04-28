@@ -90,7 +90,7 @@ const Orders = () => {
       }}
     >
       <Typography variant="h4" sx={{ textAlign: "center" }}>
-        Orders
+        Tukku
       </Typography>
       <Box
         sx={{

@@ -29,7 +29,12 @@ body {
 
 ::-webkit-scrollbar {
   width: 10px;
-  height: 10px;
+}
+
+@media (max-width: 600px) {
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
 }
 
 ::-webkit-scrollbar-track {

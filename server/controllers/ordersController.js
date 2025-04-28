@@ -33,11 +33,11 @@ const getOrderById = async (req, res) => {
 
 // Create a new order
 const createOrder = async (req, res) => {
-  const { eurocode, client, notes } = req.body;
+  const { products, client, notes } = req.body;
 
   const newOrderData = {
-    eurocode: eurocode.trim(),
-    client: client,
+    products,
+    client,
   };
 
   if (notes?.trim()) {
@@ -70,10 +70,10 @@ const createOrder = async (req, res) => {
 
 // Update a order
 const updateOrder = async (req, res) => {
-  const { eurocode, client, notes } = req.body;
+  const { products, client, notes } = req.body;
 
   const updatedOrderData = {
-    eurocode: eurocode.trim(),
+    products,
     client,
   };
 

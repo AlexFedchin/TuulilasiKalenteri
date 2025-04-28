@@ -1,13 +1,37 @@
 const Joi = require("joi");
 
 const orderValidationSchema = Joi.object({
-  eurocode: Joi.string().min(2).max(20).required().messages({
-    "string.base": "Eurocode must be a string.",
-    "string.empty": "Eurocode is required.",
-    "string.min": "Eurocode must be at least 2 characters long.",
-    "string.max": "Eurocode must be at most 20 characters long.",
-    "any.required": "Eurocode is required.",
-  }),
+  products: Joi.array()
+    .items(
+      Joi.object({
+        eurocode: Joi.string().min(2).max(20).required().messages({
+          "string.base": "Eurocode must be a string.",
+          "string.empty": "Eurocode is required.",
+          "string.min": "Eurocode must be at least 2 characters long.",
+          "string.max": "Eurocode must be at most 20 characters long.",
+          "any.required": "Eurocode is required.",
+        }),
+        amount: Joi.number().integer().min(1).required().messages({
+          "number.base": "Amount must be a number.",
+          "number.integer": "Amount must be an integer.",
+          "number.min": "Amount must be at least 1.",
+          "any.required": "Amount is required.",
+        }),
+        price: Joi.number().integer().min(0).required().messages({
+          "number.base": "Price must be a number.",
+          "number.integer": "Price must be an integer.",
+          "number.min": "Price must be at least 0.",
+          "any.required": "Price is required.",
+        }),
+      })
+    )
+    .required()
+    .messages({
+      "array.base": "Products must be an array.",
+      "array.includesRequiredUnknowns":
+        "Each product must have eurocode, amount, and price.",
+      "any.required": "Products are required.",
+    }),
   client: Joi.string()
     .required()
     .valid(

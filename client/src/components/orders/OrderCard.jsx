@@ -45,6 +45,8 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
         flexDirection: "column",
         gap: 0.5,
         position: "relative",
+        height: "auto",
+        overflow: "visible",
       }}
     >
       {/* Note actions menu */}
@@ -121,20 +123,24 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
           maxWidth: "calc(100% - 20px)",
         }}
       >
-        {order.eurocode.toUpperCase()}
-      </Typography>
-
-      <Typography
-        variant="card"
-        color="inherit"
-        sx={{
-          wordBreak: "break-word",
-          overflow: "hidden",
-          hyphens: "auto",
-        }}
-      >
         {clientName}
       </Typography>
+
+      {order.products.map((product, index) => (
+        <Typography
+          key={index}
+          variant="card"
+          color="inherit"
+          sx={{
+            wordBreak: "break-word",
+            overflow: "hidden",
+            hyphens: "auto",
+            pl: 0.5,
+          }}
+        >
+          {product.eurocode.toUpperCase()}, {product.amount}pc
+        </Typography>
+      ))}
 
       {order.notes && (
         <>

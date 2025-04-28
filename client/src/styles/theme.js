@@ -35,7 +35,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
           bookingBox: {
             fontSize: isMobile ? "0.6rem" : isTablet ? "0.65rem" : "0.7rem",
             lineHeight: 1.2,
-            fontWeight: 500,
+            fontWeight: 600,
           },
           textFieldLabel: {
             fontWeight: "bold",
