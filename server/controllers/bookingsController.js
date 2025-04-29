@@ -14,6 +14,7 @@ const getAllBookings = async (req, res) => {
     plateNumber,
     phoneNumber,
     eurocode,
+    price,
     inStock,
     warehouseLocation,
     clientType,
@@ -39,6 +40,7 @@ const getAllBookings = async (req, res) => {
   if (plateNumber) filter.plateNumber = new RegExp(plateNumber, "i");
   if (phoneNumber) filter.phoneNumber = new RegExp(phoneNumber, "i");
   if (eurocode) filter.eurocode = new RegExp(eurocode, "i");
+  if (price) filter.price = Number(price);
   if (inStock !== undefined) filter.inStock = inStock === "true";
   if (warehouseLocation)
     filter.warehouseLocation = new RegExp(warehouseLocation, "i");
@@ -104,6 +106,7 @@ const createBooking = async (req, res) => {
     plateNumber,
     phoneNumber,
     eurocode,
+    price,
     inStock,
     warehouseLocation,
     clientType,
@@ -156,6 +159,7 @@ const createBooking = async (req, res) => {
       isWorkDone,
       phoneNumber: phoneNumber.trim(),
       eurocode: eurocode.trim().toUpperCase(),
+      price,
       inStock,
       warehouseLocation: inStock ? warehouseLocation.trim() : undefined,
       clientType,
@@ -199,6 +203,7 @@ const updateBooking = async (req, res) => {
     isWorkDone,
     phoneNumber,
     eurocode,
+    price,
     inStock,
     warehouseLocation,
     clientType,
@@ -262,6 +267,7 @@ const updateBooking = async (req, res) => {
       plateNumber: plateNumber.trim().toUpperCase(),
       phoneNumber: phoneNumber.trim(),
       eurocode: eurocode.trim().toUpperCase(),
+      price,
       inStock,
       warehouseLocation: inStock ? warehouseLocation.trim() : undefined,
       clientType,

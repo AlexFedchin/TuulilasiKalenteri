@@ -79,6 +79,11 @@ const BookingBox = ({ booking, onClick, left, width }) => {
         <Typography variant="bookingBox" color="inherit" sx={infoTextStyle}>
           p. {booking.phoneNumber}
         </Typography>
+        {booking?.price > 0 ? (
+          <Typography variant="bookingBox" color="inherit" sx={infoTextStyle}>
+            € {booking.price}
+          </Typography>
+        ) : null}
       </Box>
 
       {booking.insuranceNumber && (

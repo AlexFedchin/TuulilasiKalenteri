@@ -13,11 +13,13 @@ import {
   MenuItem,
   FormHelperText,
   Alert,
+  InputAdornment,
 } from "@mui/material";
 import AbcIcon from "@mui/icons-material/Abc";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CarIcon from "@mui/icons-material/DirectionsCar";
 import TagIcon from "@mui/icons-material/Tag";
+import PriceIcon from "@mui/icons-material/SellOutlined";
 import WarehouseIcon from "@mui/icons-material/Warehouse";
 import PersonIcon from "@mui/icons-material/Person";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -45,16 +47,44 @@ const bookingValidationSchema = Joi.object({
     .pattern(/^[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{0,4}$/)
     .min(2)
     .max(14)
-    .required(),
-  isWorkDone: Joi.boolean().required(),
+    .required()
+    .messages({
+      "string.pattern.base": "Invalid plate number format.",
+      "string.min": "Plate number must be at least 2 characters long.",
+      "string.max": "Plate number must not exceed 14 characters.",
+      "any.required": "Plate number is required.",
+    }),
+  isWorkDone: Joi.boolean().required().messages({
+    "any.required": "Work done status is required.",
+  }),
   phoneNumber: Joi.string()
     .pattern(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/)
     .min(10)
     .max(20)
-    .required(),
-  carModel: Joi.string().min(2).max(25).required(),
-  eurocode: Joi.string().min(2).max(20).required(),
-  inStock: Joi.boolean().required(),
+    .required()
+    .messages({
+      "string.pattern.base": "Invalid phone number format.",
+      "string.min": "Phone number must be at least 10 characters long.",
+      "string.max": "Phone number must not exceed 20 characters.",
+      "any.required": "Phone number is required.",
+    }),
+  carModel: Joi.string().min(2).max(25).required().messages({
+    "string.min": "Car model must be at least 2 characters long.",
+    "string.max": "Car model must not exceed 25 characters.",
+    "any.required": "Car model is required.",
+  }),
+  eurocode: Joi.string().min(2).max(20).required().messages({
+    "string.min": "Eurocode must be at least 2 characters long.",
+    "string.max": "Eurocode must not exceed 20 characters.",
+    "any.required": "Eurocode is required.",
+  }),
+  price: Joi.number().min(0).required().messages({
+    "number.min": "Price must be a positive number.",
+    "any.required": "Price is required.",
+  }),
+  inStock: Joi.boolean().required().messages({
+    "any.required": "In-stock status is required.",
+  }),
   warehouseLocation: Joi.string()
     .min(2)
     .max(50)
@@ -62,9 +92,23 @@ const bookingValidationSchema = Joi.object({
       is: true,
       then: Joi.required(),
       otherwise: Joi.allow(""),
+    })
+    .messages({
+      "string.min": "Warehouse location must be at least 2 characters long.",
+      "string.max": "Warehouse location must not exceed 50 characters.",
+      "any.required": "Warehouse location is required when in stock.",
     }),
-  clientType: Joi.string().valid("private", "company").required(),
-  payerType: Joi.string().valid("person", "company", "insurance").required(),
+  clientType: Joi.string().valid("private", "company").required().messages({
+    "any.only": "Client type must be either 'private' or 'company'.",
+    "any.required": "Client type is required.",
+  }),
+  payerType: Joi.string()
+    .valid("person", "company", "insurance")
+    .required()
+    .messages({
+      "any.only": "Payer type must be 'person', 'company', or 'insurance'.",
+      "any.required": "Payer type is required.",
+    }),
   insuranceCompany: Joi.string()
     .valid(
       "pohjolaVakuutus",
@@ -80,6 +124,10 @@ const bookingValidationSchema = Joi.object({
       is: "insurance",
       then: Joi.required(),
       otherwise: Joi.allow(""),
+    })
+    .messages({
+      "any.only": "Invalid insurance company.",
+      "any.required": "Insurance company is required for insurance payer type.",
     }),
   insuranceCompanyName: Joi.string()
     .min(2)
@@ -92,6 +140,13 @@ const bookingValidationSchema = Joi.object({
         otherwise: Joi.allow(""),
       }),
       otherwise: Joi.allow(""),
+    })
+    .messages({
+      "string.min":
+        "Insurance company name must be at least 2 characters long.",
+      "string.max": "Insurance company name must not exceed 50 characters.",
+      "any.required":
+        "Insurance company name is required when 'Other' is selected.",
     }),
   insuranceNumber: Joi.string()
     .min(5)
@@ -100,12 +155,32 @@ const bookingValidationSchema = Joi.object({
       is: "insurance",
       then: Joi.required(),
       otherwise: Joi.allow(""),
+    })
+    .messages({
+      "string.min": "Insurance number must be at least 5 characters long.",
+      "string.max": "Insurance number must not exceed 50 characters.",
+      "any.required": "Insurance number is required for insurance payer type.",
     }),
-  date: Joi.date().required(),
-  duration: Joi.number().min(0.5).max(6).required(),
-  notes: Joi.string().min(0).max(500).allow(""),
-  location: Joi.string().length(24).hex().required().allow(""),
-  invoiceMade: Joi.boolean().required().default(false),
+  date: Joi.date().required().messages({
+    "date.base": "Invalid date format.",
+    "any.required": "Date is required.",
+  }),
+  duration: Joi.number().min(0.5).max(6).required().messages({
+    "number.min": "Duration must be at least 0.5 hours.",
+    "number.max": "Duration must not exceed 6 hours.",
+    "any.required": "Duration is required.",
+  }),
+  notes: Joi.string().min(0).max(500).allow("").messages({
+    "string.max": "Notes must not exceed 500 characters.",
+  }),
+  location: Joi.string().length(24).hex().required().allow("").messages({
+    "string.length": "Location must be a valid 24-character hex string.",
+    "any.required": "Location is required.",
+  }),
+  invoiceMade: Joi.boolean().required().default(false).messages({
+    "boolean.base": "Invoice status must be a boolean.",
+    "any.required": "Invoice status is required.",
+  }),
 });
 
 const BookingModal = ({
@@ -221,6 +296,7 @@ const BookingModal = ({
     phoneNumber: booking?.phoneNumber || "",
     carModel: booking?.carModel || "",
     eurocode: booking?.eurocode || "",
+    price: booking?.price || 0,
     inStock: booking?.inStock || false,
     warehouseLocation: booking?.warehouseLocation || "",
     clientType: booking?.clientType || "private",
@@ -326,6 +402,10 @@ const BookingModal = ({
       if (name === "plateNumber") {
         setEuropeanPlateNumberWarning(validateEuropeanPlateNumber(value));
         updatedData.plateNumber = value.toUpperCase();
+      }
+
+      if (name === "price") {
+        updatedData.price = Math.max(Number(value), 0);
       }
 
       return updatedData;
@@ -507,55 +587,54 @@ const BookingModal = ({
           }}
         >
           {/* Plate number & is work done */}
-          <Box>
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="textFieldLabel">
-                  <AbcIcon fontSize="small" />
-                  Plate number
-                </Typography>
-                <TextField
-                  size="small"
-                  disabled={!isEditable}
-                  fullWidth
-                  margin="none"
-                  type="text"
-                  placeholder="XXX-123"
-                  name="plateNumber"
-                  value={formData["plateNumber"].toUpperCase()}
-                  onChange={handleChange}
-                  error={!!errors["plateNumber"]}
-                  helperText={errors["plateNumber"] || ""}
-                />
-                {europeanPlateNumberWarning && (
-                  <Alert severity="warning" sx={{ mt: 1 }}>
-                    This license plate doesn't look like a regular Finnish,
-                    Swedish or Estonian plate number. Please, check it to make
-                    sure it is correct.
-                  </Alert>
-                )}
-              </Box>
-              <Box
-                sx={{
-                  flexShrink: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography variant="textFieldLabel">Work done</Typography>
-                <Switch
-                  name="isWorkDone"
-                  checked={formData["isWorkDone"] || false}
-                  disabled={!isEditable}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      isWorkDone: e.target.checked,
-                    }))
-                  }
-                />
-              </Box>
+
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="textFieldLabel">
+                <AbcIcon fontSize="small" />
+                Plate number
+              </Typography>
+              <TextField
+                size="small"
+                disabled={!isEditable}
+                fullWidth
+                margin="none"
+                type="text"
+                placeholder="XXX-123"
+                name="plateNumber"
+                value={formData["plateNumber"].toUpperCase()}
+                onChange={handleChange}
+                error={!!errors["plateNumber"]}
+                helperText={errors["plateNumber"] || ""}
+              />
+              {europeanPlateNumberWarning && (
+                <Alert severity="warning" sx={{ mt: 1 }}>
+                  This license plate doesn't look like a regular Finnish,
+                  Swedish or Estonian plate number. Please, check it to make
+                  sure it is correct.
+                </Alert>
+              )}
+            </Box>
+            <Box
+              sx={{
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <Typography variant="textFieldLabel">Work done</Typography>
+              <Switch
+                name="isWorkDone"
+                checked={formData["isWorkDone"] || false}
+                disabled={!isEditable}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    isWorkDone: e.target.checked,
+                  }))
+                }
+              />
             </Box>
           </Box>
 
@@ -608,24 +687,52 @@ const BookingModal = ({
           </Box>
 
           {/* Eurocode */}
-          <Box>
-            <Typography variant="textFieldLabel">
-              <TagIcon fontSize="small" />
-              Eurocode
-            </Typography>
-            <TextField
-              size="small"
-              fullWidth
-              margin="none"
-              disabled={!isEditable}
-              type="text"
-              placeholder="Eurocode"
-              name="eurocode"
-              value={formData["eurocode"].toUpperCase()}
-              onChange={handleChange}
-              error={!!errors["eurocode"]}
-              helperText={errors["eurocode"] || ""}
-            />
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="textFieldLabel">
+                <TagIcon fontSize="small" />
+                Eurocode
+              </Typography>
+              <TextField
+                size="small"
+                fullWidth
+                margin="none"
+                disabled={!isEditable}
+                type="text"
+                placeholder="Eurocode"
+                name="eurocode"
+                value={formData["eurocode"].toUpperCase()}
+                onChange={handleChange}
+                error={!!errors["eurocode"]}
+                helperText={errors["eurocode"] || ""}
+              />
+            </Box>
+            <Box sx={{ width: "40%" }}>
+              <Typography variant="textFieldLabel">
+                <PriceIcon fontSize="small" />
+                Price
+              </Typography>
+              <TextField
+                size="small"
+                fullWidth
+                margin="none"
+                disabled={!isEditable}
+                type="number"
+                placeholder="Price"
+                name="price"
+                value={formData["price"]}
+                onChange={handleChange}
+                error={!!errors["price"]}
+                helperText={errors["price"] || ""}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">€</InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Box>
           </Box>
 
           {/* In stock & Location in warehouse */}
