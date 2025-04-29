@@ -1,4 +1,6 @@
 const Location = require("../models/location");
+const User = require("../models/user");
+const Booking = require("../models/booking");
 
 // Get all locations
 const getAllLocations = async (req, res) => {
@@ -9,7 +11,24 @@ const getAllLocations = async (req, res) => {
     } else {
       locations = await Location.find({ users: req.user.id });
     }
-    res.status(200).json(locations);
+
+    const locationsWithUsernames = await Promise.all(
+      locations.map(async (location) => {
+        location.users = await Promise.all(
+          location.users.map(async (userId) => {
+            const user = await User.findById(
+              userId,
+              "_id username firstName lastName"
+            );
+            return user;
+          })
+        );
+        return {
+          ...location.toObject(),
+        };
+      })
+    );
+    res.status(200).json(locationsWithUsernames);
   } catch (error) {
     console.error("Error getting all locations:", error);
     res.status(500).json({ error: error.message });
@@ -79,11 +98,20 @@ const updateLocation = async (req, res) => {
 // Delete a location
 const deleteLocation = async (req, res) => {
   try {
-    const deletedLocation = await Location.findByIdAndDelete(req.params.id);
+    const location = await Location.findById(req.params.id);
 
-    if (!deletedLocation) {
+    if (!location) {
       return res.status(404).json({ error: "Location not found" });
     }
+
+    // Delete all users associated with the location
+    await User.deleteMany({ _id: { $in: location.users } });
+
+    // Delete all bookings associated with the location
+    await Booking.deleteMany({ location: location._id });
+
+    // Delete the location itself
+    const deletedLocation = await Location.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ deletedLocationId: deletedLocation._id });
   } catch (error) {

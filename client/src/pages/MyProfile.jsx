@@ -61,7 +61,7 @@ const getStyles = (isMobile, isTablet) => ({
   },
 });
 
-const Admin = () => {
+const MyProfile = () => {
   const { user, setUser, token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
   const [editField, setEditField] = useState(null);
@@ -392,4 +392,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default MyProfile;

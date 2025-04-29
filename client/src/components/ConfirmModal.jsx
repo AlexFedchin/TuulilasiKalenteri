@@ -90,7 +90,7 @@ const ConfirmModal = ({ onConfirm, onClose, text }) => {
             maxHeight: "60vh",
           }}
         >
-          <Typography variant="body">
+          <Typography variant="body1">
             <span dangerouslySetInnerHTML={{ __html: text }} />
           </Typography>
         </Box>
