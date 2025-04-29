@@ -188,6 +188,15 @@ const Calendar = () => {
                     size: "small",
                     fullWidth: true,
                     variant: "outlined",
+                    InputProps: {
+                      sx: {
+                        fontSize: isMobile
+                          ? "0.9rem"
+                          : isTablet
+                          ? "0.95rem"
+                          : "1rem",
+                      },
+                    },
                   },
                 }}
               />
@@ -305,6 +314,15 @@ const Calendar = () => {
                     size: "small",
                     fullWidth: true,
                     variant: "outlined",
+                    InputProps: {
+                      sx: {
+                        fontSize: isMobile
+                          ? "0.9rem"
+                          : isTablet
+                          ? "0.95rem"
+                          : "1rem",
+                      },
+                    },
                   },
                 }}
               />

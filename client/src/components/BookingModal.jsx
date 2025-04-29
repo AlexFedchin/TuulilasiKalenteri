@@ -849,7 +849,10 @@ const BookingModal = ({
                 <DateTimePicker
                   format="DD.MM.YYYY HH:mm"
                   value={dayjs(formData["date"])}
-                  disabled={!isEditable}
+                  readOnly={!isEditable}
+                  sx={{
+                    pointerEvents: isEditable ? "auto" : "none",
+                  }}
                   onChange={(newValue) =>
                     handleChange({
                       target: {
@@ -872,6 +875,15 @@ const BookingModal = ({
                       variant: "outlined",
                       error: !!errors["date"],
                       helperText: errors["date"] || "",
+                      InputProps: {
+                        sx: {
+                          fontSize: isMobile
+                            ? "0.9rem"
+                            : isTablet
+                            ? "0.95rem"
+                            : "1rem",
+                        },
+                      },
                     },
                   }}
                 />

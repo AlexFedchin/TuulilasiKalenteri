@@ -100,6 +100,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             display: "flex",
             color: "var(--off-black)",
             gap: 8,
+            fontSize: isMobile ? "0.9rem" : isTablet ? "0.95rem" : "1rem",
             "&:-webkit-autofill": {
               boxShadow: "0 0 0 100px transparent inset !important",
               WebkitTextFillColor: "var(--off-black) !important",
@@ -222,6 +223,13 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
           },
         },
       },
+      // MuiOutlinedInput: {
+      //   styleOverrides: {
+      //     input: {
+      //       fontSize: "0.875rem", // adjust globally
+      //     },
+      //   },
+      // },
     },
   });
 
