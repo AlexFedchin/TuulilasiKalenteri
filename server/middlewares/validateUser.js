@@ -5,38 +5,75 @@ const userValidationSchema = Joi.object({
     .pattern(/^[a-zA-Z0-9_.-]+$/)
     .min(3)
     .max(30)
-    .required()
+    .when(Joi.ref("$isEdit"), {
+      is: true,
+      then: Joi.allow(""),
+      otherwise: Joi.required().messages({
+        "any.required": "Username is required.",
+        "string.empty": "Username cannot be empty.",
+      }),
+    })
     .messages({
       "string.pattern.base":
         "Username can only contain letters, numbers, underscores, dots, and hyphens.",
       "string.min": "Username must be at least 3 characters long.",
       "string.max": "Username must not exceed 30 characters.",
-      "any.required": "Username is required.",
-      "string.empty": "Username cannot be empty.",
     }),
-  firstName: Joi.string().min(2).max(50).required().messages({
-    "string.min": "First name must be at least 2 characters long.",
-    "string.max": "First name must not exceed 50 characters.",
-    "any.required": "First name is required.",
-    "string.empty": "Email cannot be empty.",
-  }),
-  lastName: Joi.string().min(2).max(50).required().messages({
-    "string.min": "Last name must be at least 2 characters long.",
-    "string.max": "Last name must not exceed 50 characters.",
-    "any.required": "Last name is required.",
-    "string.empty": "Email cannot be empty.",
-  }),
-  role: Joi.string().valid("regular", "admin").required().messages({
-    "any.only": "Role must be either 'regular' or 'admin'.",
-    "any.required": "Role is required.",
-  }),
+  firstName: Joi.string()
+    .min(2)
+    .max(50)
+    .when(Joi.ref("$isEdit"), {
+      is: true,
+      then: Joi.allow(""),
+      otherwise: Joi.required().messages({
+        "any.required": "First name is required.",
+        "string.empty": "First name cannot be empty.",
+      }),
+    })
+    .messages({
+      "string.min": "First name must be at least 2 characters long.",
+      "string.max": "First name must not exceed 50 characters.",
+    }),
+  lastName: Joi.string()
+    .min(2)
+    .max(50)
+    .when(Joi.ref("$isEdit"), {
+      is: true,
+      then: Joi.allow(""),
+      otherwise: Joi.required().messages({
+        "any.required": "Last name is required.",
+        "string.empty": "Last name cannot be empty.",
+      }),
+    })
+    .messages({
+      "string.min": "Last name must be at least 2 characters long.",
+      "string.max": "Last name must not exceed 50 characters.",
+    }),
+  role: Joi.string()
+    .valid("regular", "admin")
+    .when(Joi.ref("$isEdit"), {
+      is: true,
+      then: Joi.allow(""),
+      otherwise: Joi.required().messages({
+        "any.required": "Role is required.",
+        "string.empty": "Role cannot be empty.",
+      }),
+    })
+    .messages({
+      "any.only": "Role must be either 'regular' or 'admin'.",
+    }),
   email: Joi.string()
     .email({ tlds: { allow: false } })
-    .required()
+    .when(Joi.ref("$isEdit"), {
+      is: true,
+      then: Joi.allow(""),
+      otherwise: Joi.required().messages({
+        "any.required": "Email is required.",
+        "string.empty": "Email cannot be empty.",
+      }),
+    })
     .messages({
       "string.email": "Please provide a valid email address.",
-      "any.required": "Email is required.",
-      "string.empty": "Email cannot be empty.",
     }),
   password: Joi.string()
     .pattern(/^[a-zA-Z0-9_.-]+$/)

@@ -59,7 +59,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             fontWeight: 600,
           },
           h4: {
-            fontSize: isMobile ? "1.1rem" : isTablet ? "1.2rem" : "1.3rem",
+            fontSize: isMobile ? "1rem" : isTablet ? "1.15rem" : "1.3rem",
             fontWeight: 550,
           },
           h5: {

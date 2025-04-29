@@ -17,6 +17,7 @@ const checkUserOwnership = async (req, res, next) => {
 
     // Attach the user to the request object for further use
     req.targetUser = user;
+
     next();
   } catch (error) {
     res.status(400).json({ error: "Invalid user ID" });

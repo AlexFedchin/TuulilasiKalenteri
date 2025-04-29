@@ -65,6 +65,13 @@ const updateUser = async (req, res) => {
       location: updatedUser.location,
     });
   } catch (error) {
+    if (error.code === 11000 && error.keyPattern?.username) {
+      // Handle duplicate username error
+      return res
+        .status(400)
+        .json({ error: "User with this username already exists" });
+    }
+
     console.error("Error updating user:", error);
     res.status(500).json({ error: error.message });
   }
