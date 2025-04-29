@@ -2,6 +2,11 @@ const Booking = require("../models/booking.js");
 const User = require("../models/user.js");
 const Location = require("../models/location.js");
 const dayjs = require("dayjs");
+const timezone = require("dayjs/plugin/timezone");
+const utc = require("dayjs/plugin/utc");
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const getAllBookings = async (req, res) => {
   const {
@@ -121,7 +126,8 @@ const createBooking = async (req, res) => {
 
     // Check if the booking ends after 16:00
     const endTime = dayjs(date).add(duration, "hour");
-    const limitEndTime = dayjs(date)
+    const limitEndTime = dayjs
+      .tz(date, "Europe/Helsinki")
       .hour(16)
       .minute(0)
       .second(0)
@@ -227,7 +233,8 @@ const updateBooking = async (req, res) => {
 
     // Check if the booking ends after 16:00
     const endTime = dayjs(booking?.date).add(duration, "hour");
-    const limitEndTime = dayjs(booking?.date)
+    const limitEndTime = dayjs
+      .tz(booking?.date, "Europe/Helsinki")
       .hour(16)
       .minute(0)
       .second(0)
