@@ -19,7 +19,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
       MuiTypography: {
         styleOverrides: {
           body1: {
-            fontSize: isMobile ? "0.875rem" : isTablet ? "1rem" : "1.125rem",
+            fontSize: isMobile ? "0.85rem" : isTablet ? "0.95rem" : "1.05rem",
             fontWeight: 400,
           },
           body2: {

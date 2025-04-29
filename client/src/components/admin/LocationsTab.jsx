@@ -60,8 +60,11 @@ const LocationsTab = () => {
         const filtered = locations.filter(
           (location) =>
             location?.title?.toLowerCase().includes(lowerCaseTerm) ||
-            location?.users?.some((user) =>
-              user?.username?.toLowerCase().includes(lowerCaseTerm)
+            location?.users?.some(
+              (user) =>
+                user?.username?.toLowerCase().includes(lowerCaseTerm) ||
+                user?.firstName.toLowerCase().includes(lowerCaseTerm) ||
+                user?.lastName?.toLowerCase().includes(lowerCaseTerm)
             )
         );
         setFilteredLocations(filtered);
