@@ -137,7 +137,9 @@ const UsersTab = () => {
         alignItems: "center",
       }}
     >
-      <Card sx={{ p: 1, maxWidth: "500px", width: "100%" }}>
+      <Card
+        sx={{ p: 1, maxWidth: "500px", width: "100%", boxSizing: "border-box" }}
+      >
         <TextField
           placeholder="Search for users..."
           variant="outlined"

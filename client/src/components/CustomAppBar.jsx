@@ -9,21 +9,25 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
+  IconButton,
 } from "@mui/material";
 import LanguageIcon from "@mui/icons-material/Language";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 import AccountIcon from "@mui/icons-material/AccountCircle";
+import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import useScreenSize from "../hooks/useScreenSize";
 import i18n from "../utils/i18n";
 import { useTranslation } from "react-i18next";
+import MobileDrawer from "./MobileDrawer";
 
 const CustomAppBar = () => {
   const { user, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [languageAnchorEl, setLanguageAnchorEl] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { isMobile, isTablet } = useScreenSize();
@@ -38,6 +42,10 @@ const CustomAppBar = () => {
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
     setLanguageAnchorEl(null);
+  };
+
+  const toggleDrawer = (open) => () => {
+    setDrawerOpen(open);
   };
 
   const navItems = [
@@ -83,6 +91,7 @@ const CustomAppBar = () => {
           />
           {/* Navigation */}
           {!isMobile &&
+            !isTablet &&
             navItems.map((item) => (
               <Button
                 key={item.path}
@@ -100,77 +109,103 @@ const CustomAppBar = () => {
             ))}
         </Box>
 
-        {/* User info and dropdown */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Button
-            onClick={(e) => setAnchorEl(e.currentTarget)}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              color: "var(--off-black)",
-              textTransform: "none",
-            }}
-          >
-            <AccountIcon />
-            {user.username}
-          </Button>
+        {/* Drawer for mobile/tablet */}
+        {(isMobile || isTablet) && (
+          <>
+            <IconButton
+              edge="end"
+              color="inherit"
+              aria-label="menu"
+              onClick={toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <MobileDrawer
+              open={drawerOpen}
+              toggleDrawer={toggleDrawer}
+              navItems={navItems}
+              user={user}
+              handleLogout={handleLogout}
+              languageAnchorEl={languageAnchorEl}
+              setLanguageAnchorEl={setLanguageAnchorEl}
+              handleLanguageChange={handleLanguageChange}
+            />
+          </>
+        )}
 
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-          >
-            <MenuItem
-              onClick={() => {
-                setAnchorEl(null);
-                navigate("/my-profile");
+        {!isMobile && !isTablet && (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            {/* User info and dropdown */}
+            <Button
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: "var(--off-black)",
+                textTransform: "none",
               }}
             >
-              <ListItemIcon sx={{ color: "inherit" }}>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText>{t("menu.myProfile")}</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleLogout} sx={{ color: "var(--error)" }}>
-              <ListItemIcon sx={{ color: "inherit" }}>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText>{t("menu.logout")}</ListItemText>
-            </MenuItem>
-          </Menu>
+              <AccountIcon />
+              {user.username}
+            </Button>
 
-          {/* Language Selector */}
-          <Button
-            onClick={(e) => setLanguageAnchorEl(e.currentTarget)}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              color: "var(--off-black)",
-              textTransform: "none",
-            }}
-          >
-            <LanguageIcon />
-            {i18n.language.toUpperCase()}
-          </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={() => setAnchorEl(null)}
+            >
+              <MenuItem
+                onClick={() => {
+                  setAnchorEl(null);
+                  navigate("/my-profile");
+                }}
+              >
+                <ListItemIcon sx={{ color: "inherit" }}>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText>{t("menu.myProfile")}</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={handleLogout} sx={{ color: "var(--error)" }}>
+                <ListItemIcon sx={{ color: "inherit" }}>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText>{t("menu.logout")}</ListItemText>
+              </MenuItem>
+            </Menu>
 
-          <Menu
-            anchorEl={languageAnchorEl}
-            open={Boolean(languageAnchorEl)}
-            onClose={() => setLanguageAnchorEl(null)}
-          >
-            <MenuItem onClick={() => handleLanguageChange("en")}>
-              {t("language.english")}
-            </MenuItem>
-            <MenuItem onClick={() => handleLanguageChange("fi")}>
-              {t("language.finnish")}
-            </MenuItem>
-            <MenuItem onClick={() => handleLanguageChange("ru")}>
-              {t("language.russian")}
-            </MenuItem>
-          </Menu>
-        </Box>
+            {/* Language Selector */}
+            <Button
+              onClick={(e) => setLanguageAnchorEl(e.currentTarget)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: "var(--off-black)",
+                textTransform: "none",
+              }}
+            >
+              <LanguageIcon />
+              {i18n.language.toUpperCase()}
+            </Button>
+
+            <Menu
+              anchorEl={languageAnchorEl}
+              open={Boolean(languageAnchorEl)}
+              onClose={() => setLanguageAnchorEl(null)}
+            >
+              <MenuItem onClick={() => handleLanguageChange("en")}>
+                {t("language.english")}
+              </MenuItem>
+              <MenuItem onClick={() => handleLanguageChange("fi")}>
+                {t("language.finnish")}
+              </MenuItem>
+              <MenuItem onClick={() => handleLanguageChange("ru")}>
+                {t("language.russian")}
+              </MenuItem>
+            </Menu>
+          </Box>
+        )}
       </Toolbar>
     </AppBar>
   );

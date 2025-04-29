@@ -14,9 +14,11 @@ const Admin = () => {
 
   return (
     <DefaultContainer>
-      <Typography variant="h2">Admin</Typography>
+      <Typography variant="h2" marginBottom={-2}>
+        Admin
+      </Typography>
 
-      <Tabs value={tabIndex} onChange={handleTabChange} sx={{ mb: 2 }}>
+      <Tabs value={tabIndex} onChange={handleTabChange}>
         <Tab label="Users" />
         <Tab label="Locations" />
         <Tab label="Invoices" />

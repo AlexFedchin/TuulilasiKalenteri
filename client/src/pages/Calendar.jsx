@@ -13,6 +13,7 @@ import ArrowForwardIcon from "@mui/icons-material/KeyboardBackspace";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
@@ -289,7 +290,7 @@ const Calendar = () => {
             }}
           >
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
+              <MobileDatePicker
                 value={currentDate}
                 format="D.M.YYYY"
                 onChange={(newValue) => {
