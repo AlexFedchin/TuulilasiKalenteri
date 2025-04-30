@@ -193,7 +193,6 @@ const WeekCalendar = ({
                   <ArrowBackIcon
                     fontSize="small"
                     onClick={() => setMode("locations")}
-                    sx={{ color: "var(--off-black)" }}
                   />
                 </IconButton>
               )}

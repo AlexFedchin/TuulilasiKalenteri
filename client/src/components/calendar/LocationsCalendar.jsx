@@ -7,7 +7,13 @@ import {
   TableRow,
   Box,
   Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  Checkbox,
+  Button,
 } from "@mui/material";
+import FilterIcon from "@mui/icons-material/FilterAlt";
 import dayjs from "dayjs";
 import useScreenSize from "../../hooks/useScreenSize";
 import BookingBox from "./BookingBox";
@@ -172,6 +178,36 @@ const LocationsCalendar = ({
     return bookings?.length === 0 && (!isPastDate || isAdmin);
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedLocations, setSelectedLocations] = useState([]);
+
+  const handleFilterClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleFilterClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLocationToggle = (locationId) => {
+    setSelectedLocations((prev) =>
+      prev.includes(locationId)
+        ? prev.filter((id) => id !== locationId)
+        : [...prev, locationId]
+    );
+  };
+
+  const handleLocationsClear = () => {
+    setSelectedLocations([]);
+    setAnchorEl(null);
+  };
+
+  const filteredLocations = locations.filter((location) =>
+    selectedLocations.length > 0
+      ? selectedLocations.includes(location._id)
+      : true
+  );
+
   return (
     <>
       <Table sx={{ tableLayout: "fixed", width: "100%" }}>
@@ -180,17 +216,53 @@ const LocationsCalendar = ({
             <TableCell
               sx={{
                 border: "none",
-                py: 0.5,
-                pr: 0.5,
+                py: 0,
+                pr: 0,
                 pl: 0,
                 width: isMobile ? "36px" : isTablet ? "42px" : "48px",
                 minWidth: isMobile ? "36px" : isTablet ? "42px" : "48px",
                 maxWidth: isMobile ? "36px" : isTablet ? "42px" : "48px",
                 boxSizing: "border-box",
+                textAlign: "center",
               }}
-            />
+            >
+              <IconButton onClick={handleFilterClick}>
+                <FilterIcon fontSize="small" />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleFilterClose}
+              >
+                {locations.map((location) => (
+                  <MenuItem
+                    key={location._id}
+                    sx={{ color: "var(--off-black)" }}
+                    onClick={() => {
+                      handleLocationToggle(location._id);
+                    }}
+                  >
+                    <Checkbox
+                      checked={selectedLocations.includes(location._id)}
+                      sx={{ ml: -1 }}
+                    />
+                    <Typography variant="body2" sx={{ color: "inherit" }}>
+                      {location.title}
+                    </Typography>
+                  </MenuItem>
+                ))}
+                <Button
+                  onClick={handleLocationsClear}
+                  size="small"
+                  color="error"
+                  sx={{ width: "90%", mx: "5%", boxSizing: "border-box" }}
+                >
+                  Clear
+                </Button>
+              </Menu>
+            </TableCell>
 
-            {locations.map((location) => (
+            {filteredLocations.map((location) => (
               <TableCell
                 key={location._id}
                 align="center"
@@ -244,7 +316,7 @@ const LocationsCalendar = ({
                     {time}
                   </Typography>
                 </TableCell>
-                {locations.map((location) => {
+                {filteredLocations.map((location) => {
                   const bookingsForSlot = getBookingForTimeSlot(time, location);
                   const widthNum =
                     bookingsForSlot.length > 0
