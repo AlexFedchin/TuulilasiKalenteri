@@ -226,40 +226,44 @@ const LocationsCalendar = ({
                 textAlign: "center",
               }}
             >
-              <IconButton onClick={handleFilterClick}>
-                <FilterIcon fontSize="small" />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleFilterClose}
-              >
-                {locations.map((location) => (
-                  <MenuItem
-                    key={location._id}
-                    sx={{ color: "var(--off-black)" }}
-                    onClick={() => {
-                      handleLocationToggle(location._id);
-                    }}
+              {!locationsLoading && (
+                <>
+                  <IconButton onClick={handleFilterClick}>
+                    <FilterIcon fontSize="small" />
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleFilterClose}
                   >
-                    <Checkbox
-                      checked={selectedLocations.includes(location._id)}
-                      sx={{ ml: -1 }}
-                    />
-                    <Typography variant="body2" sx={{ color: "inherit" }}>
-                      {location.title}
-                    </Typography>
-                  </MenuItem>
-                ))}
-                <Button
-                  onClick={handleLocationsClear}
-                  size="small"
-                  color="error"
-                  sx={{ width: "90%", mx: "5%", boxSizing: "border-box" }}
-                >
-                  Clear
-                </Button>
-              </Menu>
+                    {locations.map((location) => (
+                      <MenuItem
+                        key={location._id}
+                        sx={{ color: "var(--off-black)" }}
+                        onClick={() => {
+                          handleLocationToggle(location._id);
+                        }}
+                      >
+                        <Checkbox
+                          checked={selectedLocations.includes(location._id)}
+                          sx={{ ml: -1 }}
+                        />
+                        <Typography variant="body2" sx={{ color: "inherit" }}>
+                          {location.title}
+                        </Typography>
+                      </MenuItem>
+                    ))}
+                    <Button
+                      onClick={handleLocationsClear}
+                      size="small"
+                      color="error"
+                      sx={{ width: "90%", mx: "5%", boxSizing: "border-box" }}
+                    >
+                      Clear
+                    </Button>
+                  </Menu>
+                </>
+              )}
             </TableCell>
 
             {filteredLocations.map((location) => (
