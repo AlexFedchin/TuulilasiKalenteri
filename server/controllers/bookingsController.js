@@ -17,6 +17,7 @@ const getAllBookings = async (req, res) => {
     price,
     inStock,
     warehouseLocation,
+    isOrdered,
     clientType,
     payerType,
     insuranceCompany,
@@ -44,6 +45,7 @@ const getAllBookings = async (req, res) => {
   if (inStock !== undefined) filter.inStock = inStock === "true";
   if (warehouseLocation)
     filter.warehouseLocation = new RegExp(warehouseLocation, "i");
+  if (isOrdered !== undefined) filter.isOrdered = isOrdered === "true";
   if (clientType) filter.clientType = new RegExp(clientType, "i");
   if (payerType) filter.payerType = new RegExp(payerType, "i");
   if (insuranceCompany)
@@ -109,6 +111,7 @@ const createBooking = async (req, res) => {
     price,
     inStock,
     warehouseLocation,
+    isOrdered,
     clientType,
     payerType,
     insuranceCompany,
@@ -162,6 +165,7 @@ const createBooking = async (req, res) => {
       price,
       inStock,
       warehouseLocation: inStock ? warehouseLocation.trim() : undefined,
+      isOrdered: inStock ? undefined : isOrdered,
       clientType,
       payerType,
       insuranceCompany:
@@ -206,6 +210,7 @@ const updateBooking = async (req, res) => {
     price,
     inStock,
     warehouseLocation,
+    isOrdered,
     clientType,
     payerType,
     insuranceCompany,
@@ -270,6 +275,7 @@ const updateBooking = async (req, res) => {
       price,
       inStock,
       warehouseLocation: inStock ? warehouseLocation.trim() : undefined,
+      isOrdered: inStock ? undefined : isOrdered,
       clientType,
       payerType,
       insuranceCompany:

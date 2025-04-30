@@ -98,6 +98,16 @@ const bookingValidationSchema = Joi.object({
       "string.max": "Warehouse location must not exceed 50 characters.",
       "any.required": "Warehouse location is required when in stock.",
     }),
+  isOrdered: Joi.boolean()
+    .when("inStock", {
+      is: false,
+      then: Joi.required(),
+    })
+    .default(false)
+    .messages({
+      "any.required": "Ordered status is required.",
+      "boolean.base": "Ordered status must be a boolean.",
+    }),
   clientType: Joi.string().valid("private", "company").required().messages({
     "any.only": "Client type must be either 'private' or 'company'.",
     "any.required": "Client type is required.",
@@ -299,6 +309,7 @@ const BookingModal = ({
     price: booking?.price || 0,
     inStock: booking?.inStock || false,
     warehouseLocation: booking?.warehouseLocation || "",
+    isOrdered: booking?.isOrdered || false,
     clientType: booking?.clientType || "private",
     payerType: booking?.payerType || "person",
     insuranceCompany: booking?.insuranceCompany || "pohjolaVakuutus",
@@ -786,6 +797,7 @@ const BookingModal = ({
                 }}
               />
             </Box>
+
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="textFieldLabel">
                 <WarehouseIcon fontSize="small" />
@@ -805,6 +817,30 @@ const BookingModal = ({
                 helperText={errors["warehouseLocation"] || ""}
               />
             </Box>
+
+            {!formData["inStock"] && (
+              <Box
+                sx={{
+                  flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography variant="textFieldLabel">Ordered</Typography>
+                <Switch
+                  checked={formData["isOrdered"] || false}
+                  name="isOrdered"
+                  disabled={!isEditable}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      isOrdered: e.target.checked,
+                    }));
+                  }}
+                />
+              </Box>
+            )}
           </Box>
 
           {/* Client */}

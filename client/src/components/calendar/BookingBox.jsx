@@ -36,12 +36,16 @@ const BookingBox = ({ booking, onClick, left, width }) => {
           ? "var(--success)"
           : booking.inStock
           ? "var(--primary)"
+          : booking.isOrdered
+          ? "var(--ordered)"
           : "var(--error)",
         "&:hover": {
           backgroundColor: booking.isWorkDone
             ? "var(--success-onhover)"
             : booking.inStock
             ? "var(--primary-onhover)"
+            : booking.isOrdered
+            ? "var(--ordered-onhover)"
             : "var(--error-onhover)",
         },
         transition: "background-color 0.2s ease",

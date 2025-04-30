@@ -29,6 +29,13 @@ const bookingSchema = new mongoose.Schema(
         return this.inStock;
       },
     },
+    isOrdered: {
+      type: Boolean,
+      default: false,
+      required: function () {
+        return !this.inStock;
+      },
+    },
     clientType: {
       type: String,
       enum: ["private", "company"],

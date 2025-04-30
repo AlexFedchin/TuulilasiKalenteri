@@ -58,6 +58,16 @@ const bookingValidationSchema = Joi.object({
       "string.max": "Warehouse location must not exceed 50 characters.",
       "any.required": "Warehouse location is required when in stock.",
     }),
+  isOrdered: Joi.boolean()
+    .when("inStock", {
+      is: false,
+      then: Joi.required(),
+    })
+    .default(false)
+    .messages({
+      "any.required": "Ordered status is required.",
+      "boolean.base": "Ordered status must be a boolean.",
+    }),
   clientType: Joi.string().valid("private", "company").required().messages({
     "any.only": "Client type must be either 'private' or 'company'.",
     "any.required": "Client type is required.",
