@@ -150,7 +150,7 @@ const BookingBoxTooltip = ({ booking, children }) => {
             </Typography>
           )}
           <Typography variant="body2">
-            <strong>Invoice Made:</strong> {booking.invoiceMade ? "Yes" : "No"}
+            <strong>Work done:</strong> {booking.isWorkDone ? "Yes" : "No"}
           </Typography>
         </Box>
       }
