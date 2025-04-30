@@ -102,8 +102,10 @@ const OrderModal = ({ onClose, order, setOrders }) => {
     products: order?.products.map(({ eurocode, amount, price }) => ({
       eurocode,
       amount,
+      tmpAmount: amount,
       price,
-    })) || [{ eurocode: "", amount: 1, price: 0 }],
+      tmpPrice: price,
+    })) || [{ eurocode: "", amount: 1, tmpAmount: 1, price: 0, tmpPrice: 0 }],
     client: order?.client || clients[0].value,
     clientName: order?.clientName || "",
     notes: order?.notes || "",
@@ -148,8 +150,24 @@ const OrderModal = ({ onClose, order, setOrders }) => {
     !formData.client.trim() ||
     (formData.client === "other" && formData.clientName.trim() === "");
 
+  // Submit function
   const handleSubmit = async () => {
-    const { error } = orderValidationSchema.validate(formData, {
+    // Clean products array by removing tmp fields
+    const cleanedProducts = formData.products.map(
+      ({ eurocode, amount, price }) => ({
+        eurocode,
+        amount,
+        price,
+      })
+    );
+
+    // Create cleaned formData to send
+    const payload = {
+      ...formData,
+      products: cleanedProducts,
+    };
+
+    const { error } = orderValidationSchema.validate(payload, {
       abortEarly: false,
     });
 
@@ -168,6 +186,8 @@ const OrderModal = ({ onClose, order, setOrders }) => {
     const endpoint = isEdit ? `/api/orders/${order._id}` : "/api/orders";
     const method = isEdit ? "PUT" : "POST";
 
+    console.log("Submitting order:", payload);
+
     try {
       const response = await fetch(endpoint, {
         method,
@@ -175,7 +195,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
@@ -405,10 +425,36 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                         size="small"
                         type="number"
                         label="Amount"
-                        value={product.amount}
+                        value={product.tmpAmount}
                         onChange={(e) => {
-                          const value = Math.max(1, Number(e.target.value));
+                          handleChange(
+                            { target: { value: e.target.value } },
+                            index,
+                            "tmpAmount"
+                          );
+                        }}
+                        onBlur={(e) => {
+                          let value = 1;
+
+                          if (e.target.value === "") {
+                            value = 1;
+                          } else {
+                            value = Math.max(
+                              Math.round(Number(e.target.value)),
+                              1
+                            );
+                          }
                           handleChange({ target: { value } }, index, "amount");
+                          handleChange(
+                            { target: { value } },
+                            index,
+                            "tmpAmount"
+                          );
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.target.blur();
+                          }
                         }}
                         error={!!errors[`products.${index}.amount`]}
                         helperText={errors[`products.${index}.amount`] || ""}
@@ -419,10 +465,36 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                         size="small"
                         type="number"
                         label="Price"
-                        value={product.price}
+                        value={product.tmpPrice}
                         onChange={(e) => {
-                          const value = Math.max(0, Number(e.target.value));
+                          handleChange(
+                            { target: { value: e.target.value } },
+                            index,
+                            "tmpPrice"
+                          );
+                        }}
+                        onBlur={(e) => {
+                          let value = 0;
+
+                          if (e.target.value === "") {
+                            value = 0;
+                          } else {
+                            value = Math.max(
+                              Math.round(Number(e.target.value)),
+                              0
+                            );
+                          }
                           handleChange({ target: { value } }, index, "price");
+                          handleChange(
+                            { target: { value } },
+                            index,
+                            "tmpPrice"
+                          );
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.target.blur();
+                          }
                         }}
                         error={!!errors[`products.${index}.price`]}
                         helperText={errors[`products.${index}.price`] || ""}

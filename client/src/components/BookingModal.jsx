@@ -310,6 +310,7 @@ const BookingModal = ({
     location: booking?.location || location || "",
     invoiceMade: booking?.invoiceMade || false,
   });
+  const [tmpPrice, setTmpPrice] = useState(formData["price"]);
   const [locations, setLocations] = useState([]);
   const [finnishPhoneNumberWarning, setFinnishPhoneNumberWarning] = useState(
     validateFinnishPhoneNumber(formData.phoneNumber)
@@ -405,7 +406,8 @@ const BookingModal = ({
       }
 
       if (name === "price") {
-        updatedData.price = Math.max(Number(value), 0);
+        updatedData.price = Math.max(Math.round(Number(value)), 0);
+        setTmpPrice(Math.max(Math.round(Number(value)), 0));
       }
 
       return updatedData;
@@ -720,16 +722,32 @@ const BookingModal = ({
                 type="number"
                 placeholder="Price"
                 name="price"
-                value={formData["price"]}
-                onChange={handleChange}
+                value={tmpPrice}
+                onChange={(e) => {
+                  setTmpPrice(e.target.value);
+                }}
+                onBlur={(e) => {
+                  let value = 0;
+
+                  if (e.target.value === "") {
+                    value = 0;
+                  } else {
+                    value = Number(e.target.value);
+                  }
+
+                  handleChange({ target: { name: "price", value } });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.target.blur();
+                  }
+                }}
                 error={!!errors["price"]}
                 helperText={errors["price"] || ""}
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">€</InputAdornment>
-                    ),
-                  },
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">€</InputAdornment>
+                  ),
                 }}
               />
             </Box>
