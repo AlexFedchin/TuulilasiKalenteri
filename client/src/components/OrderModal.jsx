@@ -186,8 +186,6 @@ const OrderModal = ({ onClose, order, setOrders }) => {
     const endpoint = isEdit ? `/api/orders/${order._id}` : "/api/orders";
     const method = isEdit ? "PUT" : "POST";
 
-    console.log("Submitting order:", payload);
-
     try {
       const response = await fetch(endpoint, {
         method,
