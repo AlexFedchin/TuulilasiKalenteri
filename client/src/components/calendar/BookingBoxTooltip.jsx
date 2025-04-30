@@ -4,8 +4,12 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import { insuranceCompanies } from "../../utils/insuranceCompanies";
+import { useAuth } from "../../context/AuthContext";
 
 const BookingBoxTooltip = ({ booking, children }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
+
   const infoRowStyle = {
     display: "flex",
     flexDirection: "row",
@@ -152,6 +156,12 @@ const BookingBoxTooltip = ({ booking, children }) => {
           <Typography variant="body2">
             <strong>Work done:</strong> {booking.isWorkDone ? "Yes" : "No"}
           </Typography>
+          {isAdmin && booking.payerType === "insurance" && (
+            <Typography variant="body2">
+              <strong>Invoice sent:</strong>{" "}
+              {booking.invoiceMade ? "Yes" : "No"}
+            </Typography>
+          )}
         </Box>
       }
       placement="top"
