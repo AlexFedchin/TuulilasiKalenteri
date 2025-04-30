@@ -86,7 +86,7 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
           justifyContent: "space-between",
         }}
       >
-        {/* Icon and Username */}
+        {/* Icon and Title */}
         <Box
           sx={{
             display: "flex",

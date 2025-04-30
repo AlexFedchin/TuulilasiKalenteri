@@ -11,6 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Loader from "../loader/Loader";
 import LocationCard from "./LocationCard";
 import ConfirmModal from "../ConfirmModal";
+import NewLocationCard from "./NewLocationCard";
 import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 
@@ -22,6 +23,7 @@ const LocationsTab = () => {
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [filteredLocations, setFilteredLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isAdding, setIsAdding] = useState(false);
 
   // Fetch locations data from the server
   useEffect(() => {
@@ -82,7 +84,6 @@ const LocationsTab = () => {
   };
 
   const deleteLocation = async (locationId) => {
-    setLoading(true);
     try {
       const response = await fetch(`/api/locations/${locationId}`, {
         method: "DELETE",
@@ -101,14 +102,20 @@ const LocationsTab = () => {
     } catch (error) {
       console.error("Error deleting location:", error);
       alert.error(`Error: ${error.message}`);
-    } finally {
-      setLoading(false);
     }
   };
 
   const onDeleteClick = (location) => {
     setSelectedLocation(location);
     setOpenConfirmModal(true);
+  };
+
+  const handleAddClick = () => {
+    setIsAdding(true);
+  };
+
+  const handleCancelAdd = () => {
+    setIsAdding(false);
   };
 
   useEffect(() => {
@@ -170,23 +177,31 @@ const LocationsTab = () => {
                 onDelete={onDeleteClick}
               />
             ))}
+            {isAdding && (
+              <NewLocationCard
+                setLocations={setLocations}
+                onCancel={handleCancelAdd}
+              />
+            )}
           </Box>
-          <IconButton
-            onClick={() => console.log("Create new location")}
-            sx={{
-              width: "40px",
-              height: "40px",
-              alignSelf: "center",
-              color: "var(--primary)",
-              backgroundColor: "var(--white)",
-              "&:hover": {
-                backgroundColor: "var(--white-onhover)",
-                color: "var(--primary-onhover)",
-              },
-            }}
-          >
-            <AddIcon />
-          </IconButton>
+          {!isAdding && (
+            <IconButton
+              onClick={handleAddClick}
+              sx={{
+                width: "40px",
+                height: "40px",
+                alignSelf: "center",
+                color: "var(--primary)",
+                backgroundColor: "var(--white)",
+                "&:hover": {
+                  backgroundColor: "var(--white-onhover)",
+                  color: "var(--primary-onhover)",
+                },
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          )}
         </>
       )}
 
