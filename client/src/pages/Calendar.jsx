@@ -396,7 +396,7 @@ const Calendar = () => {
             flexDirection: "row",
             alignItems: "stretch",
             boxSizing: "border-box",
-            maxHeight: "670.88px",
+            maxHeight: "676px",
             py: 0.5,
             width: isAdmin
               ? isMobile || isTablet
