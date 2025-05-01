@@ -38,17 +38,6 @@ const BookingBoxTooltip = ({ booking, children }) => {
     return company ? company.logo : null;
   };
 
-  const getDurationText = () => {
-    if (booking.duration === 1) {
-      return "1 hour";
-    } else if (booking.duration > 1 && booking.duration < 24) {
-      return `${booking.duration} hours`;
-    } else if (booking.duration < 1) {
-      return `${booking.duration * 60} minutes`;
-    }
-    return `${booking.duration} hours`;
-  };
-
   return (
     <Tooltip
       title={
@@ -143,10 +132,8 @@ const BookingBoxTooltip = ({ booking, children }) => {
           )}
           <Typography variant="body2">
             <strong>Date and Time:</strong>{" "}
-            {dayjs(booking.date).format("DD.MM.YYYY, HH:mm")}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Duration:</strong> {getDurationText()}
+            {dayjs(booking.date).format("DD.MM.YYYY, HH:mm")} -{" "}
+            {dayjs(booking.date).add(booking.duration, "hour").format("HH:mm")}
           </Typography>
           {booking.notes && (
             <Typography variant="body2">

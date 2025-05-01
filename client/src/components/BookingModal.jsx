@@ -563,7 +563,6 @@ const BookingModal = ({
           }}
         >
           {/* Plate number & is work done */}
-
           <Box sx={{ display: "flex", gap: 2 }}>
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="textFieldLabel">
@@ -583,13 +582,6 @@ const BookingModal = ({
                 error={!!errors["plateNumber"]}
                 helperText={errors["plateNumber"] || ""}
               />
-              {europeanPlateNumberWarning && (
-                <Alert severity="warning" sx={{ mt: 1 }}>
-                  This license plate doesn't look like a regular Finnish,
-                  Swedish or Estonian plate number. Please, check it to make
-                  sure it is correct.
-                </Alert>
-              )}
             </Box>
             <Box
               sx={{
@@ -613,6 +605,13 @@ const BookingModal = ({
               />
             </Box>
           </Box>
+          {europeanPlateNumberWarning && (
+            <Alert severity="warning" sx={{ mt: -1 }}>
+              This license plate doesn't look like a regular Finnish, Swedish or
+              Estonian plate number. Please, check it to make sure it is
+              correct.
+            </Alert>
+          )}
 
           {/* Phone number */}
           <Box>
@@ -727,8 +726,8 @@ const BookingModal = ({
             </Box>
           </Box>
 
-          {/* In stock & Location in warehouse */}
-          <Box sx={{ display: "flex", gap: 2 }}>
+          {/* In stock, Location in warehouse & is ordered */}
+          <Box sx={{ display: "flex", gap: isMobile ? 1 : 2 }}>
             <Box
               sx={{
                 flexShrink: 0,
@@ -874,7 +873,9 @@ const BookingModal = ({
 
           {/* Insurance company, insurance company name & insurance number */}
           {formData["payerType"] === "insurance" ? (
-            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+            <Box
+              sx={{ display: "flex", gap: isMobile ? 1 : 2, flexWrap: "wrap" }}
+            >
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <InsuranceCompanyIcon fontSize="small" />
@@ -964,7 +965,14 @@ const BookingModal = ({
 
           {/* Date & Duration */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: "-5px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: isMobile ? 1 : 2,
+                flexWrap: "wrap",
+                mb: "-5px",
+              }}
+            >
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <DateIcon fontSize="small" />

@@ -138,7 +138,7 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
             pl: 0.5,
           }}
         >
-          {product.eurocode.toUpperCase()}, {product.amount}pc
+          {product.eurocode.toUpperCase()}, {product.amount}pc, €{product.price}
         </Typography>
       ))}
 
