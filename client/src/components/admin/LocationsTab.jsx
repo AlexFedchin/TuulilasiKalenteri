@@ -156,7 +156,7 @@ const LocationsTab = () => {
       </Card>
 
       {loading ? (
-        <Loader style={{ marginTop: "15vh" }} />
+        <Loader style={{ marginTop: "20vh" }} />
       ) : (
         <>
           <Box

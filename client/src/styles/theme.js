@@ -8,6 +8,11 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
         contrastText: "#fcfcfc",
         hover: "#2690ce",
       },
+      error: {
+        main: "#e63f3f",
+        contrastText: "#fcfcfc",
+        hover: "#cf3030",
+      },
     },
     typography: {
       fontFamily: "'Montserrat', Arial, Helvetica, sans-serif",
@@ -220,6 +225,38 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             height: isMobile ? "34px" : isTablet ? "37px" : "40px",
             paddingLeft: isMobile ? 12 : isTablet ? 14 : 16,
             paddingRight: isMobile ? 12 : isTablet ? 14 : 16,
+          },
+        },
+      },
+      MuiToggleButton: {
+        styleOverrides: {
+          root: {
+            transition: "background-color 0.3s ease, color 0.3s ease",
+            borderRadius: "4px",
+            fontSize: isTablet ? "0.75rem" : "0.875rem",
+            "&.Mui-selected": {
+              backgroundColor: "var(--primary)",
+              color: "var(--white)",
+              "&:hover": {
+                backgroundColor: "var(--primary-onhover)",
+              },
+            },
+            "&.Mui-selected:hover": {
+              backgroundColor: "var(--primary-onhover)",
+            },
+          },
+        },
+      },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            color: "var(--off-black)",
+            "&.Mui-selected": {
+              color: "var(--primary)",
+            },
+            "&:hover": {
+              color: "var(--primary-onhover)",
+            },
           },
         },
       },

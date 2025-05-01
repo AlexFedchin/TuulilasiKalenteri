@@ -19,15 +19,15 @@ const Admin = () => {
       </Typography>
 
       <Tabs value={tabIndex} onChange={handleTabChange}>
+        <Tab label="Invoices" />
         <Tab label="Users" />
         <Tab label="Locations" />
-        <Tab label="Invoices" />
       </Tabs>
 
       <Box sx={{ width: "100%" }}>
-        {tabIndex === 0 && <UsersTab />}
-        {tabIndex === 1 && <LocationsTab />}
-        {tabIndex === 2 && <InvoicesTab />}
+        {tabIndex === 0 && <InvoicesTab />}
+        {tabIndex === 1 && <UsersTab />}
+        {tabIndex === 2 && <LocationsTab />}
       </Box>
     </DefaultContainer>
   );

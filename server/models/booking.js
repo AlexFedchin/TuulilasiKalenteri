@@ -41,6 +41,11 @@ const bookingSchema = new mongoose.Schema(
       enum: ["private", "company"],
       required: true,
     },
+    companyName: {
+      type: String,
+      minlength: 0,
+      maxlength: 50,
+    },
     payerType: {
       type: String,
       enum: ["person", "company", "insurance"],
@@ -76,6 +81,13 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       minlength: 5,
       maxlength: 50,
+      required: function () {
+        return this.payerType === "insurance";
+      },
+    },
+    deductible: {
+      type: Number,
+      min: 0,
       required: function () {
         return this.payerType === "insurance";
       },

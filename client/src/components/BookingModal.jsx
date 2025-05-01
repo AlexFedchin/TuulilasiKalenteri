@@ -23,8 +23,9 @@ import PriceIcon from "@mui/icons-material/SellOutlined";
 import WarehouseIcon from "@mui/icons-material/Warehouse";
 import PersonIcon from "@mui/icons-material/Person";
 import BusinessIcon from "@mui/icons-material/Business";
-import InsuranceIcon from "@mui/icons-material/RequestQuoteOutlined";
+import InsuranceIcon from "@mui/icons-material/DescriptionOutlined";
 import PaymentIcon from "@mui/icons-material/Euro";
+import DeductibleIcon from "@mui/icons-material/PaymentsOutlined";
 import DateIcon from "@mui/icons-material/CalendarMonth";
 import DurationIcon from "@mui/icons-material/AccessTime";
 import LocationIcon from "@mui/icons-material/LocationPin";
@@ -113,6 +114,10 @@ const bookingValidationSchema = Joi.object({
     "any.only": "Client type must be either 'private' or 'company'.",
     "any.required": "Client type is required.",
   }),
+  companyName: Joi.string().min(2).max(50).allow("").messages({
+    "string.min": "Company name must be at least 2 characters long.",
+    "string.max": "Company name must not exceed 50 characters.",
+  }),
   payerType: Joi.string()
     .valid("person", "company", "insurance")
     .required()
@@ -170,7 +175,18 @@ const bookingValidationSchema = Joi.object({
     .messages({
       "string.min": "Insurance number must be at least 5 characters long.",
       "string.max": "Insurance number must not exceed 50 characters.",
-      "any.required": "Insurance number is required for insurance payer type.",
+      "any.required": "Insurance number is required.",
+    }),
+  deductible: Joi.number()
+    .min(0)
+    .when("payerType", {
+      is: "insurance",
+      then: Joi.required(),
+      otherwise: Joi.allow(""),
+    })
+    .messages({
+      "number.min": "Deductible must be at least 0.",
+      "any.required": "Deductible is required.",
     }),
   date: Joi.date().required().messages({
     "date.base": "Invalid date format.",
@@ -261,6 +277,13 @@ const BookingModal = ({
       icon: <InsuranceCompanyIcon fontSize="small" />,
     },
   ];
+  const deductibleValues = [
+    { name: "€ 0", value: 0 },
+    { name: "€ 50", value: 50 },
+    { name: "€ 100", value: 100 },
+    { name: "€ 150", value: 150 },
+    { name: "€ 200", value: 200 },
+  ];
 
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -274,10 +297,12 @@ const BookingModal = ({
     warehouseLocation: booking?.warehouseLocation || "",
     isOrdered: booking?.isOrdered || false,
     clientType: booking?.clientType || "private",
+    companyName: booking?.companyName || "",
     payerType: booking?.payerType || "person",
     insuranceCompany: booking?.insuranceCompany || "pohjolaVakuutus",
     insuranceCompanyName: booking?.insuranceCompanyName || "",
     insuranceNumber: booking?.insuranceNumber || "",
+    deductible: booking?.deductible || 0,
     date: dayjs(date).format("YYYY-MM-DDTHH:mmZ"),
     duration: booking?.duration || 1,
     notes: booking?.notes || "",
@@ -805,37 +830,61 @@ const BookingModal = ({
             )}
           </Box>
 
-          {/* Client */}
-          <Box>
-            <Typography variant="textFieldLabel">
-              <PersonIcon fontSize="small" />
-              Client
-            </Typography>
-            <FormControl
-              fullWidth
-              size="small"
-              error={!!errors["clientType"]}
-              sx={{ mb: "-5px" }}
-            >
-              <Select
-                name="clientType"
-                value={formData["clientType"]}
-                onChange={handleChange}
-                disabled={!isEditable}
+          {/* Client type & Company name*/}
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="textFieldLabel">
+                <PersonIcon fontSize="small" />
+                Client
+              </Typography>
+              <FormControl
+                fullWidth
+                size="small"
+                error={!!errors["clientType"]}
+                sx={{ mb: "-5px" }}
               >
-                {clientTypes.map((client) => (
-                  <MenuItem
-                    key={client.value}
-                    value={client.value}
-                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                  >
-                    {client.icon}
-                    {client.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>{errors["clientType"] || ""}</FormHelperText>
-            </FormControl>
+                <Select
+                  name="clientType"
+                  value={formData["clientType"]}
+                  onChange={handleChange}
+                  disabled={!isEditable}
+                >
+                  {clientTypes.map((client) => (
+                    <MenuItem
+                      key={client.value}
+                      value={client.value}
+                      sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                    >
+                      {client.icon}
+                      {client.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{errors["clientType"] || ""}</FormHelperText>
+              </FormControl>
+            </Box>
+
+            {formData["clientType"] === "company" && (
+              <Box sx={{ flexGrow: 1 }}>
+                <Typography variant="textFieldLabel">
+                  <BusinessIcon fontSize="small" />
+                  Company name
+                </Typography>
+                <TextField
+                  size="small"
+                  fullWidth
+                  disabled={!isEditable}
+                  margin="none"
+                  type="text"
+                  placeholder="Company name"
+                  name="companyName"
+                  value={formData["companyName"]}
+                  onChange={handleChange}
+                  error={!!errors["companyName"]}
+                  helperText={errors["companyName"] || ""}
+                />
+              </Box>
+            )}
           </Box>
 
           {/* Payer */}
@@ -871,11 +920,12 @@ const BookingModal = ({
             </FormControl>
           </Box>
 
-          {/* Insurance company, insurance company name & insurance number */}
+          {/* Insurance company, insurance company name, insurance number, deductible */}
           {formData["payerType"] === "insurance" ? (
             <Box
               sx={{ display: "flex", gap: isMobile ? 1 : 2, flexWrap: "wrap" }}
             >
+              {/* Insurance Company */}
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <InsuranceCompanyIcon fontSize="small" />
@@ -919,6 +969,7 @@ const BookingModal = ({
                 </FormControl>
               </Box>
 
+              {/* Insurance Company Name */}
               {formData["insuranceCompany"] === "other" && (
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="textFieldLabel">
@@ -941,6 +992,7 @@ const BookingModal = ({
                 </Box>
               )}
 
+              {/* Insurance Number */}
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <InsuranceIcon fontSize="small" />
@@ -959,6 +1011,38 @@ const BookingModal = ({
                   error={!!errors["insuranceNumber"]}
                   helperText={errors["insuranceNumber"] || ""}
                 />
+              </Box>
+
+              {/* Deductible */}
+              <Box sx={{ flexGrow: 1 }}>
+                <Typography variant="textFieldLabel">
+                  <DeductibleIcon fontSize="small" />
+                  Deductible
+                </Typography>
+                <FormControl
+                  fullWidth
+                  size="small"
+                  error={!!errors["deductible"]}
+                  sx={{ mb: "-5px" }}
+                >
+                  <Select
+                    name="deductible"
+                    onChange={handleChange}
+                    value={formData["deductible"]}
+                    disabled={!isEditable}
+                  >
+                    {deductibleValues.map((deductible) => (
+                      <MenuItem
+                        value={deductible.value}
+                        key={deductible.value}
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        {deductible.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>{errors["deductible"] || ""}</FormHelperText>
+                </FormControl>
               </Box>
             </Box>
           ) : null}

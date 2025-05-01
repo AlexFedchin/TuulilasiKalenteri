@@ -92,9 +92,9 @@ const getAllBookings = async (req, res) => {
 
 const getBookingById = async (req, res) => {
   try {
-    const event = await Booking.findById(req.params.id);
-    if (!event) return res.status(404).json({ error: "Booking not found" });
-    res.json(event);
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
+    res.json(booking);
   } catch {
     console.error("Error getting booking by ID:", error);
     res.status(500).json({ error: error.message });
@@ -113,10 +113,12 @@ const createBooking = async (req, res) => {
     warehouseLocation,
     isOrdered,
     clientType,
+    companyName,
     payerType,
     insuranceCompany,
     insuranceCompanyName,
     insuranceNumber,
+    deductible,
     date,
     duration,
     notes,
@@ -167,6 +169,7 @@ const createBooking = async (req, res) => {
       warehouseLocation: inStock ? warehouseLocation.trim() : undefined,
       isOrdered: inStock ? undefined : isOrdered,
       clientType,
+      companyName: clientType === "company" ? companyName.trim() : undefined,
       payerType,
       insuranceCompany:
         payerType === "insurance" ? insuranceCompany : undefined,
@@ -178,6 +181,7 @@ const createBooking = async (req, res) => {
         payerType === "insurance"
           ? insuranceNumber.trim().toUpperCase()
           : undefined,
+      deductible: payerType === "insurance" ? deductible : undefined,
       date,
       duration,
       notes: notes.trim(),
@@ -212,22 +216,17 @@ const updateBooking = async (req, res) => {
     warehouseLocation,
     isOrdered,
     clientType,
+    companyName,
     payerType,
     insuranceCompany,
     insuranceCompanyName,
     insuranceNumber,
+    deductible,
     date,
     duration,
     notes,
     location,
   } = req.body;
-
-  let invoiceMade;
-  if (req.user.role === "admin") {
-    invoiceMade = req.body.invoiceMade;
-  } else {
-    invoiceMade = undefined;
-  }
 
   try {
     const booking = await Booking.findById(req.params.id);
@@ -277,6 +276,7 @@ const updateBooking = async (req, res) => {
       warehouseLocation: inStock ? warehouseLocation.trim() : undefined,
       isOrdered: inStock ? undefined : isOrdered,
       clientType,
+      companyName: clientType === "company" ? companyName.trim() : undefined,
       payerType,
       insuranceCompany:
         payerType === "insurance" ? insuranceCompany : undefined,
@@ -286,15 +286,12 @@ const updateBooking = async (req, res) => {
           : undefined,
       insuranceNumber:
         payerType === "insurance" ? insuranceNumber.trim() : undefined,
+      deductible: payerType === "insurance" ? deductible : undefined,
       date,
       duration,
       notes: notes.trim(),
       location: bookingLocation,
     };
-
-    if (invoiceMade !== undefined) {
-      updateFields.invoiceMade = invoiceMade;
-    }
 
     const updatedBooking = await Booking.findByIdAndUpdate(
       req.params.id,

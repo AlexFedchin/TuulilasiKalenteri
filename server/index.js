@@ -10,6 +10,7 @@ const usersRoutes = require("./routes/usersRouter");
 const locationsRoutes = require("./routes/locationsRouter");
 const notesRoutes = require("./routes/notesRouter");
 const ordersRoutes = require("./routes/ordersRouter");
+const invoicesRoutes = require("./routes/invoicesRouter");
 const app = express();
 
 // Parse command line arguments to set the environment mode
@@ -34,6 +35,7 @@ app.use("/api/users", usersRoutes);
 app.use("/api/locations", locationsRoutes);
 app.use("/api/notes", notesRoutes);
 app.use("/api/orders", ordersRoutes);
+app.use("/api/invoices", invoicesRoutes);
 
 // Catch-all route to show 404 page for unmatched routes
 app.get("/*splat", (req, res) => {

@@ -72,6 +72,10 @@ const bookingValidationSchema = Joi.object({
     "any.only": "Client type must be either 'private' or 'company'.",
     "any.required": "Client type is required.",
   }),
+  companyName: Joi.string().min(2).max(50).allow("").messages({
+    "string.min": "Company name must be at least 2 characters long.",
+    "string.max": "Company name must not exceed 50 characters.",
+  }),
   payerType: Joi.string()
     .valid("person", "company", "insurance")
     .required()
@@ -130,8 +134,18 @@ const bookingValidationSchema = Joi.object({
     .messages({
       "string.min": "Insurance number must be at least 5 characters long.",
       "string.max": "Insurance number must not exceed 50 characters.",
-      "any.required":
-        "Insurance number is required when payer type is 'insurance'.",
+      "any.required": "Insurance number is required.",
+    }),
+  deductible: Joi.number()
+    .min(0)
+    .when("payerType", {
+      is: "insurance",
+      then: Joi.required(),
+      otherwise: Joi.allow(""),
+    })
+    .messages({
+      "number.min": "Deductible must be at least 0.",
+      "any.required": "Deductible is required.",
     }),
   date: Joi.date().required().messages({
     "date.base": "Date must be a valid date.",
