@@ -78,8 +78,8 @@ const Bookings = () => {
     setPage(1);
   };
 
-  const handleViewChange = (event, newView) => {
-    setView(newView);
+  const handleViewChange = (event) => {
+    setView(event.target.value);
     setPage(1);
   };
 

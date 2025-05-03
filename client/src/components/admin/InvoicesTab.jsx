@@ -31,8 +31,8 @@ const InvoicesTab = () => {
   const [sortOrder, setSortOrder] = useState("newest");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleView = (event, newView) => {
-    setView(newView);
+  const handleView = (event) => {
+    setView(event.target.value);
     setSelectedBookings([]);
     setPage(1);
   };

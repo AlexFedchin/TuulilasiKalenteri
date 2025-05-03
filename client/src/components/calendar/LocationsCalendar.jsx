@@ -256,7 +256,7 @@ const LocationsCalendar = ({
                     <Button
                       onClick={handleLocationsClear}
                       size="small"
-                      color="error"
+                      variant="delete"
                       sx={{ width: "90%", mx: "5%", boxSizing: "border-box" }}
                     >
                       Clear

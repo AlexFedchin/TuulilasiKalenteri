@@ -193,6 +193,23 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
               cursor: "not-allowed",
             },
           },
+          delete: {
+            borderRadius: "4px",
+            backgroundColor: "transparent",
+            color: "var(--error)",
+            fontSize: isTablet ? "0.75rem" : "0.875rem",
+            fontWeight: 500,
+            "&:hover": {
+              color: "var(--error-onhover)",
+              backgroundColor: "#ffe5e5",
+            },
+            "&.Mui-disabled": {
+              backgroundColor: "var(--light-grey)",
+              color: "var(--off-grey)",
+              opacity: 0.6,
+              cursor: "not-allowed",
+            },
+          },
         },
       },
       MuiListItemText: {
@@ -262,6 +279,40 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             },
             "&:hover": {
               color: "var(--primary-onhover)",
+            },
+          },
+        },
+      },
+      MuiAlert: {
+        styleOverrides: {
+          root: {
+            fontSize: isMobile ? "0.8rem" : isTablet ? "0.9rem" : "1rem",
+          },
+          standardError: {
+            color: "var(--error)",
+            "& .MuiAlert-icon": {
+              color: "var(--error)",
+            },
+            "& .MuiAlert-action": {
+              color: "var(--error)",
+            },
+          },
+          standardSuccess: {
+            color: "var(--success)",
+            "& .MuiAlert-icon": {
+              color: "var(--success)",
+            },
+            "& .MuiAlert-action": {
+              color: "var(--success)",
+            },
+          },
+          standardWarning: {
+            color: "var(--warning)",
+            "& .MuiAlert-icon": {
+              color: "var(--warning)",
+            },
+            "& .MuiAlert-action": {
+              color: "var(--warning)",
             },
           },
         },

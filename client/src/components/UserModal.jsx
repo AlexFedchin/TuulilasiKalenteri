@@ -26,6 +26,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import DoneIcon from "@mui/icons-material/Done";
 import { useAuth } from "../context/AuthContext";
 import { alert } from "../utils/alert";
+import useScreenSize from "../hooks/useScreenSize";
 import Joi from "joi";
 
 const userValidationSchema = Joi.object({
@@ -103,6 +104,7 @@ const userValidationSchema = Joi.object({
 
 const UserModal = ({ onClose, user, setUsers }) => {
   const { token } = useAuth();
+  const { isMobile, isTablet } = useScreenSize();
   const isEdit = !!user;
 
   const [formData, setFormData] = useState({
@@ -279,7 +281,7 @@ const UserModal = ({ onClose, user, setUsers }) => {
           maxWidth: "600px",
           bgcolor: "var(--white)",
           boxShadow: 24,
-          p: 3,
+          p: isMobile ? 2 : 3,
           borderRadius: 2,
           outline: "none",
           display: "flex",
@@ -311,7 +313,15 @@ const UserModal = ({ onClose, user, setUsers }) => {
 
         <Box
           component="form"
-          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            maxHeight: "50vh",
+            overflowY: "auto",
+            pr: 2,
+            pb: 2,
+          }}
         >
           {/* Username */}
           <Box>
@@ -532,12 +542,19 @@ const UserModal = ({ onClose, user, setUsers }) => {
           ) : null}
         </Box>
         {/* Action Buttons */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: isMobile || isTablet ? 1 : 2,
+          }}
+        >
           <Button
             onClick={onClose}
             variant="cancel"
             startIcon={<CloseIcon />}
             disabled={submitting}
+            sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
           >
             Cancel
           </Button>
@@ -546,8 +563,9 @@ const UserModal = ({ onClose, user, setUsers }) => {
             variant="submit"
             loading={submitting}
             loadingPosition="start"
-            disabled={isSubmitDisabled || submitting}
+            disabled={isSubmitDisabled}
             startIcon={<DoneIcon />}
+            sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
           >
             {isEdit ? "Update" : "Create"}
           </Button>

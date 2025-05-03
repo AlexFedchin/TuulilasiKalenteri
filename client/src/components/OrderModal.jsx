@@ -262,7 +262,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
           maxWidth: "600px",
           bgcolor: "var(--white)",
           boxShadow: 24,
-          p: 3,
+          p: isMobile ? 2 : 3,
           borderRadius: 2,
           outline: "none",
           display: "flex",
@@ -395,7 +395,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                 flexDirection: "column",
                 gap: 2,
                 pt: 1,
-                maxHeight: "300px",
+                maxHeight: "200px",
                 overflowY: "auto",
               }}
             >
@@ -493,7 +493,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                           gap: 1,
                           width: "100%",
                           alignItems: isMobile ? "flex-start" : "center",
-                          flexDirection: isMobile ? "column" : "row",
+                          flexDirection: "row",
                         }}
                       >
                         <TextField
@@ -501,7 +501,11 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                           type="number"
                           label="Price"
                           value={product.tmpPrice}
-                          sx={{ flexGrow: 1, flexShrink: 0, width: "60%" }}
+                          sx={{
+                            flexGrow: 1,
+                            flexShrink: 0,
+                            width: isMobile || isTablet ? "40%" : "60%",
+                          }}
                           onChange={(e) => {
                             handleChange(
                               { target: { value: e.target.value } },
@@ -636,8 +640,19 @@ const OrderModal = ({ onClose, order, setOrders }) => {
         </Box>
 
         {/* Action Buttons */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-          <Button onClick={onClose} variant="cancel" startIcon={<CloseIcon />}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: isMobile || isTablet ? 1 : 2,
+          }}
+        >
+          <Button
+            onClick={onClose}
+            variant="cancel"
+            startIcon={<CloseIcon />}
+            sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
+          >
             Cancel
           </Button>
           <Button
@@ -645,6 +660,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
             variant="submit"
             startIcon={<DoneIcon />}
             disabled={isSubmitDisabled}
+            sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
           >
             {isEdit ? "Update" : "Create"}
           </Button>

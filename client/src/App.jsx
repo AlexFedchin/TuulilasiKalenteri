@@ -11,6 +11,7 @@ import { lazy, Suspense } from "react";
 import { useSnackbar } from "notistack";
 import { setUseSnackbarRef } from "./utils/alert";
 import Loader from "./components/loader/Loader";
+import CustomFoter from "./components/CustomFooter";
 
 const Authentication = lazy(() => import("./pages/Authentication"));
 const Calendar = lazy(() => import("./pages/Calendar"));
@@ -68,6 +69,8 @@ function App() {
             <Route path="*" element={<NotFound to="/" />} />
           </Routes>
         </Suspense>
+
+        {user && <CustomFoter />}
       </ThemeProvider>
     </Router>
   );

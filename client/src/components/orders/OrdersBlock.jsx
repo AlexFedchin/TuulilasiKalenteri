@@ -148,9 +148,9 @@ const Orders = () => {
           <ConfirmModal
             onConfirm={handleDelete}
             onClose={() => setOpenDeleteModal(false)}
-            text={`Are you sure you want to delete the order with eurocode <b>${
-              selectedOrder.eurocode
-            }</b> for <b>${
+            text={`Are you sure you want to delete the order for ${
+              selectedOrder.products.length
+            } products for <b>${
               selectedOrder.client === "other"
                 ? selectedOrder.clientName
                 : selectedOrder.client

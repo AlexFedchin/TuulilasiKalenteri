@@ -12,13 +12,14 @@ import {
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountIcon from "@mui/icons-material/AccountCircle";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import i18n from "../utils/i18n";
 
 const MobileDrawer = ({ open, toggleDrawer, navItems }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -127,8 +128,11 @@ const MobileDrawer = ({ open, toggleDrawer, navItems }) => {
             <ListItem key={item.path} disablePadding>
               <ListItemButton
                 onClick={() => navigate(item.path)}
-                disableTouchRipple
                 sx={{
+                  bgcolor:
+                    location.pathname === item.path
+                      ? "var(--off-white)"
+                      : "inherit",
                   "&:active": {
                     backgroundColor: "var(--off-white)",
                   },

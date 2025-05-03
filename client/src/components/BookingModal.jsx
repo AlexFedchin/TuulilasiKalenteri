@@ -224,13 +224,13 @@ const BookingModal = ({
   dayjs.extend(utc);
   dayjs.extend(timezone);
   dayjs.extend(updateLocale);
-
   dayjs.updateLocale("en", {
     weekStart: 1,
   });
 
   const { token, user } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
+  // Figure out the initial date
   if (date) {
     date = dayjs(date).format("YYYY-MM-DDTHH:mmZ");
   } else if (booking) {
@@ -248,9 +248,13 @@ const BookingModal = ({
     date = localDate.format("YYYY-MM-DDTHH:mmZ");
   }
 
+  const [submitting, setSubmitting] = useState(false);
+
   const isEdit = !!booking;
   const isAdmin = user?.role === "admin";
-  const isEditable = isAdmin || !dayjs(date).isBefore(dayjs(), "day");
+  const isEditable =
+    (isAdmin || !dayjs(date).isBefore(dayjs(), "day")) && !submitting;
+  const isSubmittable = isAdmin || !dayjs(date).isBefore(dayjs(), "day");
 
   const validateFinnishPhoneNumber = (value) => {
     const finnishPhoneRegex =
@@ -451,7 +455,7 @@ const BookingModal = ({
           return;
         } else {
           setLocations(data);
-          if (!isEdit && !formData.location) {
+          if (!isEdit && !booking) {
             setFormData((prev) => ({
               ...prev,
               location: data[0]?._id || "",
@@ -466,10 +470,12 @@ const BookingModal = ({
     if (user.role === "admin") {
       fetchLocations();
     }
-  }, [token, user.role, isEdit]);
+  }, [token, user.role, isEdit, booking]);
 
   // Submit function
   const handleSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
     const { error } = bookingValidationSchema.validate(formData, {
       abortEarly: false,
     });
@@ -521,6 +527,8 @@ const BookingModal = ({
     } catch (err) {
       alert.error("Unexpected error occurred");
       console.error("Request failed:", err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -591,7 +599,11 @@ const BookingModal = ({
           <Typography variant="h4">
             {isEdit ? "Edit Booking" : "New Booking"}
           </Typography>
-          <IconButton onClick={onClose} sx={{ position: "absolute", right: 0 }}>
+          <IconButton
+            onClick={onClose}
+            sx={{ position: "absolute", right: 0 }}
+            disabled={submitting}
+          >
             <CloseIcon />
           </IconButton>
         </Box>
@@ -807,19 +819,32 @@ const BookingModal = ({
               />
             </Box>
 
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ flexGrow: 1, flexShrink: 1, overflow: "hidden" }}>
               <Typography
                 variant="textFieldLabel"
                 sx={{
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
-                  maxWidth: "100%",
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
                 }}
               >
                 <WarehouseIcon fontSize="small" />
-                Location in warehouse
+                <Box
+                  component="span"
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Location in warehouse
+                </Box>
               </Typography>
+
               <TextField
                 size="small"
                 fullWidth
@@ -1228,23 +1253,25 @@ const BookingModal = ({
         </Box>
 
         {/* Action Buttons */}
-        {isEditable && (
+        {isSubmittable && (
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               flexDirection: isMobile || isTablet ? "column-reverse" : "row",
-              gap: 2,
+              gap: isMobile || isTablet ? 1 : 2,
               flexWrap: "wrap",
             }}
           >
-            <Box>
+            <Box sx={{ width: isMobile || isTablet ? "100%" : "auto" }}>
               {isEdit && (
                 <Button
                   startIcon={<DeleteIcon />}
-                  variant="cancel"
+                  disabled={submitting}
+                  variant="delete"
                   onClick={handleDelete}
+                  sx={{ width: isMobile || isTablet ? "100%" : "auto" }}
                 >
                   Delete
                 </Button>
@@ -1253,7 +1280,8 @@ const BookingModal = ({
             <Box
               sx={{
                 display: "flex",
-                gap: 2,
+                width: isMobile || isTablet ? "100%" : "auto",
+                gap: isMobile || isTablet ? 1 : 2,
                 justifyContent: isMobile || isTablet ? "center" : "flex-end",
                 flexGrow: 1,
               }}
@@ -1261,15 +1289,20 @@ const BookingModal = ({
               <Button
                 startIcon={<CloseIcon />}
                 variant="cancel"
+                disabled={submitting}
                 onClick={onClose}
+                sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
               >
                 Cancel
               </Button>
               <Button
                 startIcon={<DoneIcon />}
                 variant="submit"
+                loading={submitting}
+                loadingPosition="start"
                 disabled={isSubmitDisabled}
                 onClick={handleSubmit}
+                sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
               >
                 {isEdit ? "Update" : "Create"}
               </Button>
