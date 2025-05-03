@@ -9,6 +9,7 @@ const EditableNoteCard = ({
   initialDescription = "",
   onSave,
   onCancel,
+  isSaving,
 }) => {
   const { isMobile, isTablet } = useScreenSize();
   const [title, setTitle] = useState(initialTitle);
@@ -68,6 +69,8 @@ const EditableNoteCard = ({
       <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 1 }}>
         <IconButton
           onClick={onCancel}
+          aria-label="cancel"
+          disabled={isSaving}
           sx={{
             p: 0.5,
           }}
@@ -76,6 +79,8 @@ const EditableNoteCard = ({
         </IconButton>
         <IconButton
           disabled={isEmpty}
+          loading={isSaving}
+          aria-label="save"
           onClick={() =>
             onSave({
               title: title.trim(),

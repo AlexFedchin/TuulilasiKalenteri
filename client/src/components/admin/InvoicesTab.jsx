@@ -13,7 +13,7 @@ import {
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import Loader from "../loader/Loader";
-import BookingCard from "./BookingCard";
+import InvoiceCard from "./InvoiceCard";
 import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 import useScreenSize from "../../hooks/useScreenSize";
@@ -29,6 +29,7 @@ const InvoicesTab = () => {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleView = (event, newView) => {
     setView(newView);
@@ -75,6 +76,8 @@ const InvoicesTab = () => {
 
   // Function to handle marking invoices as sent or unsent
   const handleMarkAsSent = async () => {
+    if (submitting) return;
+    setSubmitting(true);
     const url =
       view === "sent"
         ? "/api/invoices/mark-as-unsent"
@@ -109,10 +112,12 @@ const InvoicesTab = () => {
         setRemovingBookings([]);
       }, 300);
 
-      alert.success("Invoice status updated successfully");
+      alert.success("Invoice status updated successfully!");
     } catch (error) {
       alert.error(`Error: ${error.message}`);
       console.error("Error updating bookings:", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -201,8 +206,10 @@ const InvoicesTab = () => {
             </ToggleButtonGroup>
             <Button
               variant="contained"
+              loading={submitting}
+              loadingPosition="start"
               color={view === "sent" ? "error" : "primary"}
-              disabled={selectedBookings.length === 0}
+              disabled={selectedBookings.length === 0 || submitting}
               startIcon={view === "sent" ? <CloseIcon /> : <CheckIcon />}
               onClick={handleMarkAsSent}
             >
@@ -299,7 +306,9 @@ const InvoicesTab = () => {
           <Button
             variant="contained"
             color={view === "sent" ? "error" : "primary"}
-            disabled={selectedBookings.length === 0}
+            loading={submitting}
+            loadingPosition="start"
+            disabled={selectedBookings.length === 0 || submitting}
             startIcon={view === "sent" ? <CloseIcon /> : <CheckIcon />}
             onClick={handleMarkAsSent}
           >
@@ -322,7 +331,7 @@ const InvoicesTab = () => {
           }}
         >
           {paginatedBookings.map((booking) => (
-            <BookingCard
+            <InvoiceCard
               key={booking._id}
               booking={booking}
               selectedBookings={selectedBookings}
@@ -338,9 +347,9 @@ const InvoicesTab = () => {
               sx={{ mt: "20vh", fontStyle: "italic", maxWidth: "66%" }}
             >
               You don't have any {view === "sent" ? "sent" : "unsent"} invoices
-              for {filter} bookings.
+              {filter !== "all" ? ` for ${filter} bookings` : ""}.
             </Typography>
-          ) : filteredBookings.length > 5 ? (
+          ) : filteredBookings.length > bookingsPerPage ? (
             <Pagination
               color="primary"
               count={Math.ceil(bookings.length / bookingsPerPage)}

@@ -69,7 +69,7 @@ const Orders = () => {
       );
       setOpenDeleteModal(false);
       setSelectedOrder(null);
-      alert.success("Order deleted successfully");
+      alert.success("Order deleted successfully!");
     } catch (error) {
       alert.error(`Error: ${error.message}`);
       console.error("Error deleting order:", error);

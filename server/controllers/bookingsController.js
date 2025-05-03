@@ -83,6 +83,24 @@ const getAllBookings = async (req, res) => {
     }
 
     const bookings = await Booking.find(filter);
+
+    // If the user is an admin, populate the creator name
+    if (req.user.role === "admin") {
+      const bookingsWithCreator = await Promise.all(
+        bookings.map(async (booking) => {
+          const creator = await User.findById(booking.createdBy);
+          return {
+            ...booking.toObject(),
+            creatorName: creator
+              ? `${creator.firstName} ${creator.lastName}`
+              : "Unknown",
+          };
+        })
+      );
+
+      return res.json(bookingsWithCreator);
+    }
+
     res.json(bookings);
   } catch (error) {
     console.error("Error getting all bookings:", error);

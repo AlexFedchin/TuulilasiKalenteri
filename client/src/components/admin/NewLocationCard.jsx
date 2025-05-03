@@ -33,7 +33,7 @@ const NewLocationCard = ({ setLocations, onCancel }) => {
       }
 
       setLocations((prevLocations) => [...prevLocations, result]);
-      alert.success("Location created successfully");
+      alert.success("Location created successfully!");
       onCancel();
     } catch (error) {
       console.error("Error creating location:", error);

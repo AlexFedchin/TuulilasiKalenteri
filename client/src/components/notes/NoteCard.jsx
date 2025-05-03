@@ -6,17 +6,21 @@ import {
   MenuItem,
   ListItemIcon,
   Card,
+  CircularProgress,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "../../context/AuthContext";
+import { alert } from "../../utils/alert";
 import EditableNoteCard from "./EditableNoteCard";
 
 const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
   const { token } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleMenuOpen = (event) => {
@@ -37,6 +41,8 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
   };
 
   const handleSave = async ({ title, description }) => {
+    if (isSaving) return;
+    setIsSaving(true);
     if (!title.trim() && !description.trim()) {
       return;
     }
@@ -53,16 +59,20 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
         const updatedNote = await response.json();
         onUpdateNote(updatedNote);
         setIsEditing(false);
+        alert.success("Note updated successfully!");
       } else {
-        console.error("Failed to update the note");
+        alert.error("Failed to update the note");
       }
     } catch (error) {
       console.error("Error updating the note:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    handleMenuClose();
+    if (isDeleting) return;
+    setIsDeleting(true);
     try {
       const response = await fetch(`/api/notes/${note._id}`, {
         method: "DELETE",
@@ -72,13 +82,16 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
       });
       if (response.ok) {
         onDeleteNote(note._id);
-        alert.success("Note deleted successfully");
+        alert.success("Note deleted successfully!");
       } else {
         console.error("Failed to delete the note");
       }
     } catch (error) {
       alert.error("Failed to delete the note");
       console.error("Error deleting the note:", error);
+    } finally {
+      handleMenuClose();
+      setIsDeleting(false);
     }
   };
 
@@ -88,6 +101,7 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
       initialDescription={note.description}
       onSave={handleSave}
       onCancel={handleCancel}
+      isSaving={isSaving}
     />
   ) : (
     <Card
@@ -146,6 +160,7 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
             Edit
           </MenuItem>
           <MenuItem
+            disabled={isDeleting}
             onClick={handleDelete}
             sx={{
               color: "var(--error)",
@@ -153,7 +168,11 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
             }}
           >
             <ListItemIcon sx={{ color: "inherit" }}>
-              <DeleteIcon fontSize="small" />
+              {isDeleting ? (
+                <CircularProgress size={20} sx={{ color: "var(--error)" }} />
+              ) : (
+                <DeleteIcon fontSize="small" />
+              )}
             </ListItemIcon>
             Delete
           </MenuItem>

@@ -98,7 +98,7 @@ const LocationsTab = () => {
       setLocations((prevLocations) =>
         prevLocations.filter((location) => location._id !== locationId)
       );
-      alert.success("Location deleted successfully");
+      alert.success("Location deleted successfully!");
     } catch (error) {
       console.error("Error deleting location:", error);
       alert.error(`Error: ${error.message}`);

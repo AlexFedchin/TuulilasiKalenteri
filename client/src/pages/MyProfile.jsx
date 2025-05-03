@@ -107,7 +107,7 @@ const MyProfile = () => {
         throw new Error(result.error || "Failed to update user");
       }
 
-      alert.success("Profile updated successfully");
+      alert.success("Profile updated successfully!");
       setUser(result);
       setEditField(null);
     } catch (error) {

@@ -41,7 +41,7 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
         )
       );
       setTitle(tempTitle);
-      alert.success("Location updated successfully");
+      alert.success("Location updated successfully!");
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating location:", error);

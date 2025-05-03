@@ -118,6 +118,7 @@ const UserModal = ({ onClose, user, setUsers }) => {
   const [locations, setLocations] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
   const roles = [
     { value: "regular", name: "Regular", image: "/icons/regular.webp" },
@@ -182,6 +183,8 @@ const UserModal = ({ onClose, user, setUsers }) => {
   };
 
   const handleSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
     const { error } = userValidationSchema.validate(formData, {
       abortEarly: false,
       context: { isEdit },
@@ -257,6 +260,8 @@ const UserModal = ({ onClose, user, setUsers }) => {
     } catch (err) {
       alert.error("Unexpected error occurred");
       console.error("Request failed:", err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -293,7 +298,11 @@ const UserModal = ({ onClose, user, setUsers }) => {
           <Typography variant="h4">
             {isEdit ? "Edit User" : "New User"}
           </Typography>
-          <IconButton onClick={onClose} sx={{ position: "absolute", right: 0 }}>
+          <IconButton
+            onClick={onClose}
+            disabled={submitting}
+            sx={{ position: "absolute", right: 0 }}
+          >
             <CloseIcon />
           </IconButton>
         </Box>
@@ -524,13 +533,20 @@ const UserModal = ({ onClose, user, setUsers }) => {
         </Box>
         {/* Action Buttons */}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-          <Button onClick={onClose} variant="cancel" startIcon={<CloseIcon />}>
+          <Button
+            onClick={onClose}
+            variant="cancel"
+            startIcon={<CloseIcon />}
+            disabled={submitting}
+          >
             Cancel
           </Button>
           <Button
             onClick={handleSubmit}
             variant="submit"
-            disabled={isSubmitDisabled}
+            loading={submitting}
+            loadingPosition="start"
+            disabled={isSubmitDisabled || submitting}
             startIcon={<DoneIcon />}
           >
             {isEdit ? "Update" : "Create"}

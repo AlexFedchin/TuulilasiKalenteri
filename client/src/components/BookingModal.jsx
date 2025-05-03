@@ -36,6 +36,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
 import Joi from "joi";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import updateLocale from "dayjs/plugin/updateLocale";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -218,12 +221,31 @@ const BookingModal = ({
   location,
   setBookings,
 }) => {
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+  dayjs.extend(updateLocale);
+
+  dayjs.updateLocale("en", {
+    weekStart: 1,
+  });
+
   const { token, user } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
   if (date) {
     date = dayjs(date).format("YYYY-MM-DDTHH:mmZ");
   } else if (booking) {
     date = dayjs(booking?.date).format("YYYY-MM-DDTHH:mmZ");
+  } else {
+    let nearestDate = dayjs().add(1, "day").hour(8).minute(0);
+
+    let nearestWorkday = nearestDate;
+    if (nearestDate.day() === 6) {
+      nearestWorkday = nearestDate.add(2, "day");
+    } else if (nearestDate.day() === 0) {
+      nearestWorkday = nearestDate.add(1, "day");
+    }
+    const localDate = dayjs.tz(nearestWorkday, "Europe/Helsinki");
+    date = localDate.format("YYYY-MM-DDTHH:mmZ");
   }
 
   const isEdit = !!booking;
@@ -786,7 +808,15 @@ const BookingModal = ({
             </Box>
 
             <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="textFieldLabel">
+              <Typography
+                variant="textFieldLabel"
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: "100%",
+                }}
+              >
                 <WarehouseIcon fontSize="small" />
                 Location in warehouse
               </Typography>
@@ -1077,6 +1107,10 @@ const BookingModal = ({
                       },
                     })
                   }
+                  shouldDisableDate={(date) => {
+                    const day = date.day();
+                    return day === 0 || day === 6;
+                  }}
                   ampm={false}
                   minDate={isAdmin ? undefined : dayjs().startOf("day")}
                   minTime={dayjs().startOf("day").add(8, "hour")}

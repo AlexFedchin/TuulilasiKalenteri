@@ -12,6 +12,7 @@ const Notes = () => {
   const { isMobile, isTablet } = useScreenSize();
   const [notes, setNotes] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     fetch("/api/notes", {
@@ -39,6 +40,14 @@ const Notes = () => {
   }, [user, token]);
 
   const handleCreateNote = async ({ title, description }) => {
+    if (isSaving) return;
+    setIsSaving(true);
+
+    if (!title.trim() && !description.trim()) {
+      alert.error("Title and description cannot be empty");
+      return;
+    }
+
     try {
       const response = await fetch("/api/notes", {
         method: "POST",
@@ -55,10 +64,12 @@ const Notes = () => {
       const newNote = await response.json();
       setNotes((prev) => [newNote, ...prev]);
       setIsCreating(false);
-      alert.success("Note created successfully");
+      alert.success("Note created successfully!");
     } catch (error) {
       alert.error("Failed to create note");
       console.error("Error creating note:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -123,6 +134,7 @@ const Notes = () => {
           <EditableNoteCard
             onSave={handleCreateNote}
             onCancel={() => setIsCreating(false)}
+            isSaving={isSaving}
           />
         ) : (
           <Button

@@ -3,7 +3,7 @@ import { insuranceCompanies } from "../../utils/insuranceCompanies";
 import dayjs from "dayjs";
 import { alert } from "../../utils/alert";
 
-const BookingCard = ({
+const InvoiceCard = ({
   booking,
   selectedBookings,
   setSelectedBookings,
@@ -174,4 +174,4 @@ const BookingCard = ({
   );
 };
 
-export default BookingCard;
+export default InvoiceCard;

@@ -117,7 +117,7 @@ const UsersTab = () => {
         throw new Error("Failed to delete user");
       }
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
-      alert.success("User deleted successfully");
+      alert.success("User deleted successfully!");
     } catch (error) {
       console.error("Error deleting user:", error);
       alert.error(`Error: ${error.message}`);

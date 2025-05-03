@@ -241,8 +241,13 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
                 backgroundColor: "var(--primary-onhover)",
               },
             },
-            "&.Mui-selected:hover": {
-              backgroundColor: "var(--primary-onhover)",
+            "&:not(.Mui-selected)": {
+              backgroundColor: "var(--white)",
+              color: "var(--off-grey)",
+              "&:hover": {
+                backgroundColor: "var(--off-white)",
+                color: "var(--off-black)",
+              },
             },
           },
         },
@@ -250,7 +255,8 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
       MuiTab: {
         styleOverrides: {
           root: {
-            color: "var(--off-black)",
+            transition: "background-color 0.3s ease, color 0.3s ease",
+            color: "var(--off-grey)",
             "&.Mui-selected": {
               color: "var(--primary)",
             },
