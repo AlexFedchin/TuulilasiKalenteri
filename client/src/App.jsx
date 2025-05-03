@@ -6,6 +6,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 import CustomAppBar from "./components/CustomAppBar";
 import useScreenSize from "./hooks/useScreenSize";
 import createCustomTheme from "./styles/theme";
+import { Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material";
 import { lazy, Suspense } from "react";
 import { useSnackbar } from "notistack";
@@ -30,50 +31,57 @@ function App() {
   return (
     <Router>
       <ThemeProvider theme={theme}>
-        {user && <CustomAppBar />}
+        <Box
+          sx={{
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {user && <CustomAppBar />}
 
-        <Suspense fallback={<Loader fullScreen />}>
-          <Routes>
-            <Route
-              path="/"
-              element={user ? <Calendar /> : <Authentication />}
-            />
+          <Box sx={{ flexGrow: 1 }}>
+            <Suspense fallback={<Loader fullScreen />}>
+              <Routes>
+                <Route
+                  path="/"
+                  element={user ? <Calendar /> : <Authentication />}
+                />
+                <Route
+                  path="/bookings"
+                  element={
+                    <PrivateRoute>
+                      <Bookings />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/my-profile"
+                  element={
+                    <PrivateRoute>
+                      <MyProfile />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <Admin />
+                    </AdminRoute>
+                  }
+                />
+                <Route path="*" element={<NotFound to="/" />} />
+              </Routes>
+            </Suspense>
+          </Box>
 
-            <Route
-              path="/bookings"
-              element={
-                <PrivateRoute>
-                  <Bookings />
-                </PrivateRoute>
-              }
-            />
-
-            <Route
-              path="/my-profile"
-              element={
-                <PrivateRoute>
-                  <MyProfile />
-                </PrivateRoute>
-              }
-            />
-
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute>
-                  <Admin />
-                </AdminRoute>
-              }
-            />
-
-            <Route path="*" element={<NotFound to="/" />} />
-          </Routes>
-        </Suspense>
-
-        {user && <CustomFoter />}
+          {user && <CustomFoter />}
+        </Box>
       </ThemeProvider>
     </Router>
   );
 }
 
 export default App;
+
