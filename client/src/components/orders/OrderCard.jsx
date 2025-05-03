@@ -140,7 +140,7 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
             fontWeight: product.status === "inStock" ? "unset" : 500,
           }}
         >
-          {product.eurocode.toUpperCase()}, {product.amount}pc
+          {product.eurocode.toUpperCase()}, {product.amount}pc, €{product.price}
         </Typography>
       ))}
 
