@@ -12,6 +12,8 @@ import {
   FormHelperText,
   IconButton,
   InputAdornment,
+  ToggleButtonGroup,
+  ToggleButton,
 } from "@mui/material";
 import NotesIcon from "@mui/icons-material/Notes";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -48,6 +50,13 @@ const orderValidationSchema = Joi.object({
           "number.min": "Price must be at least 0.",
           "any.required": "Price is required.",
         }),
+        status: Joi.string()
+          .valid("inStock", "order")
+          .default("inStock")
+          .messages({
+            "string.base": "Status must be a string.",
+            "any.only": "Status must be either 'In Stock' or 'Order'.",
+          }),
       })
     )
     .required()
@@ -99,13 +108,23 @@ const OrderModal = ({ onClose, order, setOrders }) => {
   const isEdit = !!order;
 
   const [formData, setFormData] = useState({
-    products: order?.products.map(({ eurocode, amount, price }) => ({
+    products: order?.products.map(({ eurocode, amount, price, status }) => ({
       eurocode,
       amount,
       tmpAmount: amount,
       price,
       tmpPrice: price,
-    })) || [{ eurocode: "", amount: 1, tmpAmount: 1, price: 0, tmpPrice: 0 }],
+      status,
+    })) || [
+      {
+        eurocode: "",
+        amount: 1,
+        tmpAmount: 1,
+        price: 0,
+        tmpPrice: 0,
+        status: "inStock",
+      },
+    ],
     client: order?.client || clients[0].value,
     clientName: order?.clientName || "",
     notes: order?.notes || "",
@@ -127,7 +146,14 @@ const OrderModal = ({ onClose, order, setOrders }) => {
       ...prevFormData,
       products: [
         ...prevFormData.products,
-        { eurocode: "", amount: 1, price: 0 },
+        {
+          eurocode: "",
+          amount: 1,
+          tmpAmount: 1,
+          price: 0,
+          tmpPrice: 0,
+          status: "inStock",
+        },
       ],
     }));
   };
@@ -154,10 +180,11 @@ const OrderModal = ({ onClose, order, setOrders }) => {
   const handleSubmit = async () => {
     // Clean products array by removing tmp fields
     const cleanedProducts = formData.products.map(
-      ({ eurocode, amount, price }) => ({
+      ({ eurocode, amount, price, status }) => ({
         eurocode,
         amount,
         price,
+        status,
       })
     );
 
@@ -340,7 +367,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
               flexWrap: "nowrap",
               p: 2,
               pr: 1,
-              pt: 1,
+              pt: 2,
               mt: 1,
               borderRadius: 1,
               border: "1px solid var(--primary)",
@@ -359,7 +386,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                 fontWeight: 600,
               }}
             >
-              Products
+              Products ({formData.products.length})
             </Typography>
 
             <Box
@@ -373,155 +400,203 @@ const OrderModal = ({ onClose, order, setOrders }) => {
               }}
             >
               {formData.products.map((product, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    gap: 1,
-                    pr: 1,
-                    alignItems: "center",
-                    flexWrap: "nowrap",
-                    flexDirection: "row",
-                  }}
-                >
+                <>
                   <Box
+                    key={index}
                     sx={{
                       display: "flex",
                       gap: 1,
+                      pr: 1,
                       alignItems: "center",
-                      flexDirection: isMobile || isTablet ? "column" : "row",
-                      flexWrap: "wrap",
+                      flexWrap: "nowrap",
+                      flexDirection: "row",
                     }}
                   >
-                    <TextField
-                      size="small"
-                      type="text"
-                      fullWidth
-                      label="Eurocode"
-                      name={`products[${index}].eurocode`}
-                      value={product.eurocode}
-                      onChange={(e) => handleChange(e, index, "eurocode")}
-                      error={!!errors[`products.${index}.eurocode`]}
-                      helperText={errors[`products.${index}.eurocode`] || ""}
-                      sx={{
-                        width:
-                          isMobile || isTablet ? "100%" : "calc(50% - 4px)",
-                      }}
-                    />
-
                     <Box
                       sx={{
                         display: "flex",
                         gap: 1,
                         alignItems: "center",
-                        flexWrap: "nowrap",
-                        width:
-                          isMobile || isTablet ? "100%" : "calc(50% - 4px)",
+                        flexDirection: isMobile || isTablet ? "column" : "row",
+                        flexWrap: "wrap",
                       }}
                     >
-                      <TextField
-                        size="small"
-                        type="number"
-                        label="Amount"
-                        value={product.tmpAmount}
-                        onChange={(e) => {
-                          handleChange(
-                            { target: { value: e.target.value } },
-                            index,
-                            "tmpAmount"
-                          );
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          alignItems: "center",
+                          flexWrap: "nowrap",
+                          width: "100%",
                         }}
-                        onBlur={(e) => {
-                          let value = 1;
-
-                          if (e.target.value === "") {
-                            value = 1;
-                          } else {
-                            value = Math.max(
-                              Math.round(Number(e.target.value)),
-                              1
+                      >
+                        <TextField
+                          size="small"
+                          type="text"
+                          fullWidth
+                          label="Eurocode"
+                          name={`products[${index}].eurocode`}
+                          value={product.eurocode}
+                          onChange={(e) => handleChange(e, index, "eurocode")}
+                          error={!!errors[`products.${index}.eurocode`]}
+                          helperText={
+                            errors[`products.${index}.eurocode`] || ""
+                          }
+                        />
+                        <TextField
+                          size="small"
+                          type="number"
+                          label="Amount"
+                          value={product.tmpAmount}
+                          onChange={(e) => {
+                            handleChange(
+                              { target: { value: e.target.value } },
+                              index,
+                              "tmpAmount"
                             );
-                          }
-                          handleChange({ target: { value } }, index, "amount");
-                          handleChange(
-                            { target: { value } },
-                            index,
-                            "tmpAmount"
-                          );
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.target.blur();
-                          }
-                        }}
-                        error={!!errors[`products.${index}.amount`]}
-                        helperText={errors[`products.${index}.amount`] || ""}
-                        sx={{ width: "40%" }}
-                      />
+                          }}
+                          onBlur={(e) => {
+                            let value = 1;
 
-                      <TextField
-                        size="small"
-                        type="number"
-                        label="Price"
-                        value={product.tmpPrice}
-                        onChange={(e) => {
-                          handleChange(
-                            { target: { value: e.target.value } },
-                            index,
-                            "tmpPrice"
-                          );
-                        }}
-                        onBlur={(e) => {
-                          let value = 0;
-
-                          if (e.target.value === "") {
-                            value = 0;
-                          } else {
-                            value = Math.max(
-                              Math.round(Number(e.target.value)),
-                              0
+                            if (e.target.value === "") {
+                              value = 1;
+                            } else {
+                              value = Math.max(
+                                Math.round(Number(e.target.value)),
+                                1
+                              );
+                            }
+                            handleChange(
+                              { target: { value } },
+                              index,
+                              "amount"
                             );
-                          }
-                          handleChange({ target: { value } }, index, "price");
-                          handleChange(
-                            { target: { value } },
-                            index,
-                            "tmpPrice"
-                          );
+                            handleChange(
+                              { target: { value } },
+                              index,
+                              "tmpAmount"
+                            );
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.target.blur();
+                            }
+                          }}
+                          error={!!errors[`products.${index}.amount`]}
+                          helperText={errors[`products.${index}.amount`] || ""}
+                          sx={{ width: "40%" }}
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          width: "100%",
+                          alignItems: isMobile ? "flex-start" : "center",
+                          flexDirection: isMobile ? "column" : "row",
                         }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.target.blur();
-                          }
-                        }}
-                        error={!!errors[`products.${index}.price`]}
-                        helperText={errors[`products.${index}.price`] || ""}
-                        slotProps={{
-                          input: {
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                €
-                              </InputAdornment>
-                            ),
-                          },
-                        }}
-                        sx={{ width: "60%" }}
-                      />
+                      >
+                        <TextField
+                          size="small"
+                          type="number"
+                          label="Price"
+                          value={product.tmpPrice}
+                          sx={{ flexGrow: 1, flexShrink: 0, width: "60%" }}
+                          onChange={(e) => {
+                            handleChange(
+                              { target: { value: e.target.value } },
+                              index,
+                              "tmpPrice"
+                            );
+                          }}
+                          onBlur={(e) => {
+                            let value = 0;
+
+                            if (e.target.value === "") {
+                              value = 0;
+                            } else {
+                              value = Math.max(
+                                Math.round(Number(e.target.value)),
+                                0
+                              );
+                            }
+                            handleChange({ target: { value } }, index, "price");
+                            handleChange(
+                              { target: { value } },
+                              index,
+                              "tmpPrice"
+                            );
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.target.blur();
+                            }
+                          }}
+                          error={!!errors[`products.${index}.price`]}
+                          helperText={errors[`products.${index}.price`] || ""}
+                          slotProps={{
+                            input: {
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  €
+                                </InputAdornment>
+                              ),
+                            },
+                          }}
+                        />
+                        <ToggleButtonGroup
+                          size="small"
+                          value={product.status}
+                          exclusive
+                          onChange={(e) => {
+                            handleChange(
+                              { target: { value: e.target.value } },
+                              index,
+                              "status"
+                            );
+                          }}
+                          sx={{
+                            flexShrink: 0,
+                          }}
+                        >
+                          <ToggleButton value="inStock" sx={{ flexShrink: 0 }}>
+                            In Stock
+                          </ToggleButton>
+                          <ToggleButton
+                            value="order"
+                            sx={{
+                              flexShrink: 0,
+                              "&.Mui-selected": {
+                                backgroundColor: "var(--error)",
+                                color: "var(--white)",
+                                "&:hover": {
+                                  backgroundColor: "var(--error-onhover)",
+                                },
+                              },
+                            }}
+                          >
+                            Order
+                          </ToggleButton>
+                        </ToggleButtonGroup>
+                      </Box>
                     </Box>
-                  </Box>
 
-                  <IconButton
-                    onClick={() => handleRemoveProduct(index)}
-                    disabled={formData.products.length === 1}
-                    sx={{
-                      p: 0,
-                      color: "var(--error)",
-                      "&:hover": { color: "var(--error-onhover)" },
-                    }}
-                  >
-                    <RemoveCircleIcon />
-                  </IconButton>
-                </Box>
+                    <IconButton
+                      onClick={() => handleRemoveProduct(index)}
+                      disabled={formData.products.length === 1}
+                      sx={{
+                        p: 0,
+                        color: "var(--error)",
+                        "&:hover": { color: "var(--error-onhover)" },
+                      }}
+                    >
+                      <RemoveCircleIcon />
+                    </IconButton>
+                  </Box>
+                  {index < formData.products.length - 1 && (
+                    <Divider sx={{ mr: 1 }} />
+                  )}
+                </>
               ))}
             </Box>
 

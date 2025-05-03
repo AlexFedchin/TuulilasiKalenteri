@@ -10,6 +10,8 @@ import {
   IconButton,
   Pagination,
   Button,
+  ToggleButtonGroup,
+  ToggleButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
@@ -38,12 +40,16 @@ const Bookings = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [view, setView] = useState("all");
 
   // Fetch bookings from the API on mount
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await fetch(`/api/bookings?userId=${user.id}`, {
+        const url =
+          view === "all" ? "/api/bookings" : `/api/bookings?userId=${user.id}`;
+
+        const response = await fetch(url, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -65,10 +71,15 @@ const Bookings = () => {
     };
 
     fetchBookings();
-  }, [token, user]);
+  }, [token, user, view]);
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
+    setPage(1);
+  };
+
+  const handleViewChange = (event, newView) => {
+    setView(newView);
     setPage(1);
   };
 
@@ -195,39 +206,71 @@ const Bookings = () => {
             zIndex: 5,
           }}
         >
-          <TextField
-            placeholder="Search for bookings..."
-            variant="outlined"
-            size="small"
-            sx={{ flexGrow: 1, maxWidth: "400px" }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ color: "var(--off-grey)" }} />
-                  </InputAdornment>
-                ),
-                endAdornment: searchTerm && (
-                  <InputAdornment position="end" sx={{ mr: "-12px" }}>
-                    <IconButton
-                      onClick={() => setSearchTerm("")}
-                      sx={{ color: "var(--off-grey)" }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Box
+            sx={{ width: isMobile ? "100%" : "unset", display: "flex", gap: 1 }}
+          >
+            <TextField
+              placeholder="Search for bookings..."
+              variant="outlined"
+              size="small"
+              sx={{ flexGrow: 1, maxWidth: "unset" }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: "var(--off-grey)" }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: searchTerm && (
+                    <InputAdornment position="end" sx={{ mr: "-12px" }}>
+                      <IconButton
+                        onClick={() => setSearchTerm("")}
+                        sx={{ color: "var(--off-grey)" }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            {user.role === "admin" && (
+              <ToggleButtonGroup
+                value={view}
+                size="small"
+                exclusive
+                onChange={handleViewChange}
+                sx={{ flexGrow: 1, maxWidth: "150px", minWidth: "100px" }}
+              >
+                <ToggleButton
+                  value="all"
+                  sx={{
+                    flexGrow: 1,
+                  }}
+                >
+                  All
+                </ToggleButton>
+                <ToggleButton
+                  value="my"
+                  sx={{
+                    flexGrow: 1,
+                  }}
+                >
+                  My
+                </ToggleButton>
+              </ToggleButtonGroup>
+            )}
+          </Box>
+          <Box
+            sx={{ width: isMobile ? "100%" : "unset", display: "flex", gap: 1 }}
+          >
             <Select
               value={filter}
               onChange={handleFilterChange}
               size="small"
-              sx={{ minWidth: 120 }}
+              sx={{ minWidth: 120, flexGrow: 1 }}
             >
               <MenuItem value="all">All</MenuItem>
               <MenuItem value="past">Past</MenuItem>
@@ -238,7 +281,7 @@ const Bookings = () => {
               value={sortOrder}
               onChange={handleSortOrderChange}
               size="small"
-              sx={{ minWidth: 150 }}
+              sx={{ minWidth: 150, flexGrow: 1 }}
             >
               <MenuItem value="newest">Newest first</MenuItem>
               <MenuItem value="oldest">Oldest first</MenuItem>

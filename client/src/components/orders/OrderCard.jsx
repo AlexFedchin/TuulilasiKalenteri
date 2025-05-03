@@ -136,9 +136,11 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
             overflow: "hidden",
             hyphens: "auto",
             pl: 0.5,
+            color: product.status === "inStock" ? "inherit" : "var(--accent)",
+            fontWeight: product.status === "inStock" ? "unset" : 500,
           }}
         >
-          {product.eurocode.toUpperCase()}, {product.amount}pc, €{product.price}
+          {product.eurocode.toUpperCase()}, {product.amount}pc
         </Typography>
       ))}
 

@@ -23,6 +23,13 @@ const orderValidationSchema = Joi.object({
           "number.min": "Price must be at least 0.",
           "any.required": "Price is required.",
         }),
+        status: Joi.string()
+          .valid("inStock", "order")
+          .default("inStock")
+          .messages({
+            "string.base": "Status must be a string.",
+            "any.only": "Status must be either 'In Stock' or 'Order'.",
+          }),
       })
     )
     .required()
