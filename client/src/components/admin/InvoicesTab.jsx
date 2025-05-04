@@ -355,7 +355,7 @@ const InvoicesTab = () => {
               count={Math.ceil(bookings.length / bookingsPerPage)}
               page={page}
               onChange={handlePageChange}
-              boundaryCount={1}
+              boundaryCount={0}
               siblingCount={1}
               size={isMobile ? "small" : ""}
               sx={{
