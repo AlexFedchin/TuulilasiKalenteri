@@ -14,8 +14,10 @@ import Loader from "../loader/Loader";
 import ConfirmModal from "../ConfirmModal";
 import UserModal from "../UserModal";
 import UserCard from "./UserCard";
+import useScreenSize from "../../hooks/useScreenSize";
 
 const UsersTab = () => {
+  const { isMobile } = useScreenSize();
   const { token, user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
@@ -138,7 +140,12 @@ const UsersTab = () => {
       }}
     >
       <Card
-        sx={{ p: 1, maxWidth: "500px", width: "100%", boxSizing: "border-box" }}
+        sx={{
+          p: 1,
+          maxWidth: "500px",
+          width: "100%",
+          boxSizing: isMobile ? "content-box" : "border-box",
+        }}
       >
         <TextField
           placeholder="Search for users..."

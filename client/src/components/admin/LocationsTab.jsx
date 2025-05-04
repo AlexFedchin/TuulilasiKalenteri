@@ -14,9 +14,11 @@ import ConfirmModal from "../ConfirmModal";
 import NewLocationCard from "./NewLocationCard";
 import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
+import useScreenSize from "../../hooks/useScreenSize";
 
 const LocationsTab = () => {
   const { token } = useAuth();
+  const { isMobile } = useScreenSize();
   const [loading, setLoading] = useState(true);
   const [locations, setLocations] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -133,7 +135,12 @@ const LocationsTab = () => {
       }}
     >
       <Card
-        sx={{ p: 1, maxWidth: "500px", width: "100%", boxSizing: "border-box" }}
+        sx={{
+          p: 1,
+          maxWidth: "500px",
+          width: "100%",
+          boxSizing: isMobile ? "content-box" : "border-box",
+        }}
       >
         <TextField
           placeholder="Search for locations..."

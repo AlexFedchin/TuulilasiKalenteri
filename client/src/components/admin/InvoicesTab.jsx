@@ -174,11 +174,11 @@ const InvoicesTab = () => {
             width: "100%",
             display: "flex",
             flexWrap: "wrap",
-            gap: 2,
+            gap: 1,
             p: 1,
             alignItems: "center",
             justifyContent: "space-between",
-            boxSizing: "border-box",
+            boxSizing: "content-box",
             position: "sticky",
             top: 16,
             zIndex: 5,
@@ -188,7 +188,7 @@ const InvoicesTab = () => {
             sx={{
               width: "100%",
               display: "flex",
-              gap: 2,
+              gap: 1,
               alignItems: "center",
               justifyContent: "space-between",
             }}
@@ -220,7 +220,7 @@ const InvoicesTab = () => {
             sx={{
               width: "100%",
               display: "flex",
-              gap: 2,
+              gap: 1,
               alignItems: "center",
             }}
           >
@@ -355,7 +355,16 @@ const InvoicesTab = () => {
               count={Math.ceil(bookings.length / bookingsPerPage)}
               page={page}
               onChange={handlePageChange}
-              sx={{ mt: 2 }}
+              boundaryCount={1}
+              siblingCount={1}
+              size={isMobile ? "small" : ""}
+              sx={{
+                mt: 2,
+                display: "flex",
+                justifyContent: "center",
+                flexWrap: "nowrap",
+                overflow: "hidden",
+              }}
             />
           ) : null}
         </Box>

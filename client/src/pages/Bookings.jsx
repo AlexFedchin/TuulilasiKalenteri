@@ -200,7 +200,7 @@ const Bookings = () => {
             p: 1,
             alignItems: "center",
             justifyContent: "space-between",
-            boxSizing: "border-box",
+            boxSizing: isMobile ? "content-box" : "border-box",
             position: "sticky",
             top: 16,
             zIndex: 5,
@@ -270,7 +270,7 @@ const Bookings = () => {
               value={filter}
               onChange={handleFilterChange}
               size="small"
-              sx={{ minWidth: 120, flexGrow: 1 }}
+              sx={{ minWidth: isMobile ? 100 : 120, flexGrow: 1 }}
             >
               <MenuItem value="all">All</MenuItem>
               <MenuItem value="past">Past</MenuItem>
@@ -281,7 +281,7 @@ const Bookings = () => {
               value={sortOrder}
               onChange={handleSortOrderChange}
               size="small"
-              sx={{ minWidth: 150, flexGrow: 1 }}
+              sx={{ minWidth: isMobile ? 120 : 150, flexGrow: 1 }}
             >
               <MenuItem value="newest">Newest first</MenuItem>
               <MenuItem value="oldest">Oldest first</MenuItem>
@@ -290,6 +290,7 @@ const Bookings = () => {
               variant="submit"
               onClick={handleCreateClick}
               size="small"
+              sx={{ minWidth: 40, maxWidth: isMobile ? 40 : "unset" }}
               startIcon={isMobile ? undefined : <AddIcon />}
             >
               {isMobile ? <AddIcon /> : "Create Booking"}
@@ -325,7 +326,16 @@ const Bookings = () => {
                 count={Math.ceil(processedBookings.length / bookingsPerPage)}
                 page={page}
                 onChange={(_, value) => setPage(value)}
-                sx={{ mt: 2 }}
+                boundaryCount={1}
+                siblingCount={1}
+                size={isMobile ? "small" : ""}
+                sx={{
+                  mt: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                  flexWrap: "nowrap",
+                  overflow: "hidden",
+                }}
               />
             )}
           </Box>
