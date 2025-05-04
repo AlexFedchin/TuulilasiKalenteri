@@ -326,7 +326,7 @@ const Bookings = () => {
                 count={Math.ceil(processedBookings.length / bookingsPerPage)}
                 page={page}
                 onChange={(_, value) => setPage(value)}
-                boundaryCount={0}
+                boundaryCount={1}
                 siblingCount={1}
                 size={isMobile ? "small" : ""}
                 sx={{
