@@ -16,6 +16,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import DefaultContainer from "../components/DefaultContainer";
+import ChangePasswordModal from "../components/ChangePasswordModal";
 import { useAuth } from "../context/AuthContext";
 import useScreenSize from "../hooks/useScreenSize";
 import { alert } from "../utils/alert";
@@ -71,6 +72,8 @@ const MyProfile = () => {
     lastName: user?.lastName || "",
     email: user?.email || "",
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [openPasswordModal, setOpenPasswordModal] = useState(false);
 
   const styles = getStyles(isMobile, isTablet);
 
@@ -89,6 +92,8 @@ const MyProfile = () => {
   };
 
   const handleSaveClick = async (field) => {
+    if (submitting) return;
+    setSubmitting(true);
     try {
       const response = await fetch(`/api/users/${user.id}`, {
         method: "PUT",
@@ -102,8 +107,6 @@ const MyProfile = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        alert.error(`Error: ${result.error}`);
-        console.error("Request failed:", result.error);
         throw new Error(result.error || "Failed to update user");
       }
 
@@ -111,7 +114,10 @@ const MyProfile = () => {
       setUser(result);
       setEditField(null);
     } catch (error) {
+      alert.error(`Error: ${error.message}`);
       console.error("Error saving changes:", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -137,8 +143,10 @@ const MyProfile = () => {
                 autoComplete="given-name"
                 autoFocus
                 value={formData.username}
-                InputProps={{
-                  style: styles.textFieldInput,
+                slotProps={{
+                  input: {
+                    sx: styles.textFieldInput,
+                  },
                 }}
                 onChange={(e) => handleInputChange("username", e.target.value)}
                 onKeyDown={(e) => {
@@ -167,6 +175,7 @@ const MyProfile = () => {
                 <IconButton
                   onClick={handleCancelClick}
                   sx={styles.cancelButton}
+                  disabled={submitting}
                 >
                   <CloseIcon fontSize={isMobile ? "small" : "medium"} />
                 </IconButton>
@@ -203,8 +212,10 @@ const MyProfile = () => {
                 autoComplete="given-name"
                 autoFocus
                 value={formData.firstName}
-                InputProps={{
-                  style: styles.textFieldInput,
+                slotProps={{
+                  input: {
+                    sx: styles.textFieldInput,
+                  },
                 }}
                 onChange={(e) => handleInputChange("firstName", e.target.value)}
               />
@@ -228,12 +239,14 @@ const MyProfile = () => {
                 <IconButton
                   onClick={handleCancelClick}
                   sx={styles.cancelButton}
+                  disabled={submitting}
                 >
                   <CloseIcon fontSize={isMobile ? "small" : "medium"} />
                 </IconButton>
                 <IconButton
                   onClick={() => handleSaveClick("firstName")}
                   disabled={!formData.firstName}
+                  loading={submitting}
                   sx={styles.saveButton}
                 >
                   <CheckIcon fontSize={isMobile ? "small" : "medium"} />
@@ -264,8 +277,10 @@ const MyProfile = () => {
                 autoComplete="family-name"
                 autoFocus
                 value={formData.lastName}
-                InputProps={{
-                  style: styles.textFieldInput,
+                slotProps={{
+                  input: {
+                    sx: styles.textFieldInput,
+                  },
                 }}
                 onChange={(e) => handleInputChange("lastName", e.target.value)}
               />
@@ -288,12 +303,14 @@ const MyProfile = () => {
                 <IconButton
                   onClick={handleCancelClick}
                   sx={styles.cancelButton}
+                  disabled={submitting}
                 >
                   <CloseIcon fontSize={isMobile ? "small" : "medium"} />
                 </IconButton>
                 <IconButton
                   onClick={() => handleSaveClick("lastName")}
                   disabled={!formData.lastName}
+                  loading={submitting}
                   sx={styles.saveButton}
                 >
                   <CheckIcon fontSize={isMobile ? "small" : "medium"} />
@@ -324,8 +341,10 @@ const MyProfile = () => {
                 autoFocus
                 autoComplete="email"
                 value={formData.email}
-                InputProps={{
-                  style: styles.textFieldInput,
+                slotProps={{
+                  input: {
+                    sx: styles.textFieldInput,
+                  },
                 }}
                 onChange={(e) => handleInputChange("email", e.target.value)}
               />
@@ -348,12 +367,14 @@ const MyProfile = () => {
                 <IconButton
                   onClick={handleCancelClick}
                   sx={styles.cancelButton}
+                  disabled={submitting}
                 >
                   <CloseIcon fontSize={isMobile ? "small" : "medium"} />
                 </IconButton>
                 <IconButton
                   onClick={() => handleSaveClick("email")}
                   disabled={!formData.email}
+                  loading={submitting}
                   sx={styles.saveButton}
                 >
                   <CheckIcon fontSize={isMobile ? "small" : "medium"} />
@@ -385,9 +406,20 @@ const MyProfile = () => {
               </Typography>
               <Typography variant="body1">●●●●●●●●●</Typography>
             </Box>
+            <IconButton
+              className="edit-button"
+              onClick={() => setOpenPasswordModal(true)}
+            >
+              <EditIcon fontSize={isMobile ? "small" : "medium"} />
+            </IconButton>
           </Box>
         </CardContent>
       </Card>
+
+      {/* Password Modal */}
+      {openPasswordModal && (
+        <ChangePasswordModal onClose={() => setOpenPasswordModal(false)} />
+      )}
     </DefaultContainer>
   );
 };

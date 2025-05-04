@@ -249,11 +249,14 @@ const BookingModal = ({
   }
 
   const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const isEdit = !!booking;
   const isAdmin = user?.role === "admin";
   const isEditable =
-    (isAdmin || !dayjs(date).isBefore(dayjs(), "day")) && !submitting;
+    (isAdmin || !dayjs(date).isBefore(dayjs(), "day")) &&
+    !submitting &&
+    !deleting;
   const isSubmittable = isAdmin || !dayjs(date).isBefore(dayjs(), "day");
 
   const validateFinnishPhoneNumber = (value) => {
@@ -370,6 +373,7 @@ const BookingModal = ({
     )
   );
 
+  // Handle form data changes
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -439,7 +443,7 @@ const BookingModal = ({
     });
   };
 
-  // Fetch locations if user is admin
+  // Fetch locations on mount if user is admin
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -455,7 +459,7 @@ const BookingModal = ({
           return;
         } else {
           setLocations(data);
-          if (!isEdit && !booking) {
+          if (!isEdit && !booking && !formData.location) {
             setFormData((prev) => ({
               ...prev,
               location: data[0]?._id || "",
@@ -467,10 +471,10 @@ const BookingModal = ({
       }
     };
 
-    if (user.role === "admin") {
+    if (user.role === "admin" && locations?.length === 0) {
       fetchLocations();
     }
-  }, [token, user.role, isEdit, booking]);
+  }, [token, user.role, isEdit, booking, formData.location, locations?.length]);
 
   // Submit function
   const handleSubmit = async () => {
@@ -534,6 +538,8 @@ const BookingModal = ({
 
   // Deleting a booking
   const handleDelete = async () => {
+    if (deleting) return;
+    setDeleting(true);
     try {
       const response = await fetch(`/api/bookings/${booking._id}`, {
         method: "DELETE",
@@ -561,6 +567,8 @@ const BookingModal = ({
     } catch (err) {
       alert.error("Unexpected error occurred");
       console.error("Request failed:", err);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -602,7 +610,7 @@ const BookingModal = ({
           <IconButton
             onClick={onClose}
             sx={{ position: "absolute", right: 0 }}
-            disabled={submitting}
+            disabled={submitting || deleting}
           >
             <CloseIcon />
           </IconButton>
@@ -1269,6 +1277,8 @@ const BookingModal = ({
                 <Button
                   startIcon={<DeleteIcon />}
                   disabled={submitting}
+                  loading={deleting}
+                  loadingPosition="start"
                   variant="delete"
                   onClick={handleDelete}
                   sx={{ width: isMobile || isTablet ? "100%" : "auto" }}
@@ -1289,7 +1299,7 @@ const BookingModal = ({
               <Button
                 startIcon={<CloseIcon />}
                 variant="cancel"
-                disabled={submitting}
+                disabled={submitting || deleting}
                 onClick={onClose}
                 sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
               >
@@ -1300,7 +1310,7 @@ const BookingModal = ({
                 variant="submit"
                 loading={submitting}
                 loadingPosition="start"
-                disabled={isSubmitDisabled}
+                disabled={isSubmitDisabled || deleting}
                 onClick={handleSubmit}
                 sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
               >

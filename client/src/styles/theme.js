@@ -201,7 +201,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
             fontWeight: 500,
             "&:hover": {
               color: "var(--error-onhover)",
-              backgroundColor: "#ffe5e5",
+              backgroundColor: "var(--error-bg)",
             },
             "&.Mui-disabled": {
               backgroundColor: "var(--light-grey)",
@@ -290,6 +290,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
           },
           standardError: {
             color: "var(--error)",
+            backgroundColor: "var(--error-bg)",
             "& .MuiAlert-icon": {
               color: "var(--error)",
             },
@@ -299,6 +300,7 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
           },
           standardSuccess: {
             color: "var(--success)",
+            backgroundColor: "var(--success-bg)",
             "& .MuiAlert-icon": {
               color: "var(--success)",
             },
@@ -308,11 +310,22 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
           },
           standardWarning: {
             color: "var(--warning)",
+            backgroundColor: "var(--warning-bg)",
             "& .MuiAlert-icon": {
               color: "var(--warning)",
             },
             "& .MuiAlert-action": {
               color: "var(--warning)",
+            },
+          },
+          standardInfo: {
+            color: "var(--primary-onhover)",
+            backgroundColor: "var(--primary-bg)",
+            "& .MuiAlert-icon": {
+              color: "var(--primary-onhover)",
+            },
+            "& .MuiAlert-action": {
+              color: "var(--primary-onhover)",
             },
           },
         },

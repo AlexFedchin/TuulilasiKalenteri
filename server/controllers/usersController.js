@@ -41,6 +41,15 @@ const updateUser = async (req, res) => {
   };
 
   if (password) {
+    const existingUser = await User.findById(req.params.id);
+    if (
+      existingUser &&
+      (await bcrypt.compare(password.trim(), existingUser.password))
+    ) {
+      return res.status(400).json({
+        error: "New password cannot be the same as the current password",
+      });
+    }
     updatedUserData.password = await bcrypt.hash(password?.trim(), 10);
   }
 

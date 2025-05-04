@@ -37,7 +37,11 @@ const EditableNoteCard = ({
         autoFocus
         variant="standard"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e) => {
+          if (e.target.value.length <= 50) {
+            setTitle(e.target.value);
+          }
+        }}
         placeholder="Title"
         sx={{ mb: 1 }}
         slotProps={{
@@ -54,7 +58,11 @@ const EditableNoteCard = ({
         size="small"
         variant="standard"
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        onChange={(e) => {
+          if (e.target.value.length <= 200) {
+            setDescription(e.target.value);
+          }
+        }}
         placeholder="Description"
         multiline
         slotProps={{

@@ -1,17 +1,21 @@
 :root {
   --primary: #2aa4eb;
   --primary-onhover: #2690ce;
+  --primary-bg: #2aa4eb10;
   --accent: #c60000;
   --accent-onhover: #b20000;
   --ordered: #7700cc;
   --ordered-onhover: #6600aa;
   --error: #e63f3f;
   --error-onhover: #cf3030;
+  --error-bg: #e63f3f15;
   --error2: #ffe5e5;
-  --warning: #e27800;
-  --warning-onhover: #c58607;
+  --warning: #ce6e00;
+  --warning-onhover: #b66100;
+  --warning-bg: #ce6e0015;
   --success: #38b319;
   --success-onhover: #389e1e;
+  --success-bg: #38b31915;
   --off-white: #eeeeee;
   --white: #fcfcfc;
   --white-onhover: #f6f6f6;

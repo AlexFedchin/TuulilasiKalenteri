@@ -192,4 +192,33 @@ const verifyToken = async (req, res) => {
   }
 };
 
-module.exports = { login, register, logout, verifyToken, isTokenBlacklisted };
+const checkPassword = async (req, res) => {
+  const { password } = req.body;
+
+  try {
+    // Check if user exists
+    const user = await User.findById(req.user.id);
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: "Incorrect password" });
+    }
+
+    res.status(200).json({ message: "Password is correct" });
+  } catch (error) {
+    console.error("Error during password check:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  login,
+  register,
+  logout,
+  verifyToken,
+  isTokenBlacklisted,
+  checkPassword,
+};

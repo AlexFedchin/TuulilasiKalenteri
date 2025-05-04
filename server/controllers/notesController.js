@@ -35,14 +35,17 @@ const getNoteById = async (req, res) => {
 const createNote = async (req, res) => {
   const { title, description } = req.body;
 
-  const note = new Note({ title, description, createdBy: req.user.id });
-
   try {
-    let savedNote;
-    try {
-      savedNote = await note.save();
-    } catch (error) {
-      return res.status(500).json({ error: "Failed to save note" });
+    const note = new Note({
+      title: title.trim(),
+      description: description.trim(),
+      createdBy: req.user.id,
+    });
+
+    const savedNote = await note.save();
+
+    if (!savedNote) {
+      return res.status(400).json({ error: "Failed to create note" });
     }
 
     res.status(201).json(savedNote);
@@ -55,7 +58,7 @@ const createNote = async (req, res) => {
 // Update a note
 const updateNote = async (req, res) => {
   const { title, description } = req.body;
-  console.log("Updating note with ID:", req.params.id);
+
   try {
     const note = await Note.findById(req.params.id);
 
@@ -69,7 +72,7 @@ const updateNote = async (req, res) => {
 
     const updatedNote = await Note.findByIdAndUpdate(
       req.params.id,
-      { title, description },
+      { title: title.trim(), description: description.trim() },
       { new: true, runValidators: true }
     );
 

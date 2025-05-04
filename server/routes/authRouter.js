@@ -4,6 +4,7 @@ const {
   register,
   logout,
   verifyToken,
+  checkPassword,
 } = require("../controllers/authController");
 const authenticate = require("../middlewares/authenticate");
 const validateUserData = require("../middlewares/validateUser");
@@ -13,6 +14,12 @@ router.post("/login", login);
 router.post("/register", validateUserData(false), register);
 router.post("/logout", authenticate(["admin", "regular"]), logout);
 router.get("/verify-token", authenticate(["admin", "regular"]), verifyToken);
+router.post(
+  "/check-password",
+  authenticate(["admin", "regular"]),
+  checkPassword
+);
 
 // Export the router to be used in the server.js
 module.exports = router;
+

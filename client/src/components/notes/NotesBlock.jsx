@@ -55,18 +55,22 @@ const Notes = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title, description }),
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim(),
+        }),
       });
 
+      const result = await response.json();
       if (!response.ok) {
-        throw new Error("Failed to create note");
+        throw new Error(result.error || "Failed to create note");
       }
-      const newNote = await response.json();
-      setNotes((prev) => [newNote, ...prev]);
+
+      setNotes((prev) => [result, ...prev]);
       setIsCreating(false);
       alert.success("Note created successfully!");
     } catch (error) {
-      alert.error("Failed to create note");
+      alert.error(`Error: ${error.message}`);
       console.error("Error creating note:", error);
     } finally {
       setIsSaving(false);
@@ -161,3 +165,4 @@ const Notes = () => {
 };
 
 export default Notes;
+

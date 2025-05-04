@@ -129,7 +129,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
     clientName: order?.clientName || "",
     notes: order?.notes || "",
   });
-
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleChange = (e, index, field) => {
@@ -178,6 +178,8 @@ const OrderModal = ({ onClose, order, setOrders }) => {
 
   // Submit function
   const handleSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
     // Clean products array by removing tmp fields
     const cleanedProducts = formData.products.map(
       ({ eurocode, amount, price, status }) => ({
@@ -245,6 +247,8 @@ const OrderModal = ({ onClose, order, setOrders }) => {
     } catch (err) {
       alert.error("Unexpected error occurred");
       console.error("Request failed:", err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -281,7 +285,11 @@ const OrderModal = ({ onClose, order, setOrders }) => {
           <Typography variant="h4">
             {isEdit ? "Edit Order" : "New Order"}
           </Typography>
-          <IconButton onClick={onClose} sx={{ position: "absolute", right: 0 }}>
+          <IconButton
+            onClick={onClose}
+            sx={{ position: "absolute", right: 0 }}
+            disabled={submitting}
+          >
             <CloseIcon />
           </IconButton>
         </Box>
@@ -400,9 +408,8 @@ const OrderModal = ({ onClose, order, setOrders }) => {
               }}
             >
               {formData.products.map((product, index) => (
-                <>
+                <React.Fragment key={index}>
                   <Box
-                    key={index}
                     sx={{
                       display: "flex",
                       gap: 1,
@@ -600,7 +607,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                   {index < formData.products.length - 1 && (
                     <Divider sx={{ mr: 1 }} />
                   )}
-                </>
+                </React.Fragment>
               ))}
             </Box>
 
@@ -651,6 +658,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
             onClick={onClose}
             variant="cancel"
             startIcon={<CloseIcon />}
+            disabled={submitting}
             sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
           >
             Cancel
@@ -659,6 +667,8 @@ const OrderModal = ({ onClose, order, setOrders }) => {
             onClick={handleSubmit}
             variant="submit"
             startIcon={<DoneIcon />}
+            loading={submitting}
+            loadingPosition="start"
             disabled={isSubmitDisabled}
             sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
           >
