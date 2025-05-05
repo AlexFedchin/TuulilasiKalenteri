@@ -3,9 +3,11 @@ import { Card, Typography, Box, Divider, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import useScreenSize from "../../hooks/useScreenSize";
+import { useTranslation } from "react-i18next";
 
 const UserCard = ({ user, onEdit, onDelete }) => {
   const { isMobile, isTablet } = useScreenSize();
+  const { t } = useTranslation();
 
   const handleEdit = () => {
     onEdit(user);
@@ -50,7 +52,7 @@ const UserCard = ({ user, onEdit, onDelete }) => {
           <Box
             component="img"
             src={`/icons/${user.role}.webp`}
-            alt="User Icon"
+            alt={t("userCard.iconAlt", { role: user.role })}
             sx={{
               width: isMobile ? "20px" : isTablet ? "24px" : "28px",
               height: isMobile ? "20px" : isTablet ? "24px" : "28px",
@@ -107,9 +109,11 @@ const UserCard = ({ user, onEdit, onDelete }) => {
         }}
       >
         <Typography variant="body2" fontWeight="bold">
-          First Name:
+          {t("userCard.firstName")}
         </Typography>
-        <Typography variant="body2">{user.firstName || "N/A"}</Typography>
+        <Typography variant="body2">
+          {user.firstName || t("userCard.na")}
+        </Typography>
       </Box>
       <Box
         sx={{
@@ -120,9 +124,11 @@ const UserCard = ({ user, onEdit, onDelete }) => {
         }}
       >
         <Typography variant="body2" fontWeight="bold">
-          Last Name:
+          {t("userCard.lastName")}
         </Typography>
-        <Typography variant="body2">{user.lastName || "N/A"}</Typography>
+        <Typography variant="body2">
+          {user.lastName || t("userCard.na")}
+        </Typography>
       </Box>
       <Box
         sx={{
@@ -133,9 +139,11 @@ const UserCard = ({ user, onEdit, onDelete }) => {
         }}
       >
         <Typography variant="body2" fontWeight="bold">
-          Email:
+          {t("userCard.email")}
         </Typography>
-        <Typography variant="body2">{user.email || "N/A"}</Typography>
+        <Typography variant="body2">
+          {user.email || t("userCard.na")}
+        </Typography>
       </Box>
 
       <Box
@@ -147,10 +155,10 @@ const UserCard = ({ user, onEdit, onDelete }) => {
         }}
       >
         <Typography variant="body2" fontWeight="bold">
-          Role:
+          {t("userCard.role")}
         </Typography>
         <Typography variant="body2">
-          {user.role === "admin" ? "Admin" : "Regular"}
+          {user.role === "admin" ? t("userCard.admin") : t("userCard.regular")}
         </Typography>
       </Box>
       {user.role !== "admin" && (
@@ -163,9 +171,11 @@ const UserCard = ({ user, onEdit, onDelete }) => {
           }}
         >
           <Typography variant="body2" fontWeight="bold">
-            Location:
+            {t("userCard.location")}
           </Typography>
-          <Typography variant="body2">{user.locationTitle || "N/A"}</Typography>
+          <Typography variant="body2">
+            {user.locationTitle || t("userCard.na")}
+          </Typography>
         </Box>
       )}
     </Card>

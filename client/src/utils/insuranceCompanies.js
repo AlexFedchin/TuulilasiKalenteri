@@ -1,3 +1,5 @@
+import { t } from "i18next"; // or your translation library
+
 export const insuranceCompanies = [
   {
     name: "Pohjola Vakuutus",
@@ -34,5 +36,5 @@ export const insuranceCompanies = [
     value: "alandia",
     logo: "/insurance-companies-logos/alandia-logo.webp",
   },
-  { name: "Other", value: "other" },
+  { name: t("bookingModal.other"), value: "other" }, // Use translation function here
 ];

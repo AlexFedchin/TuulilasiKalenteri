@@ -13,6 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import dayjs from "dayjs";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const BookingCard = ({ booking, onEditClick, onDeleteClick }) => {
   const {
@@ -32,16 +33,17 @@ const BookingCard = ({ booking, onEditClick, onDeleteClick }) => {
   } = booking;
 
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
   const getStatusText = () => {
     if (inStock) {
-      return "In stock, " + warehouseLocation;
+      return t("bookingCard.inStock", { location: warehouseLocation });
     } else if (isOrdered) {
-      return "Ordered";
+      return t("bookingCard.ordered");
     } else {
-      return "Out of stock";
+      return t("bookingCard.outOfStock");
     }
   };
 
@@ -75,7 +77,7 @@ const BookingCard = ({ booking, onEditClick, onDeleteClick }) => {
         position: "relative",
       }}
     >
-      <Typography variant="h4">Booking Details</Typography>
+      <Typography variant="h4">{t("bookingCard.title")}</Typography>
 
       <IconButton
         onClick={handleMenuOpen}
@@ -106,7 +108,7 @@ const BookingCard = ({ booking, onEditClick, onDeleteClick }) => {
           <ListItemIcon sx={{ color: "inherit" }}>
             <EditIcon fontSize="small" />
           </ListItemIcon>
-          Edit
+          {t("menu.edit")}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -121,51 +123,53 @@ const BookingCard = ({ booking, onEditClick, onDeleteClick }) => {
           <ListItemIcon sx={{ color: "inherit" }}>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
-          Delete
+          {t("menu.delete")}
         </MenuItem>
       </Menu>
 
       <Divider sx={{ my: 0.5 }} />
 
       <Typography variant="body2">
-        <strong>Car Model:</strong> {carModel}
+        <strong>{t("bookingCard.carModel")}:</strong> {carModel}
       </Typography>
       <Typography variant="body2">
-        <strong>Plate Number:</strong> {plateNumber}
+        <strong>{t("bookingCard.plateNumber")}:</strong> {plateNumber}
       </Typography>
       <Typography variant="body2">
-        <strong>Phone:</strong> {phoneNumber}
+        <strong>{t("bookingCard.phone")}:</strong> {phoneNumber}
       </Typography>
       {companyName && (
         <Typography variant="body2">
-          <strong>Company:</strong> {companyName}
+          <strong>{t("bookingCard.company")}:</strong> {companyName}
         </Typography>
       )}
       <Typography variant="body2">
-        <strong>Glass:</strong> {eurocode}, € {price || 0}
+        <strong>{t("bookingCard.glass")}:</strong> {eurocode}, € {price || 0}
       </Typography>
       <Typography variant="body2">
-        <strong>Glass Status:</strong>{" "}
+        <strong>{t("bookingCard.glassStatus")}:</strong>{" "}
         <span style={{ color: getStatusColor() }}>{getStatusText()}</span>
       </Typography>
       <Typography variant="body2">
-        <strong>Work Status:</strong>{" "}
+        <strong>{t("bookingCard.workStatus")}:</strong>{" "}
         <span style={{ color: isWorkDone ? "var(--success)" : "var(--error)" }}>
-          {isWorkDone ? "Done" : "Not done"}
+          {isWorkDone ? t("bookingCard.done") : t("bookingCard.notDone")}
         </span>
       </Typography>
       <Typography variant="body2">
-        <strong>Date and Time:</strong> {dayjs(date).format("DD.MM.YYYY HH:mm")}{" "}
-        - {dayjs(date).add(duration, "hour").format("HH:mm")}
+        <strong>{t("bookingCard.dateAndTime")}:</strong>{" "}
+        {dayjs(date).format("DD.MM.YYYY HH:mm")} -{" "}
+        {dayjs(date).add(duration, "hour").format("HH:mm")}
       </Typography>
       {notes && (
         <Typography variant="body2">
-          <strong>Notes:</strong> {notes}
+          <strong>{t("bookingCard.notes")}:</strong> {notes}
         </Typography>
       )}
       {user.role === "admin" && (
         <Typography variant="body2">
-          <strong>Creator:</strong> {booking.creatorName || "Unknown"}
+          <strong>{t("bookingCard.creator")}:</strong>{" "}
+          {booking.creatorName || t("bookingCard.unknown")}
         </Typography>
       )}
     </Card>

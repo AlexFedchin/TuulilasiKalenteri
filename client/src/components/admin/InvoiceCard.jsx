@@ -2,6 +2,7 @@ import { Card, Typography, Checkbox, Box } from "@mui/material";
 import { insuranceCompanies } from "../../utils/insuranceCompanies";
 import dayjs from "dayjs";
 import { alert } from "../../utils/alert";
+import { useTranslation } from "react-i18next";
 
 const InvoiceCard = ({
   booking,
@@ -10,6 +11,8 @@ const InvoiceCard = ({
   isRemoving,
   view,
 }) => {
+  const { t } = useTranslation();
+
   const getInsuranceCompanyName = () => {
     if (booking.insuranceCompany === "other") {
       return booking.insuranceCompanyName;
@@ -17,7 +20,7 @@ const InvoiceCard = ({
     const company = insuranceCompanies.find(
       (company) => company.value === booking.insuranceCompany
     );
-    return company ? company.name : "Unknown";
+    return company ? company.name : t("invoiceCard.unknown");
   };
 
   const handleCheckboxChange = (event) => {
@@ -30,7 +33,7 @@ const InvoiceCard = ({
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => {
-      alert.info("Copied to clipboard");
+      alert.info(t("alert.copiedToClipboard"));
     });
   };
 
@@ -69,7 +72,7 @@ const InvoiceCard = ({
         />
       </Box>
       <Typography variant="body2">
-        <strong>Insurance Company:</strong>{" "}
+        <strong>{t("invoiceCard.insuranceCompany")}:</strong>{" "}
         <Typography
           component="span"
           onClick={() => copyToClipboard(getInsuranceCompanyName())}
@@ -80,7 +83,7 @@ const InvoiceCard = ({
       </Typography>
       {booking.companyName && (
         <Typography variant="body2">
-          <strong>Company:</strong>{" "}
+          <strong>{t("invoiceCard.company")}:</strong>{" "}
           <Typography
             component="span"
             onClick={() => copyToClipboard(booking.companyName)}
@@ -91,7 +94,7 @@ const InvoiceCard = ({
         </Typography>
       )}
       <Typography variant="body2">
-        <strong>Plate Number:</strong>{" "}
+        <strong>{t("invoiceCard.plateNumber")}:</strong>{" "}
         <Typography
           component="span"
           onClick={() => copyToClipboard(booking.plateNumber)}
@@ -101,7 +104,7 @@ const InvoiceCard = ({
         </Typography>
       </Typography>
       <Typography variant="body2">
-        <strong>Car Model:</strong>{" "}
+        <strong>{t("invoiceCard.carModel")}:</strong>{" "}
         <Typography
           component="span"
           onClick={() => copyToClipboard(booking.carModel)}
@@ -111,7 +114,7 @@ const InvoiceCard = ({
         </Typography>
       </Typography>
       <Typography variant="body2">
-        <strong>Insurance Number:</strong>{" "}
+        <strong>{t("invoiceCard.insuranceNumber")}:</strong>{" "}
         <Typography
           component="span"
           onClick={() => copyToClipboard(booking.insuranceNumber)}
@@ -121,7 +124,8 @@ const InvoiceCard = ({
         </Typography>
       </Typography>
       <Typography variant="body2">
-        <strong>Deductible:</strong> <Typography component="span">€</Typography>{" "}
+        <strong>{t("invoiceCard.deductible")}:</strong>{" "}
+        <Typography component="span">€</Typography>{" "}
         <Typography
           component="span"
           onClick={() => copyToClipboard(booking.deductible || 0)}
@@ -131,7 +135,8 @@ const InvoiceCard = ({
         </Typography>
       </Typography>
       <Typography variant="body2">
-        <strong>Price:</strong> <Typography component="span">€</Typography>{" "}
+        <strong>{t("invoiceCard.price")}:</strong>{" "}
+        <Typography component="span">€</Typography>{" "}
         <Typography
           component="span"
           onClick={() => copyToClipboard(booking.price || 0)}
@@ -141,7 +146,7 @@ const InvoiceCard = ({
         </Typography>
       </Typography>
       <Typography variant="body2">
-        <strong>Service Date:</strong>{" "}
+        <strong>{t("invoiceCard.serviceDate")}:</strong>{" "}
         <Typography
           component="span"
           onClick={() =>
@@ -156,7 +161,7 @@ const InvoiceCard = ({
         <Typography variant="body2" fontWeight="bold" textAlign="right">
           {booking.locationTitle || (
             <Typography component="span" fontStyle="italic">
-              Unknown
+              {t("invoiceCard.unknown")}
             </Typography>
           )}
         </Typography>
@@ -167,7 +172,9 @@ const InvoiceCard = ({
             color: booking.invoiceMade ? "var(--success)" : "var(--error)",
           }}
         >
-          {booking.invoiceMade ? "Invoice sent" : "Invoice not sent"}
+          {booking.invoiceMade
+            ? t("invoiceCard.invoiceSent")
+            : t("invoiceCard.invoiceNotSent")}
         </Typography>
       </Box>
     </Card>

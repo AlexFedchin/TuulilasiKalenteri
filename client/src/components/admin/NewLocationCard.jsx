@@ -5,15 +5,17 @@ import CheckIcon from "@mui/icons-material/Check";
 import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 import useScreenSize from "../../hooks/useScreenSize";
+import { useTranslation } from "react-i18next";
 
 const NewLocationCard = ({ setLocations, onCancel }) => {
   const { isMobile, isTablet } = useScreenSize();
   const { token } = useAuth();
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
 
   const handleSave = async () => {
     if (!title.trim()) {
-      alert.error("Title cannot be empty");
+      alert.error(t("alert.error"));
       return;
     }
     try {
@@ -29,15 +31,17 @@ const NewLocationCard = ({ setLocations, onCancel }) => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to create location");
+        throw new Error(result.error);
       }
 
       setLocations((prevLocations) => [...prevLocations, result]);
-      alert.success("Location created successfully!");
+      alert.success(t("alert.locationCreateSuccess"));
       onCancel();
     } catch (error) {
       console.error("Error creating location:", error);
-      alert.error(`Error: ${error.message}`);
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
     }
   };
 
@@ -74,7 +78,7 @@ const NewLocationCard = ({ setLocations, onCancel }) => {
           <Box
             component="img"
             src={`/icons/location.webp`}
-            alt="User Icon"
+            alt="Location Icon"
             sx={{
               width: isMobile ? "20px" : isTablet ? "24px" : "28px",
               height: isMobile ? "20px" : isTablet ? "24px" : "28px",
@@ -85,7 +89,7 @@ const NewLocationCard = ({ setLocations, onCancel }) => {
             onChange={(e) => setTitle(e.target.value)}
             variant="standard"
             fullWidth
-            placeholder="Enter location title"
+            placeholder={t("locationCard.titlePlaceholder")}
             sx={{ mr: 1 }}
           />
         </Box>

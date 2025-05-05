@@ -28,6 +28,7 @@ import { useAuth } from "../context/AuthContext";
 import { alert } from "../utils/alert";
 import useScreenSize from "../hooks/useScreenSize";
 import Joi from "joi";
+import { useTranslation } from "react-i18next";
 
 const userValidationSchema = Joi.object({
   username: Joi.string()
@@ -103,6 +104,7 @@ const userValidationSchema = Joi.object({
 });
 
 const UserModal = ({ onClose, user, setUsers }) => {
+  const { t } = useTranslation();
   const { token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
   const isEdit = !!user;
@@ -123,8 +125,12 @@ const UserModal = ({ onClose, user, setUsers }) => {
   const [submitting, setSubmitting] = useState(false);
 
   const roles = [
-    { value: "regular", name: "Regular", image: "/icons/regular.webp" },
-    { value: "admin", name: "Admin", image: "/icons/admin.webp" },
+    {
+      value: "regular",
+      name: t("userCard.regular"),
+      image: "/icons/regular.webp",
+    },
+    { value: "admin", name: t("userCard.admin"), image: "/icons/admin.webp" },
   ];
 
   const togglePasswordVisibility = () => {
@@ -234,8 +240,7 @@ const UserModal = ({ onClose, user, setUsers }) => {
       const result = await response.json();
 
       if (!response.ok) {
-        alert.error(`Error: ${result.error}`);
-        return;
+        throw new Error(result.error);
       }
 
       if (isEdit) {
@@ -252,16 +257,18 @@ const UserModal = ({ onClose, user, setUsers }) => {
               : u
           )
         );
-        alert.success("User updated successfully!");
+        alert.success(t("alert.userUpdateSuccess"));
       } else {
         setUsers((prev) => [result, ...prev]);
-        alert.success("User created successfully!");
+        alert.success(t("alert.userCreateSuccess"));
       }
 
       onClose();
-    } catch (err) {
-      alert.error("Unexpected error occurred");
-      console.error("Request failed:", err);
+    } catch (error) {
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
+      console.error("Request failed:", error);
     } finally {
       setSubmitting(false);
     }
@@ -298,7 +305,7 @@ const UserModal = ({ onClose, user, setUsers }) => {
           }}
         >
           <Typography variant="h4">
-            {isEdit ? "Edit User" : "New User"}
+            {isEdit ? t("userModal.titleEdit") : t("userModal.titleNew")}
           </Typography>
           <IconButton
             onClick={onClose}
@@ -327,10 +334,10 @@ const UserModal = ({ onClose, user, setUsers }) => {
           <Box>
             <Typography variant="textFieldLabel">
               <SettingsIcon fontSize="small" />
-              Username
+              {t("userModal.username")}
             </Typography>
             <TextField
-              placeholder="Username"
+              placeholder={t("userModal.username")}
               name="username"
               onKeyDown={(e) => e.key === " " && e.preventDefault()}
               size="small"
@@ -347,10 +354,10 @@ const UserModal = ({ onClose, user, setUsers }) => {
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="textFieldLabel">
                 <PersonIcon fontSize="small" />
-                First name
+                {t("userModal.firstName")}
               </Typography>
               <TextField
-                placeholder="First Name"
+                placeholder={t("userModal.firstName")}
                 name="firstName"
                 size="small"
                 value={formData.firstName}
@@ -363,10 +370,10 @@ const UserModal = ({ onClose, user, setUsers }) => {
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="textFieldLabel">
                 <PersonIcon fontSize="small" />
-                Last name
+                {t("userModal.lastName")}
               </Typography>
               <TextField
-                placeholder="Last Name"
+                placeholder={t("userModal.lastName")}
                 name="lastName"
                 size="small"
                 value={formData.lastName}
@@ -382,10 +389,10 @@ const UserModal = ({ onClose, user, setUsers }) => {
           <Box>
             <Typography variant="textFieldLabel">
               <EmailIcon fontSize="small" />
-              Email
+              {t("userModal.email")}
             </Typography>
             <TextField
-              placeholder="Email"
+              placeholder={t("userModal.email")}
               name="email"
               size="small"
               type="email"
@@ -401,10 +408,10 @@ const UserModal = ({ onClose, user, setUsers }) => {
           <Box>
             <Typography variant="textFieldLabel">
               <PasswordIcon fontSize="small" />
-              Password
+              {t("userModal.password")}
             </Typography>
             <TextField
-              placeholder="Password"
+              placeholder={t("userModal.password")}
               name="password"
               size="small"
               onKeyDown={(e) => e.key === " " && e.preventDefault()}
@@ -441,8 +448,7 @@ const UserModal = ({ onClose, user, setUsers }) => {
             />
             {isEdit && (
               <Alert severity="info" size="small" sx={{ mt: 1 }}>
-                This will reset current user's password. Leave blank to keep the
-                current password.
+                {t("userModal.passwordResetInfo")}
               </Alert>
             )}
           </Box>
@@ -474,19 +480,18 @@ const UserModal = ({ onClose, user, setUsers }) => {
                   fontWeight: 600,
                 }}
               >
-                Unchangeable Fields
+                {t("userModal.unchangeableFields")}
               </Typography>
 
               <Alert severity="warning" sx={{ mb: -1 }}>
-                The fields below cannot be changed once you create the user. Be
-                careful when selecting them.
+                {t("userModal.unchangeableFieldsWarning")}
               </Alert>
 
               {/* Role */}
               <Box sx={{ mb: "-5px" }}>
                 <Typography variant="textFieldLabel">
                   <RoleIcon fontSize="small" />
-                  Role
+                  {t("userModal.role")}
                 </Typography>
                 <FormControl fullWidth error={!!errors.role}>
                   <Select
@@ -519,7 +524,7 @@ const UserModal = ({ onClose, user, setUsers }) => {
                 <Box sx={{ mb: "-4px" }}>
                   <Typography variant="textFieldLabel">
                     <LocationIcon fontSize="small" />
-                    Location
+                    {t("userModal.location")}
                   </Typography>
                   <FormControl fullWidth error={!!errors.location}>
                     <Select
@@ -556,7 +561,7 @@ const UserModal = ({ onClose, user, setUsers }) => {
             disabled={submitting}
             sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
           >
-            Cancel
+            {t("userModal.cancel")}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -567,7 +572,7 @@ const UserModal = ({ onClose, user, setUsers }) => {
             startIcon={<DoneIcon />}
             sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
           >
-            {isEdit ? "Update" : "Create"}
+            {isEdit ? t("userModal.update") : t("userModal.create")}
           </Button>
         </Box>
       </Box>

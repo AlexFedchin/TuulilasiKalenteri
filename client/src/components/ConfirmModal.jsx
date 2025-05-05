@@ -11,10 +11,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import useScreenSize from "../hooks/useScreenSize";
 import Loader from "./loader/Loader";
+import { useTranslation } from "react-i18next";
 
 const ConfirmModal = ({ onConfirm, onClose, text }) => {
   const { isMobile } = useScreenSize();
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleConfirm = () => {
     setLoading(true);
@@ -73,7 +75,7 @@ const ConfirmModal = ({ onConfirm, onClose, text }) => {
             position: "relative",
           }}
         >
-          <Typography variant="h4">Are you sure?</Typography>
+          <Typography variant="h4">{t("confirmModal.title")}</Typography>
           <IconButton onClick={onClose} sx={{ position: "absolute", right: 0 }}>
             <CloseIcon />
           </IconButton>
@@ -111,7 +113,7 @@ const ConfirmModal = ({ onConfirm, onClose, text }) => {
             onClick={onClose}
             sx={{ flexGrow: 1 }}
           >
-            Cancel
+            {t("confirmModal.cancel")}
           </Button>
           <Button
             startIcon={<DoneIcon />}
@@ -119,7 +121,7 @@ const ConfirmModal = ({ onConfirm, onClose, text }) => {
             onClick={handleConfirm}
             sx={{ flexGrow: 1 }}
           >
-            Confirm
+            {t("confirmModal.confirm")}
           </Button>
         </Box>
       </Box>

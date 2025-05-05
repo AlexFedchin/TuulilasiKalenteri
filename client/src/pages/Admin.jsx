@@ -4,9 +4,11 @@ import DefaultContainer from "../components/DefaultContainer";
 import UsersTab from "../components/admin/UsersTab";
 import LocationsTab from "../components/admin/LocationsTab";
 import InvoicesTab from "../components/admin/InvoicesTab";
+import { useTranslation } from "react-i18next"; // Import translation hook
 
 const Admin = () => {
   const [tabIndex, setTabIndex] = useState(0);
+  const { t } = useTranslation(); // Initialize translation function
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
@@ -15,13 +17,13 @@ const Admin = () => {
   return (
     <DefaultContainer>
       <Typography variant="h2" marginBottom={-2}>
-        Admin
+        {t("admin.title")}
       </Typography>
 
       <Tabs value={tabIndex} onChange={handleTabChange}>
-        <Tab label="Invoices" />
-        <Tab label="Users" />
-        <Tab label="Locations" />
+        <Tab label={t("admin.tabs.invoices")} />
+        <Tab label={t("admin.tabs.users")} />
+        <Tab label={t("admin.tabs.locations")} />
       </Tabs>
 
       <Box sx={{ width: "100%" }}>

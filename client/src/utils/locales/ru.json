@@ -6,11 +6,225 @@
   },
   "menu": {
     "myProfile": "Мой профиль",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "edit": "Редактировать",
+    "delete": "Удалить"
   },
   "language": {
     "english": "English",
     "finnish": "Suomi",
     "russian": "Русский"
+  },
+  "orderModal": {
+    "titleNew": "Новый заказ",
+    "titleEdit": "Редактировать заказ",
+    "client": "Клиент",
+    "clientName": "Имя клиента",
+    "products": "Товары",
+    "eurocode": "Еврокод",
+    "amount": "Кол-во",
+    "price": "Цена",
+    "status": "Статус",
+    "inStock": "В налич.",
+    "order": "Заказать",
+    "notes": "Заметки",
+    "addProduct": "Добавить товар",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "update": "Обновить"
+  },
+  "alert": {
+    "error": "Ошибка",
+    "orderUpdateSuccess": "Заказ успешно обновлен!",
+    "orderCreateSuccess": "Заказ успешно создан!",
+    "userUpdateSuccess": "Пользователь успешно обновлен!",
+    "userCreateSuccess": "Пользователь успешно создан!",
+    "userDeleteSuccess": "Пользователь успешно удален!",
+    "locationDeleteSuccess": "Локация успешно удалена!",
+    "locationCreateSuccess": "Локация успешно создана!",
+    "locationUpdateSuccess": "Локация успешно обновлена!",
+    "bookingUpdateSuccess": "Бронирование успешно обновлено!",
+    "bookingCreateSuccess": "Бронирование успешно создано!",
+    "bookingDeleteSuccess": "Бронирование успешно удалено!",
+    "invoiceStatusUpdateSuccess": "Статус счета успешно обновлен!",
+    "copiedToClipboard": "Скопировано в буфер обмена",
+    "unexpectedError": "Произошла непредвиденная ошибка"
+  },
+  "userModal": {
+    "titleNew": "Новый пользователь",
+    "titleEdit": "Редактировать пользователя",
+    "username": "Имя пользователя",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "email": "Почта",
+    "password": "Пароль",
+    "role": "Роль",
+    "location": "Локация",
+    "unchangeableFields": "Неизменяемые поля",
+    "unchangeableFieldsWarning": "Поля ниже нельзя изменить после создания пользователя. Будьте внимательны при выборе.",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "update": "Обновить",
+    "passwordResetInfo": "Это сбросит текущий пароль пользователя. Оставьте поле пустым, чтобы сохранить текущий пароль."
+  },
+  "confirmModal": {
+    "title": "Вы уверены?",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить"
+  },
+  "admin": {
+    "title": "Админ",
+    "tabs": {
+      "invoices": "Счета",
+      "users": "Пользователи",
+      "locations": "Локации"
+    },
+    "invoices": {
+      "view": "Просмотр",
+      "sent": "Отправ.",
+      "notSent": "Не отправ.",
+      "markAsSent": "Отправлено",
+      "markAsUnsent": "Не отправ.",
+      "filter": {
+        "all": "Все",
+        "past": "Прошедшие",
+        "upcoming": "Предстоящие"
+      },
+      "sort": {
+        "newest": "Сначала новые",
+        "oldest": "Сначала старые"
+      },
+      "noSentInvoices": "У вас нет отправленных счетов.",
+      "noUnsentInvoices": "У вас нет неотправленных счетов."
+    }
+  },
+  "invoiceCard": {
+    "insuranceCompany": "Страховая компания",
+    "company": "Компания",
+    "plateNumber": "Номер авто",
+    "carModel": "Модель авто",
+    "insuranceNumber": "Номер страховки",
+    "deductible": "Личная ответственность",
+    "price": "Цена",
+    "serviceDate": "Дата",
+    "unknown": "Неизвестно",
+    "invoiceSent": "Счет отправлен",
+    "invoiceNotSent": "Счет не отправлен"
+  },
+  "userCard": {
+    "iconAlt": "Роль пользователя: {{role}}",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "email": "Почта",
+    "role": "Роль",
+    "admin": "Админ",
+    "regular": "Обычный",
+    "location": "Локация",
+    "na": "Н/Д"
+  },
+  "usersTab": {
+    "searchPlaceholder": "Поиск пользователей...",
+    "confirmDelete": "Вы уверены, что хотите удалить пользователя <b>{{username}}</b>? Пользователь и все его бронирования будут удалены. Это действие <b>не может быть отменено</b>."
+  },
+  "locationsTab": {
+    "searchPlaceholder": "Поиск локаций...",
+    "confirmDelete": "Вы уверены, что хотите удалить локацию <b>{{locationName}}</b>? Она будет удалена вместе со всеми {{userCount}} пользователями и бронированиями, связанными с ней. Это действие <b>не может быть отменено</b>."
+  },
+  "locationCard": {
+    "titlePlaceholder": "Название локации",
+    "usersLabel": "Пользователи:",
+    "noUsersMessage": "Нет пользователей",
+    "emptyTitle": "Название локации не может быть пустым"
+  },
+  "bookingCard": {
+    "title": "Детали бронирования",
+    "carModel": "Модель авто",
+    "plateNumber": "Номер авто",
+    "phone": "Телефон",
+    "company": "Компания",
+    "glass": "Стекло",
+    "glassStatus": "Статус стекла",
+    "workStatus": "Статус работы",
+    "done": "Выполнена",
+    "notDone": "Не выполнена",
+    "dateAndTime": "Дата и время",
+    "notes": "Заметки",
+    "creator": "Создатель",
+    "unknown": "Неизвестно",
+    "inStock": "В наличии, {{location}}",
+    "ordered": "Заказано",
+    "outOfStock": "Нет в наличии"
+  },
+  "bookingsPage": {
+    "title": "Бронирования",
+    "searchPlaceholder": "Поиск...",
+    "view": {
+      "all": "Все",
+      "my": "Мои"
+    },
+    "filter": {
+      "all": "Все",
+      "past": "Прошедшие",
+      "upcoming": "Предстоящие"
+    },
+    "sort": {
+      "newest": "Сначала новые",
+      "oldest": "Сначала старые"
+    },
+    "createBooking": "Создать бронь",
+    "noBookings": "Бронирования не найдены",
+    "confirmDelete": "Вы уверены, что хотите удалить бронирование для <strong>{{carModel}} {{plateNumber}}</strong> на <strong>{{date}}</strong> с <strong>{{startTime}} до {{endTime}}</strong>? Это действие <strong>не может быть отменено</strong>."
+  },
+  "bookingModal": {
+    "titleNew": "Новое бронирование",
+    "titleEdit": "Редактировать бронирование",
+    "plateNumber": "Номер авто",
+    "plateNumberPlaceholder": "XXX-123",
+    "plateNumberWarning": "Этот номерной знак не похож на обычный финский, шведский или эстонский номер. Пожалуйста, проверьте его, чтобы убедиться, что он правильный.",
+    "workDone": "Работа выполнена",
+    "phoneNumber": "Номер телефона",
+    "phoneNumberPlaceholder": "040 123 4567",
+    "phoneNumberWarning": "Этот номер телефона не похож на обычный финский номер. Пожалуйста, проверьте его, чтобы убедиться, что он правильный.",
+    "carModel": "Модель авто",
+    "carModelPlaceholder": "например, Toyota Corolla",
+    "eurocode": "Еврокод",
+    "eurocodePlaceholder": "Введите Еврокод",
+    "price": "Цена",
+    "pricePlaceholder": "Введите цену",
+    "inStock": "В налич.",
+    "warehouseLocation": "Место на складе",
+    "warehouseLocationPlaceholder": "например, А1-11",
+    "ordered": "Заказано",
+    "client": "Клиент",
+    "clientTypes": {
+      "private": "Частный клиент",
+      "company": "Бизнес-клиент"
+    },
+    "companyName": "Компания",
+    "companyNamePlaceholder": "Введите название компании",
+    "payer": "Плательщик",
+    "payerTypes": {
+      "person": "Физическое лицо",
+      "company": "Компания",
+      "insurance": "Страховая компания"
+    },
+    "insuranceCompany": "Страховая компания",
+    "other": "Другая",
+    "insuranceCompanyName": "Название страховой компании",
+    "insuranceCompanyNamePlaceholder": "Введите название страховой компании",
+    "insuranceNumber": "Номер страховки",
+    "insuranceNumberPlaceholder": "Введите номер страховки",
+    "deductible": "Личная ответственность",
+    "dateTime": "Дата и время",
+    "duration": "Длительность",
+    "location": "Локация",
+    "hour": "час",
+    "hours": "часов",
+    "notes": "Заметки",
+    "notesPlaceholder": "Введите дополнительные заметки",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "update": "Обновить",
+    "delete": "Удалить"
   }
 }

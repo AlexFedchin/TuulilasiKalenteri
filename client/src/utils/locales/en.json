@@ -6,11 +6,226 @@
   },
   "menu": {
     "myProfile": "My Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "language": {
     "english": "English",
     "finnish": "Suomi",
     "russian": "Русский"
+  },
+  "orderModal": {
+    "titleNew": "New Order",
+    "titleEdit": "Edit Order",
+    "client": "Client",
+    "clientName": "Client Name",
+    "products": "Products",
+    "eurocode": "Eurocode",
+    "amount": "Amount",
+    "price": "Price",
+    "status": "Status",
+    "inStock": "In Stock",
+    "order": "Order",
+    "notes": "Notes",
+    "addProduct": "Add Product",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update"
+  },
+  "alert": {
+    "error": "Error",
+    "orderUpdateSuccess": "Order updated successfully!",
+    "orderCreateSuccess": "Order created successfully!",
+    "userUpdateSuccess": "User updated successfully!",
+    "userCreateSuccess": "User created successfully!",
+    "userDeleteSuccess": "User deleted successfully!",
+    "locationDeleteSuccess": "Location deleted successfully!",
+    "locationCreateSuccess": "Location created successfully!",
+    "locationUpdateSuccess": "Location updated successfully!",
+    "bookingUpdateSuccess": "Booking updated successfully!",
+    "bookingCreateSuccess": "Booking created successfully!",
+    "bookingDeleteSuccess": "Booking deleted successfully!",
+    "invoiceStatusUpdateSuccess": "Invoice status updated successfully!",
+    "copiedToClipboard": "Copied to clipboard",
+    "unexpectedError": "An unexpected error occurred"
+  },
+  "userModal": {
+    "titleNew": "New User",
+    "titleEdit": "Edit User",
+    "username": "Username",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "location": "Location",
+    "unchangeableFields": "Unchangeable Fields",
+    "unchangeableFieldsWarning": "The fields below cannot be changed once you create the user. Be careful when selecting them.",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "passwordResetInfo": "This will reset the current user's password. Leave blank to keep the current password."
+  },
+  "confirmModal": {
+    "title": "Are you sure?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "admin": {
+    "title": "Admin",
+    "tabs": {
+      "invoices": "Invoices",
+      "users": "Users",
+      "locations": "Locations"
+    },
+    "invoices": {
+      "view": "View",
+      "sent": "Sent",
+      "notSent": "Not Sent",
+      "markAsSent": "Mark as Sent",
+      "markAsUnsent": "Mark as Unsent",
+      "filter": {
+        "all": "All",
+        "past": "Past",
+        "upcoming": "Upcoming"
+      },
+      "sort": {
+        "newest": "Newest first",
+        "oldest": "Oldest first"
+      },
+      "noSentInvoices": "You don't have any sent invoices.",
+      "noUnsentInvoices": "You don't have any unsent invoices."
+    }
+  },
+  "invoiceCard": {
+    "insuranceCompany": "Insurance Company",
+    "company": "Company",
+    "plateNumber": "Plate Number",
+    "carModel": "Car Model",
+    "insuranceNumber": "Insurance Number",
+    "deductible": "Deductible",
+    "price": "Price",
+    "serviceDate": "Date",
+    "unknown": "Unknown",
+    "invoiceSent": "Invoice sent",
+    "invoiceNotSent": "Invoice not sent"
+  },
+  "userCard": {
+    "iconAlt": "User role: {{role}}",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "role": "Role",
+    "admin": "Admin",
+    "regular": "Regular",
+    "location": "Location",
+    "na": "N/A"
+  },
+  "usersTab": {
+    "searchPlaceholder": "Search for users...",
+    "fetchError": "Failed to fetch users",
+    "confirmDelete": "Are you sure you want to delete the <b>{{username}}</b> user? The user and all of their bookings will be deleted. This action <b>cannot be undone</b>."
+  },
+  "locationsTab": {
+    "searchPlaceholder": "Search for locations...",
+    "confirmDelete": "Are you sure you want to delete the <b>{{locationName}}</b> location? It will be deleted with all {{userCount}} users and bookings associated with it. This action <b>cannot be undone</b>."
+  },
+  "locationCard": {
+    "titlePlaceholder": "Location title",
+    "usersLabel": "Users:",
+    "noUsersMessage": "No users assigned",
+    "emptyTitle": "Location title cannot be empty"
+  },
+  "bookingCard": {
+    "title": "Booking Details",
+    "carModel": "Car Model",
+    "plateNumber": "Plate Number",
+    "phone": "Phone",
+    "company": "Company",
+    "glass": "Glass",
+    "glassStatus": "Glass Status",
+    "workStatus": "Work Status",
+    "done": "Done",
+    "notDone": "Not done",
+    "dateAndTime": "Date and Time",
+    "notes": "Notes",
+    "creator": "Creator",
+    "unknown": "Unknown",
+    "inStock": "In stock, {{location}}",
+    "ordered": "Ordered",
+    "outOfStock": "Out of stock"
+  },
+  "bookingsPage": {
+    "title": "Bookings",
+    "searchPlaceholder": "Search...",
+    "view": {
+      "all": "All",
+      "my": "My"
+    },
+    "filter": {
+      "all": "All",
+      "past": "Past",
+      "upcoming": "Upcoming"
+    },
+    "sort": {
+      "newest": "Newest first",
+      "oldest": "Oldest first"
+    },
+    "createBooking": "Create Booking",
+    "noBookings": "No bookings found",
+    "confirmDelete": "Are you sure you want to delete the booking for <strong>{{carModel}} {{plateNumber}}</strong> on <strong>{{date}}</strong> at <strong>{{startTime}} - {{endTime}}</strong>? This action <strong>cannot be undone</strong>."
+  },
+  "bookingModal": {
+    "titleNew": "New Booking",
+    "titleEdit": "Edit Booking",
+    "plateNumber": "Plate Number",
+    "plateNumberPlaceholder": "XXX-123",
+    "plateNumberWarning": "This license plate doesn't look like a regular Finnish, Swedish or Estonian plate number. Please, check it to make sure it is correct.",
+    "workDone": "Work Done",
+    "phoneNumber": "Phone Number",
+    "phoneNumberPlaceholder": "040 123 4567",
+    "phoneNumberWarning": "This phone number doesn't look like a regular Finnish phone number. Please, check it to make sure it is correct.",
+    "carModel": "Car Model",
+    "carModelPlaceholder": "e.g., Toyota Corolla",
+    "eurocode": "Eurocode",
+    "eurocodePlaceholder": "Enter Eurocode",
+    "price": "Price",
+    "pricePlaceholder": "Enter price",
+    "inStock": "In Stock",
+    "warehouseLocation": "Warehouse Location",
+    "warehouseLocationPlaceholder": "e.g., A1-11",
+    "ordered": "Ordered",
+    "client": "Client",
+    "clientTypes": {
+      "private": "Private Client",
+      "company": "Business Client"
+    },
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Enter company name",
+    "payer": "Payer",
+    "payerTypes": {
+      "person": "Person",
+      "company": "Business",
+      "insurance": "Insurance Company"
+    },
+    "insuranceCompany": "Insurance Company",
+    "other": "Other",
+    "insuranceCompanyName": "Insurance Company Name",
+    "insuranceCompanyNamePlaceholder": "Enter insurance company name",
+    "insuranceNumber": "Insurance Number",
+    "insuranceNumberPlaceholder": "Enter insurance number",
+    "deductible": "Deductible",
+    "dateTime": "Date and Time",
+    "duration": "Duration",
+    "location": "Location",
+    "hour": "hour",
+    "hours": "hours",
+    "notes": "Notes",
+    "notesPlaceholder": "Enter additional notes",
+    "create": "Create",
+    "update": "Update",
+    "cancel": "Cancel",
+    "delete": "Delete"
   }
 }

@@ -15,10 +15,12 @@ import NewLocationCard from "./NewLocationCard";
 import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 import useScreenSize from "../../hooks/useScreenSize";
+import { useTranslation } from "react-i18next";
 
 const LocationsTab = () => {
   const { token } = useAuth();
   const { isMobile } = useScreenSize();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [locations, setLocations] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,14 +41,18 @@ const LocationsTab = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (!response.ok) {
-          throw new Error("Failed to fetch locations");
-        }
         const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error);
+        }
+
         setLocations(data);
       } catch (error) {
         console.error("Error fetching locations:", error);
-        alert.error(`Error: ${error.message}`);
+        alert.error(
+          `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+        );
       } finally {
         setLoading(false);
       }
@@ -100,10 +106,10 @@ const LocationsTab = () => {
       setLocations((prevLocations) =>
         prevLocations.filter((location) => location._id !== locationId)
       );
-      alert.success("Location deleted successfully!");
+      alert.success(t("alert.locationDeleteSuccess"));
     } catch (error) {
       console.error("Error deleting location:", error);
-      alert.error(`Error: ${error.message}`);
+      alert.error(`${t("alert.error")}: ${error.message}`);
     }
   };
 
@@ -143,7 +149,7 @@ const LocationsTab = () => {
         }}
       >
         <TextField
-          placeholder="Search for locations..."
+          placeholder={t("locationsTab.searchPlaceholder")}
           variant="outlined"
           fullWidth
           size="small"
@@ -217,7 +223,10 @@ const LocationsTab = () => {
         <ConfirmModal
           onConfirm={() => deleteLocation(selectedLocation._id)}
           onClose={() => setOpenConfirmModal(false)}
-          text={`Are you sure you want to delete the <b>${selectedLocation?.title}</b> location? It will be deleted with all ${selectedLocation.users.length} users and bookings associated with it. This action <b>cannot be undone</b>.`}
+          text={t("locationsTab.confirmDelete", {
+            locationName: selectedLocation?.title,
+            userCount: selectedLocation?.users.length,
+          })}
         />
       )}
     </Box>

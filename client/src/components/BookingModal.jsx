@@ -36,6 +36,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
 import Joi from "joi";
 import dayjs from "dayjs";
+import "dayjs/locale/fi";
+import "dayjs/locale/en";
+import "dayjs/locale/ru";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import updateLocale from "dayjs/plugin/updateLocale";
@@ -46,6 +49,7 @@ import useScreenSize from "../hooks/useScreenSize";
 import { useAuth } from "../context/AuthContext";
 import { alert } from "../utils/alert";
 import { insuranceCompanies } from "../utils/insuranceCompanies";
+import { useTranslation } from "react-i18next";
 
 const bookingValidationSchema = Joi.object({
   plateNumber: Joi.string()
@@ -221,15 +225,17 @@ const BookingModal = ({
   location,
   setBookings,
 }) => {
+  const { token, user } = useAuth();
+  const { isMobile, isTablet } = useScreenSize();
+  const { t, i18n } = useTranslation();
   dayjs.extend(utc);
   dayjs.extend(timezone);
   dayjs.extend(updateLocale);
   dayjs.updateLocale("en", {
     weekStart: 1,
   });
+  dayjs.locale(i18n.language);
 
-  const { token, user } = useAuth();
-  const { isMobile, isTablet } = useScreenSize();
   // Figure out the initial date
   if (date) {
     date = dayjs(date).format("YYYY-MM-DDTHH:mmZ");
@@ -511,8 +517,7 @@ const BookingModal = ({
       const result = await response.json();
 
       if (!response.ok) {
-        alert.error(`Error: ${result.error}`);
-        return;
+        throw new Error(result.error);
       }
 
       if (isEdit) {
@@ -521,16 +526,16 @@ const BookingModal = ({
             booking._id === result._id ? result : booking
           )
         );
-        alert.success("Booking updated successfully!");
+        alert.success(t("alert.bookingEditSuccess"));
       } else {
         setBookings((prev) => [result, ...prev]);
-        alert.success("Booking created successfully!");
+        alert.success(t("alert.bookingCreateSuccess"));
       }
 
       onClose();
-    } catch (err) {
-      alert.error("Unexpected error occurred");
-      console.error("Request failed:", err);
+    } catch (error) {
+      alert.error(`${t("alert.error")}: ${error.message}`);
+      console.error("Request failed:", error);
     } finally {
       setSubmitting(false);
     }
@@ -547,12 +552,11 @@ const BookingModal = ({
           Authorization: `Bearer ${token}`,
         },
       });
+
       const data = await response.json();
 
       if (!response.ok) {
-        alert.error(`Error: ${data.error}`);
-        console.error("Error deleting booking:", data.error);
-        return;
+        throw new Error(data.error);
       }
 
       const deletedBookingId = data.deletedBookingId;
@@ -564,9 +568,9 @@ const BookingModal = ({
       alert.success("Booking deleted successfully!");
 
       onClose();
-    } catch (err) {
-      alert.error("Unexpected error occurred");
-      console.error("Request failed:", err);
+    } catch (error) {
+      alert.error(`Error: ${error.message || t("alert.unexpectedError")}`);
+      console.error("Request failed:", error);
     } finally {
       setDeleting(false);
     }
@@ -605,7 +609,7 @@ const BookingModal = ({
           }}
         >
           <Typography variant="h4">
-            {isEdit ? "Edit Booking" : "New Booking"}
+            {isEdit ? t("bookingModal.titleEdit") : t("bookingModal.titleNew")}
           </Typography>
           <IconButton
             onClick={onClose}
@@ -630,11 +634,11 @@ const BookingModal = ({
           }}
         >
           {/* Plate number & is work done */}
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 1 }}>
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="textFieldLabel">
                 <AbcIcon fontSize="small" />
-                Plate number
+                {t("bookingModal.plateNumber")}
               </Typography>
               <TextField
                 size="small"
@@ -642,7 +646,7 @@ const BookingModal = ({
                 fullWidth
                 margin="none"
                 type="text"
-                placeholder="XXX-123"
+                placeholder={t("bookingModal.plateNumberPlaceholder")}
                 name="plateNumber"
                 value={formData["plateNumber"].toUpperCase()}
                 onChange={handleChange}
@@ -658,7 +662,9 @@ const BookingModal = ({
                 flexDirection: "column",
               }}
             >
-              <Typography variant="textFieldLabel">Work done</Typography>
+              <Typography variant="textFieldLabel">
+                {t("bookingModal.workDone")}
+              </Typography>
               <Switch
                 name="isWorkDone"
                 checked={formData["isWorkDone"] || false}
@@ -674,9 +680,7 @@ const BookingModal = ({
           </Box>
           {europeanPlateNumberWarning && (
             <Alert severity="warning" sx={{ mt: -1 }}>
-              This license plate doesn't look like a regular Finnish, Swedish or
-              Estonian plate number. Please, check it to make sure it is
-              correct.
+              {t("bookingModal.plateNumberWarning")}
             </Alert>
           )}
 
@@ -684,7 +688,7 @@ const BookingModal = ({
           <Box>
             <Typography variant="textFieldLabel">
               <PhoneIcon fontSize="small" />
-              Phone number
+              {t("bookingModal.phoneNumber")}
             </Typography>
             <TextField
               size="small"
@@ -692,7 +696,7 @@ const BookingModal = ({
               disabled={!isEditable}
               margin="none"
               type="phone"
-              placeholder="040 123 4567"
+              placeholder={t("bookingModal.phoneNumberPlaceholder")}
               name="phoneNumber"
               value={formData["phoneNumber"]}
               onChange={handleChange}
@@ -701,8 +705,7 @@ const BookingModal = ({
             />
             {finnishPhoneNumberWarning && (
               <Alert severity="warning" sx={{ mt: 1 }}>
-                This phone number doesn't look like regular Finnish phone
-                number. Please, check it to make sure it is correct.
+                {t("bookingModal.phoneNumberWarning")}
               </Alert>
             )}
           </Box>
@@ -711,7 +714,7 @@ const BookingModal = ({
           <Box>
             <Typography variant="textFieldLabel">
               <CarIcon fontSize="small" />
-              Car model
+              {t("bookingModal.carModel")}
             </Typography>
             <TextField
               size="small"
@@ -719,7 +722,7 @@ const BookingModal = ({
               disabled={!isEditable}
               margin="none"
               type="text"
-              placeholder="Car model"
+              placeholder={t("bookingModal.carModelPlaceholder")}
               name="carModel"
               value={formData["carModel"]}
               onChange={handleChange}
@@ -733,7 +736,7 @@ const BookingModal = ({
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="textFieldLabel">
                 <TagIcon fontSize="small" />
-                Eurocode
+                {t("bookingModal.eurocode")}
               </Typography>
               <TextField
                 size="small"
@@ -741,7 +744,7 @@ const BookingModal = ({
                 margin="none"
                 disabled={!isEditable}
                 type="text"
-                placeholder="Eurocode"
+                placeholder={t("bookingModal.eurocodePlaceholder")}
                 name="eurocode"
                 value={formData["eurocode"].toUpperCase()}
                 onChange={handleChange}
@@ -752,7 +755,7 @@ const BookingModal = ({
             <Box sx={{ width: "40%" }}>
               <Typography variant="textFieldLabel">
                 <PriceIcon fontSize="small" />
-                Price
+                {t("bookingModal.price")}
               </Typography>
               <TextField
                 size="small"
@@ -760,7 +763,7 @@ const BookingModal = ({
                 margin="none"
                 disabled={!isEditable}
                 type="number"
-                placeholder="Price"
+                placeholder={t("bookingModal.pricePlaceholder")}
                 name="price"
                 value={tmpPrice}
                 onChange={(e) => {
@@ -803,7 +806,9 @@ const BookingModal = ({
                 flexDirection: "column",
               }}
             >
-              <Typography variant="textFieldLabel">In stock</Typography>
+              <Typography variant="textFieldLabel">
+                {t("bookingModal.inStock")}
+              </Typography>
               <Switch
                 checked={formData["inStock"] || false}
                 name="inStock"
@@ -849,7 +854,7 @@ const BookingModal = ({
                     whiteSpace: "nowrap",
                   }}
                 >
-                  Location in warehouse
+                  {t("bookingModal.warehouseLocation")}
                 </Box>
               </Typography>
 
@@ -859,7 +864,7 @@ const BookingModal = ({
                 disabled={!formData["inStock"] || !isEditable}
                 margin="none"
                 type="text"
-                placeholder="Location in warehouse"
+                placeholder={t("bookingModal.warehouseLocationPlaceholder")}
                 name="warehouseLocation"
                 value={formData["warehouseLocation"]}
                 onChange={handleChange}
@@ -877,7 +882,9 @@ const BookingModal = ({
                   flexDirection: "column",
                 }}
               >
-                <Typography variant="textFieldLabel">Ordered</Typography>
+                <Typography variant="textFieldLabel">
+                  {t("bookingModal.ordered")}
+                </Typography>
                 <Switch
                   checked={formData["isOrdered"] || false}
                   name="isOrdered"
@@ -898,7 +905,7 @@ const BookingModal = ({
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="textFieldLabel">
                 <PersonIcon fontSize="small" />
-                Client
+                {t("bookingModal.client")}
               </Typography>
               <FormControl
                 fullWidth
@@ -919,7 +926,7 @@ const BookingModal = ({
                       sx={{ display: "flex", alignItems: "center", gap: 1 }}
                     >
                       {client.icon}
-                      {client.name}
+                      {t(`bookingModal.clientTypes.${client.value}`)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -931,7 +938,7 @@ const BookingModal = ({
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <BusinessIcon fontSize="small" />
-                  Company name
+                  {t("bookingModal.companyName")}
                 </Typography>
                 <TextField
                   size="small"
@@ -939,7 +946,7 @@ const BookingModal = ({
                   disabled={!isEditable}
                   margin="none"
                   type="text"
-                  placeholder="Company name"
+                  placeholder={t("bookingModal.companyNamePlaceholder")}
                   name="companyName"
                   value={formData["companyName"]}
                   onChange={handleChange}
@@ -954,7 +961,7 @@ const BookingModal = ({
           <Box>
             <Typography variant="textFieldLabel">
               <PaymentIcon fontSize="small" />
-              Payer
+              {t("bookingModal.payer")}
             </Typography>
             <FormControl
               fullWidth
@@ -975,7 +982,7 @@ const BookingModal = ({
                     sx={{ display: "flex", alignItems: "center", gap: 1 }}
                   >
                     {payer.icon}
-                    {payer.name}
+                    {t(`bookingModal.payerTypes.${payer.value}`)}
                   </MenuItem>
                 ))}
               </Select>
@@ -985,14 +992,12 @@ const BookingModal = ({
 
           {/* Insurance company, insurance company name, insurance number, deductible */}
           {formData["payerType"] === "insurance" ? (
-            <Box
-              sx={{ display: "flex", gap: isMobile ? 1 : 2, flexWrap: "wrap" }}
-            >
+            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
               {/* Insurance Company */}
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <InsuranceCompanyIcon fontSize="small" />
-                  Insurance company
+                  {t("bookingModal.insuranceCompany")}
                 </Typography>
                 <FormControl
                   fullWidth
@@ -1023,7 +1028,6 @@ const BookingModal = ({
                             }}
                           />
                         )}
-
                         {company.name}
                       </MenuItem>
                     ))}
@@ -1037,7 +1041,7 @@ const BookingModal = ({
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="textFieldLabel">
                     <InsuranceCompanyIcon fontSize="small" />
-                    Insurance company name
+                    {t("bookingModal.insuranceCompanyName")}
                   </Typography>
                   <TextField
                     size="small"
@@ -1045,7 +1049,9 @@ const BookingModal = ({
                     margin="none"
                     disabled={!isEditable}
                     type="text"
-                    placeholder="Insurance company name"
+                    placeholder={t(
+                      "bookingModal.insuranceCompanyNamePlaceholder"
+                    )}
                     name="insuranceCompanyName"
                     value={formData["insuranceCompanyName"]}
                     onChange={handleChange}
@@ -1059,7 +1065,7 @@ const BookingModal = ({
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <InsuranceIcon fontSize="small" />
-                  Insurance number
+                  {t("bookingModal.insuranceNumber")}
                 </Typography>
                 <TextField
                   size="small"
@@ -1067,7 +1073,7 @@ const BookingModal = ({
                   margin="none"
                   type="text"
                   disabled={!isEditable}
-                  placeholder="Insurance number"
+                  placeholder={t("bookingModal.insuranceNumberPlaceholder")}
                   name="insuranceNumber"
                   value={formData["insuranceNumber"].toUpperCase()}
                   onChange={handleChange}
@@ -1080,7 +1086,7 @@ const BookingModal = ({
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <DeductibleIcon fontSize="small" />
-                  Deductible
+                  {t("bookingModal.deductible")}
                 </Typography>
                 <FormControl
                   fullWidth
@@ -1111,11 +1117,14 @@ const BookingModal = ({
           ) : null}
 
           {/* Date & Duration */}
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <LocalizationProvider
+            dateAdapter={AdapterDayjs}
+            adapterLocale={i18n.language}
+          >
             <Box
               sx={{
                 display: "flex",
-                gap: isMobile ? 1 : 2,
+                gap: 2,
                 flexWrap: "wrap",
                 mb: "-5px",
               }}
@@ -1123,7 +1132,7 @@ const BookingModal = ({
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <DateIcon fontSize="small" />
-                  Date & Time
+                  {t("bookingModal.dateTime")}
                 </Typography>
                 <DateTimePicker
                   format="DD.MM.YYYY HH:mm"
@@ -1174,7 +1183,7 @@ const BookingModal = ({
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <DurationIcon fontSize="small" />
-                  Duration
+                  {t("bookingModal.duration")}
                 </Typography>
                 <FormControl
                   fullWidth
@@ -1191,7 +1200,10 @@ const BookingModal = ({
                       const val = 0.5 + i * 0.5;
                       return (
                         <MenuItem key={val} value={val}>
-                          {val} {val === 1 ? "hour" : "hours"}
+                          {val}{" "}
+                          {val === 1
+                            ? t("bookingModal.hour")
+                            : t("bookingModal.hours")}
                         </MenuItem>
                       );
                     })}
@@ -1207,7 +1219,7 @@ const BookingModal = ({
             <Box>
               <Typography variant="textFieldLabel">
                 <LocationIcon fontSize="small" />
-                Location
+                {t("bookingModal.location")}
               </Typography>
               <FormControl
                 fullWidth
@@ -1240,14 +1252,14 @@ const BookingModal = ({
           <Box>
             <Typography variant="textFieldLabel">
               <NotesIcon fontSize="small" />
-              Notes
+              {t("bookingModal.notes")}
             </Typography>
             <TextField
               size="small"
               fullWidth
               margin="none"
               type="text"
-              placeholder="Some additional information..."
+              placeholder={t("bookingModal.notesPlaceholder")}
               name="notes"
               disabled={!isEditable}
               value={formData["notes"]}
@@ -1283,7 +1295,7 @@ const BookingModal = ({
                   onClick={handleDelete}
                   sx={{ width: isMobile || isTablet ? "100%" : "auto" }}
                 >
-                  Delete
+                  {t("bookingModal.delete")}
                 </Button>
               )}
             </Box>
@@ -1303,7 +1315,7 @@ const BookingModal = ({
                 onClick={onClose}
                 sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
               >
-                Cancel
+                {t("bookingModal.cancel")}
               </Button>
               <Button
                 startIcon={<DoneIcon />}
@@ -1314,7 +1326,7 @@ const BookingModal = ({
                 onClick={handleSubmit}
                 sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
               >
-                {isEdit ? "Update" : "Create"}
+                {isEdit ? t("bookingModal.update") : t("bookingModal.create")}
               </Button>
             </Box>
           </Box>

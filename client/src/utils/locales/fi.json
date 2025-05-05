@@ -6,11 +6,226 @@
   },
   "menu": {
     "myProfile": "Profiilini",
-    "logout": "Kirjaudu ulos"
+    "logout": "Kirjaudu ulos",
+    "edit": "Muokkaa",
+    "delete": "Poista"
   },
   "language": {
     "english": "English",
     "finnish": "Suomi",
     "russian": "Русский"
+  },
+  "orderModal": {
+    "titleNew": "Uusi tilaus",
+    "titleEdit": "Muokkaa tilausta",
+    "client": "Asiakas",
+    "clientName": "Asiakkaan nimi",
+    "products": "Tuotteet",
+    "eurocode": "Eurokoodi",
+    "amount": "Määrä",
+    "price": "Hinta",
+    "status": "Tila",
+    "inStock": "Varastossa",
+    "order": "Tilaa",
+    "notes": "Huomautukset",
+    "addProduct": "Lisää tuote",
+    "cancel": "Peruuta",
+    "create": "Luo",
+    "update": "Päivitä"
+  },
+  "alert": {
+    "error": "Virhe",
+    "orderUpdateSuccess": "Tilaus päivitetty onnistuneesti!",
+    "orderCreateSuccess": "Tilaus luotu onnistuneesti!",
+    "userUpdateSuccess": "Käyttäjä päivitetty onnistuneesti!",
+    "userCreateSuccess": "Käyttäjä luotu onnistuneesti!",
+    "userDeleteSuccess": "Käyttäjä poistettu onnistuneesti!",
+    "locationDeleteSuccess": "Sijainti poistettu onnistuneesti!",
+    "locationCreateSuccess": "Sijainti luotu onnistuneesti!",
+    "locationUpdateSuccess": "Sijainti päivitetty onnistuneesti!",
+    "bookingUpdateSuccess": "Varaus päivitetty onnistuneesti!",
+    "bookingCreateSuccess": "Varaus luotu onnistuneesti!",
+    "bookingDeleteSuccess": "Varaus poistettu onnistuneesti!",
+    "invoiceStatusUpdateSuccess": "Laskun tila päivitetty onnistuneesti!",
+    "copiedToClipboard": "Kopioitu leikepöydälle",
+    "unexpectedError": "Tapahtui odottamaton virhe"
+  },
+  "userModal": {
+    "titleNew": "Uusi käyttäjä",
+    "titleEdit": "Muokkaa käyttäjää",
+    "username": "Käyttäjänimi",
+    "firstName": "Etunimi",
+    "lastName": "Sukunimi",
+    "email": "Sähköposti",
+    "password": "Salasana",
+    "role": "Rooli",
+    "location": "Sijainti",
+    "unchangeableFields": "Muuttumattomat kentät",
+    "unchangeableFieldsWarning": "Alla olevia kenttiä ei voi muuttaa käyttäjän luomisen jälkeen. Ole tarkka valinnoissasi.",
+    "cancel": "Peruuta",
+    "create": "Luo",
+    "update": "Päivitä",
+    "passwordResetInfo": "Tämä nollaa nykyisen käyttäjän salasanan. Jätä tyhjäksi säilyttääksesi nykyisen salasanan."
+  },
+  "confirmModal": {
+    "title": "Oletko varma?",
+    "cancel": "Peruuta",
+    "confirm": "Vahvista"
+  },
+  "admin": {
+    "title": "Ylläpito",
+    "tabs": {
+      "invoices": "Laskut",
+      "users": "Käyttäjät",
+      "locations": "Sijainnit"
+    },
+    "invoices": {
+      "view": "Näytä",
+      "sent": "Lähetetyt",
+      "notSent": "Ei lähetetyt",
+      "markAsSent": "Lähetetyksi",
+      "markAsUnsent": "Ei lähetetyksi",
+      "filter": {
+        "all": "Kaikki",
+        "past": "Menneet",
+        "upcoming": "Tulevat"
+      },
+      "sort": {
+        "newest": "Uusimmat ensin",
+        "oldest": "Vanhimmat ensin"
+      },
+      "noSentInvoices": "Teillä ei ole lähetettyjä laskuja.",
+      "noUnsentInvoices": "Teillä ei ole lähettämättömiä laskuja."
+    }
+  },
+  "invoiceCard": {
+    "insuranceCompany": "Vakuutusyhtiö",
+    "company": "Yritys",
+    "plateNumber": "Rekisterinumero",
+    "carModel": "Auton malli",
+    "insuranceNumber": "Vakuutusnumero",
+    "deductible": "Omavastuu",
+    "price": "Hinta",
+    "serviceDate": "Päivä",
+    "unknown": "Tuntematon",
+    "invoiceSent": "Lasku lähetetty",
+    "invoiceNotSent": "Laskua ei lähetetty"
+  },
+  "userCard": {
+    "iconAlt": "Käyttäjän rooli: {{role}}",
+    "firstName": "Etunimi",
+    "lastName": "Sukunimi",
+    "email": "Sähköposti",
+    "role": "Rooli",
+    "admin": "Ylläpitäjä",
+    "regular": "Tavallinen",
+    "location": "Sijainti",
+    "na": "Ei tietoa"
+  },
+  "usersTab": {
+    "searchPlaceholder": "Etsi käyttäjiä...",
+    "fetchError": "Käyttäjien haku epäonnistui",
+    "confirmDelete": "Oletko varma, että haluat poistaa käyttäjän <b>{{username}}</b>? Käyttäjä ja kaikki hänen varauksensa poistetaan. Tätä toimintoa <b>ei voi peruuttaa</b>."
+  },
+  "locationsTab": {
+    "searchPlaceholder": "Etsi sijainteja...",
+    "confirmDelete": "Oletko varma, että haluat poistaa sijainnin <b>{{locationName}}</b>? Se poistetaan kaikkien {{userCount}} käyttäjien ja siihen liittyvien varausten kanssa. Tätä toimintoa <b>ei voi peruuttaa</b>."
+  },
+  "locationCard": {
+    "titlePlaceholder": "Sijainnin nimi",
+    "usersLabel": "Käyttäjät:",
+    "noUsersMessage": "Ei käyttäjiä",
+    "emptyTitle": "Sijainnin nimi ei voi olla tyhjää"
+  },
+  "bookingCard": {
+    "title": "Varaustiedot",
+    "carModel": "Auton malli",
+    "plateNumber": "Rekisterinumero",
+    "phone": "Puhelin",
+    "company": "Yritys",
+    "glass": "Lasi",
+    "glassStatus": "Lasin tila",
+    "workStatus": "Työn tila",
+    "done": "Valmis",
+    "notDone": "Ei valmis",
+    "dateAndTime": "Päivämäärä ja aika",
+    "notes": "Huomautukset",
+    "creator": "Luoja",
+    "unknown": "Tuntematon",
+    "inStock": "Varastossa, {{location}}",
+    "ordered": "Tilattu",
+    "outOfStock": "Loppu varastosta"
+  },
+  "bookingsPage": {
+    "title": "Varaukset",
+    "searchPlaceholder": "Etsi...",
+    "view": {
+      "all": "Kaikki",
+      "my": "Omat"
+    },
+    "filter": {
+      "all": "Kaikki",
+      "past": "Menneet",
+      "upcoming": "Tulevat"
+    },
+    "sort": {
+      "newest": "Uusimmat ensin",
+      "oldest": "Vanhimmat ensin"
+    },
+    "createBooking": "Luo varaus",
+    "noBookings": "Ei varauksia",
+    "confirmDelete": "Haluatko varmasti poistaa varauksen <strong>{{carModel}} {{plateNumber}}</strong> päivältä <strong>{{date}}</strong> ajalta <strong>{{startTime}} - {{endTime}}</strong>? Tätä toimintoa <strong>ei voi peruuttaa</strong>."
+  },
+  "bookingModal": {
+    "titleNew": "Uusi varaus",
+    "titleEdit": "Muokkaa varausta",
+    "plateNumber": "Rekisterinumero",
+    "plateNumberPlaceholder": "XXX-123",
+    "plateNumberWarning": "Tämä rekisterinumero ei näytä tavalliselta suomalaiselta, ruotsalaiselta tai virolaiselta rekisterinumerolta. Tarkista se varmistaaksesi, että se on oikea.",
+    "workDone": "Työ valmis",
+    "phoneNumber": "Puhelinnumero",
+    "phoneNumberPlaceholder": "040 123 4567",
+    "phoneNumberWarning": "Tämä puhelinnumero ei näytä tavalliselta suomalaiselta puhelinnumerolta. Tarkista se varmistaaksesi, että se on oikea.",
+    "carModel": "Auton malli",
+    "carModelPlaceholder": "esim. Toyota Corolla",
+    "eurocode": "Eurokoodi",
+    "eurocodePlaceholder": "Syötä Eurokoodi",
+    "price": "Hinta",
+    "pricePlaceholder": "Syötä hinta",
+    "inStock": "Varastossa",
+    "warehouseLocation": "Sijainti Varastossa",
+    "warehouseLocationPlaceholder": "esim. A1-11",
+    "ordered": "Tilattu",
+    "client": "Asiakas",
+    "clientTypes": {
+      "private": "Yksityisasiakas",
+      "company": "Yritysasiakas"
+    },
+    "companyName": "Yrityksen nimi",
+    "companyNamePlaceholder": "Syötä yrityksen nimi",
+    "payer": "Maksaja",
+    "payerTypes": {
+      "person": "Henkilö",
+      "company": "Yritys",
+      "insurance": "Vakuutusyhtiö"
+    },
+    "insuranceCompany": "Vakuutusyhtiö",
+    "other": "Muu",
+    "insuranceCompanyName": "Vakuutusyhtiön nimi",
+    "insuranceCompanyNamePlaceholder": "Syötä vakuutusyhtiön nimi",
+    "insuranceNumber": "Vakuutusnumero",
+    "insuranceNumberPlaceholder": "Syötä vakuutusnumero",
+    "deductible": "Omavastuu",
+    "dateTime": "Päivämäärä ja aika",
+    "duration": "Kesto",
+    "location": "Sijainti",
+    "hour": "tunti",
+    "hours": "tuntia",
+    "notes": "Huomautukset",
+    "notesPlaceholder": "Syötä lisähuomautukset",
+    "cancel": "Peruuta",
+    "create": "Luo",
+    "update": "Päivitä",
+    "delete": "Poista"
   }
 }

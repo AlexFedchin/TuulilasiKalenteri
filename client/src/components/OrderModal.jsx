@@ -26,6 +26,7 @@ import { alert } from "../utils/alert";
 import { clients } from "../utils/clients";
 import Joi from "joi";
 import useScreenSize from "../hooks/useScreenSize";
+import { useTranslation } from "react-i18next";
 
 const orderValidationSchema = Joi.object({
   products: Joi.array()
@@ -103,6 +104,7 @@ const orderValidationSchema = Joi.object({
 });
 
 const OrderModal = ({ onClose, order, setOrders }) => {
+  const { t } = useTranslation();
   const { isMobile, isTablet } = useScreenSize();
   const { token } = useAuth();
   const isEdit = !!order;
@@ -228,24 +230,24 @@ const OrderModal = ({ onClose, order, setOrders }) => {
       const result = await response.json();
 
       if (!response.ok) {
-        alert.error(`Error: ${result.error}`);
-        console.error("Request failed:", result.error);
-        return;
+        throw new Error(result.error || "Unexpected error");
       }
 
       if (isEdit) {
         setOrders((prevOrders) =>
           prevOrders.map((o) => (o._id === result._id ? result : o))
         );
-        alert.success("Order updated successfully!");
+        alert.success(t("alert.orderUpdateSuccess"));
       } else {
         setOrders((prev) => [result, ...prev]);
-        alert.success("Order created successfully!");
+        alert.success(t("alert.orderCreteSuccess"));
       }
 
       onClose();
     } catch (err) {
-      alert.error("Unexpected error occurred");
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
       console.error("Request failed:", err);
     } finally {
       setSubmitting(false);
@@ -283,7 +285,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
           }}
         >
           <Typography variant="h4">
-            {isEdit ? "Edit Order" : "New Order"}
+            {isEdit ? t("orderModal.titleEdit") : t("orderModal.titleNew")}
           </Typography>
           <IconButton
             onClick={onClose}
@@ -312,7 +314,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
             <Box sx={{ mb: "-5px", flexGrow: 1 }}>
               <Typography variant="textFieldLabel">
                 <BusinessIcon fontSize="small" />
-                Client
+                {t("orderModal.client")}
               </Typography>
               <FormControl fullWidth error={!!errors.client}>
                 <Select
@@ -352,10 +354,10 @@ const OrderModal = ({ onClose, order, setOrders }) => {
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
                   <BusinessIcon fontSize="small" />
-                  Client Name
+                  {t("orderModal.clientName")}
                 </Typography>
                 <TextField
-                  placeholder="Client name"
+                  placeholder={t("orderModal.clientName")}
                   name="clientName"
                   size="small"
                   value={formData.clientName}
@@ -401,7 +403,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                 fontWeight: 600,
               }}
             >
-              Products ({formData.products.length})
+              {t("orderModal.products")} ({formData.products.length})
             </Typography>
 
             <Box
@@ -448,7 +450,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                           size="small"
                           type="text"
                           fullWidth
-                          label="Eurocode"
+                          label={t("orderModal.eurocode")}
                           name={`products[${index}].eurocode`}
                           value={product.eurocode}
                           onChange={(e) => handleChange(e, index, "eurocode")}
@@ -460,7 +462,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                         <TextField
                           size="small"
                           type="number"
-                          label="Amount"
+                          label={t("orderModal.amount")}
                           value={product.tmpAmount}
                           onChange={(e) => {
                             handleChange(
@@ -513,7 +515,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                         <TextField
                           size="small"
                           type="number"
-                          label="Price"
+                          label={t("orderModal.price")}
                           value={product.tmpPrice}
                           sx={{
                             flexGrow: 1,
@@ -578,7 +580,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                           }}
                         >
                           <ToggleButton value="inStock" sx={{ flexShrink: 0 }}>
-                            In Stock
+                            {t("orderModal.inStock")}
                           </ToggleButton>
                           <ToggleButton
                             value="order"
@@ -593,7 +595,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
                               },
                             }}
                           >
-                            Order
+                            {t("orderModal.order")}
                           </ToggleButton>
                         </ToggleButtonGroup>
                       </Box>
@@ -624,7 +626,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
               variant="outlined"
               sx={{ mr: 1 }}
             >
-              Add Product
+              {t("orderModal.addProduct")}
             </Button>
           </Box>
 
@@ -632,14 +634,14 @@ const OrderModal = ({ onClose, order, setOrders }) => {
           <Box>
             <Typography variant="textFieldLabel">
               <NotesIcon fontSize="small" />
-              Notes
+              {t("orderModal.notes")}
             </Typography>
             <TextField
               size="small"
               fullWidth
               margin="none"
               type="text"
-              placeholder="Some additional information..."
+              placeholder={t("orderModal.notes")}
               name="notes"
               value={formData.notes}
               onChange={(e) =>
@@ -668,7 +670,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
             disabled={submitting}
             sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
           >
-            Cancel
+            {t("orderModal.cancel")}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -679,7 +681,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
             disabled={isSubmitDisabled}
             sx={{ flexGrow: isMobile || isTablet ? 1 : 0 }}
           >
-            {isEdit ? "Update" : "Create"}
+            {isEdit ? t("orderModal.update") : t("orderModal.create")}
           </Button>
         </Box>
       </Box>

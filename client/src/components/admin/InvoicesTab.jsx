@@ -17,8 +17,10 @@ import InvoiceCard from "./InvoiceCard";
 import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 import useScreenSize from "../../hooks/useScreenSize";
+import { useTranslation } from "react-i18next";
 
 const InvoicesTab = () => {
+  const { t } = useTranslation();
   const { token } = useAuth();
   const { isMobile } = useScreenSize();
   const [view, setView] = useState("notSent");
@@ -93,9 +95,10 @@ const InvoicesTab = () => {
         body: JSON.stringify({ bookings: selectedBookings }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        alert.error("Failed to update invoices status");
-        return;
+        throw new Error(result.error);
       }
 
       // Add bookings to removing state for animation
@@ -112,9 +115,11 @@ const InvoicesTab = () => {
         setRemovingBookings([]);
       }, 300);
 
-      alert.success("Invoice status updated successfully!");
+      alert.success(t("alert.invoiceStatusUpdateSuccess"));
     } catch (error) {
-      alert.error(`Error: ${error.message}`);
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
       console.error("Error updating bookings:", error);
     } finally {
       setSubmitting(false);
@@ -199,10 +204,14 @@ const InvoicesTab = () => {
               value={view}
               exclusive
               onChange={handleView}
-              aria-label="view"
+              aria-label={t("admin.invoices.view")}
             >
-              <ToggleButton value="sent">Sent</ToggleButton>
-              <ToggleButton value="notSent">Not sent</ToggleButton>
+              <ToggleButton value="sent">
+                {t("admin.invoices.sent")}
+              </ToggleButton>
+              <ToggleButton value="notSent">
+                {t("admin.invoices.notSent")}
+              </ToggleButton>
             </ToggleButtonGroup>
             <Button
               variant="contained"
@@ -213,7 +222,7 @@ const InvoicesTab = () => {
               startIcon={view === "sent" ? <CloseIcon /> : <CheckIcon />}
               onClick={handleMarkAsSent}
             >
-              Mark as {view === "sent" ? "Unsent" : "Sent"}
+              {t(`admin.invoices.markAs${view === "sent" ? "Unsent" : "Sent"}`)}
             </Button>
           </Box>
           <Box
@@ -230,9 +239,13 @@ const InvoicesTab = () => {
               size="small"
               sx={{ minWidth: 120, flexGrow: 1 }}
             >
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="past">Past</MenuItem>
-              <MenuItem value="upcoming">Upcoming</MenuItem>
+              <MenuItem value="all">{t("admin.invoices.filter.all")}</MenuItem>
+              <MenuItem value="past">
+                {t("admin.invoices.filter.past")}
+              </MenuItem>
+              <MenuItem value="upcoming">
+                {t("admin.invoices.filter.upcoming")}
+              </MenuItem>
             </Select>
 
             <Select
@@ -241,8 +254,12 @@ const InvoicesTab = () => {
               size="small"
               sx={{ minWidth: 150, flexGrow: 1 }}
             >
-              <MenuItem value="newest">Newest first</MenuItem>
-              <MenuItem value="oldest">Oldest first</MenuItem>
+              <MenuItem value="newest">
+                {t("admin.invoices.sort.newest")}
+              </MenuItem>
+              <MenuItem value="oldest">
+                {t("admin.invoices.sort.oldest")}
+              </MenuItem>
             </Select>
           </Box>
         </Card>
@@ -276,10 +293,14 @@ const InvoicesTab = () => {
               value={view}
               exclusive
               onChange={handleView}
-              aria-label="view"
+              aria-label={t("admin.invoices.view")}
             >
-              <ToggleButton value="sent">Sent</ToggleButton>
-              <ToggleButton value="notSent">Not sent</ToggleButton>
+              <ToggleButton value="sent">
+                {t("admin.invoices.sent")}
+              </ToggleButton>
+              <ToggleButton value="notSent">
+                {t("admin.invoices.notSent")}
+              </ToggleButton>
             </ToggleButtonGroup>
             <Select
               value={filter}
@@ -287,9 +308,13 @@ const InvoicesTab = () => {
               size="small"
               sx={{ minWidth: 120 }}
             >
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="past">Past</MenuItem>
-              <MenuItem value="upcoming">Upcoming</MenuItem>
+              <MenuItem value="all">{t("admin.invoices.filter.all")}</MenuItem>
+              <MenuItem value="past">
+                {t("admin.invoices.filter.past")}
+              </MenuItem>
+              <MenuItem value="upcoming">
+                {t("admin.invoices.filter.upcoming")}
+              </MenuItem>
             </Select>
 
             <Select
@@ -298,8 +323,12 @@ const InvoicesTab = () => {
               size="small"
               sx={{ minWidth: 150 }}
             >
-              <MenuItem value="newest">Newest first</MenuItem>
-              <MenuItem value="oldest">Oldest first</MenuItem>
+              <MenuItem value="newest">
+                {t("admin.invoices.sort.newest")}
+              </MenuItem>
+              <MenuItem value="oldest">
+                {t("admin.invoices.sort.oldest")}
+              </MenuItem>
             </Select>
           </Box>
 
@@ -312,7 +341,7 @@ const InvoicesTab = () => {
             startIcon={view === "sent" ? <CloseIcon /> : <CheckIcon />}
             onClick={handleMarkAsSent}
           >
-            Mark as {view === "sent" ? "Unsent" : "Sent"}
+            {t(`admin.invoices.markAs${view === "sent" ? "Unsent" : "Sent"}`)}
           </Button>
         </Card>
       )}
@@ -346,10 +375,11 @@ const InvoicesTab = () => {
               variant="body2"
               sx={{ mt: "20vh", fontStyle: "italic", maxWidth: "66%" }}
             >
-              You don't have any {view === "sent" ? "sent" : "unsent"} invoices
-              {filter !== "all" ? ` for ${filter} bookings` : ""}.
+              {view === "sent"
+                ? t("admin.invoices.noSentInvoices")
+                : t("admin.invoices.noUnsentInvoices")}
             </Typography>
-          ) : filteredBookings.length > bookingsPerPage ? (
+          ) : (
             <Pagination
               color="primary"
               count={Math.ceil(bookings.length / bookingsPerPage)}
@@ -366,7 +396,7 @@ const InvoicesTab = () => {
                 overflow: "hidden",
               }}
             />
-          ) : null}
+          )}
         </Box>
       )}
     </Box>

@@ -25,8 +25,10 @@ import BookingModal from "../components/BookingModal";
 import ConfirmModal from "../components/ConfirmModal";
 import dayjs from "dayjs";
 import useScreenSize from "../hooks/useScreenSize";
+import { useTranslation } from "react-i18next";
 
 const Bookings = () => {
+  const { t } = useTranslation();
   const { user, token } = useAuth();
   const { isMobile } = useScreenSize();
   const [bookings, setBookings] = useState([]);
@@ -122,7 +124,9 @@ const Bookings = () => {
       );
       alert.success("Booking deleted successfully!");
     } catch (error) {
-      alert.error(`Error: ${error.message}`);
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
       console.error("Error deleting booking:", error);
     } finally {
       setOpenDeleteModal(false);
@@ -179,7 +183,7 @@ const Bookings = () => {
 
   return (
     <DefaultContainer>
-      <Typography variant="h2">Bookings</Typography>
+      <Typography variant="h2">{t("bookingsPage.title")}</Typography>
       <Box
         sx={{
           width: "100%",
@@ -207,13 +211,20 @@ const Bookings = () => {
           }}
         >
           <Box
-            sx={{ width: isMobile ? "100%" : "unset", display: "flex", gap: 1 }}
+            sx={{
+              width: isMobile ? "100%" : "fit-content",
+              display: "flex",
+              gap: 1,
+            }}
           >
             <TextField
-              placeholder="Search for bookings..."
+              placeholder={t("bookingsPage.searchPlaceholder")}
               variant="outlined"
               size="small"
-              sx={{ flexGrow: 1, maxWidth: "unset" }}
+              sx={{
+                flexGrow: 1,
+                maxWidth: "unset",
+              }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               slotProps={{
@@ -250,7 +261,7 @@ const Bookings = () => {
                     flexGrow: 1,
                   }}
                 >
-                  All
+                  {t("bookingsPage.view.all")}
                 </ToggleButton>
                 <ToggleButton
                   value="my"
@@ -258,7 +269,7 @@ const Bookings = () => {
                     flexGrow: 1,
                   }}
                 >
-                  My
+                  {t("bookingsPage.view.my")}
                 </ToggleButton>
               </ToggleButtonGroup>
             )}
@@ -272,9 +283,11 @@ const Bookings = () => {
               size="small"
               sx={{ minWidth: isMobile ? 100 : 120, flexGrow: 1 }}
             >
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="past">Past</MenuItem>
-              <MenuItem value="upcoming">Upcoming</MenuItem>
+              <MenuItem value="all">{t("bookingsPage.filter.all")}</MenuItem>
+              <MenuItem value="past">{t("bookingsPage.filter.past")}</MenuItem>
+              <MenuItem value="upcoming">
+                {t("bookingsPage.filter.upcoming")}
+              </MenuItem>
             </Select>
 
             <Select
@@ -283,8 +296,12 @@ const Bookings = () => {
               size="small"
               sx={{ minWidth: isMobile ? 120 : 150, flexGrow: 1 }}
             >
-              <MenuItem value="newest">Newest first</MenuItem>
-              <MenuItem value="oldest">Oldest first</MenuItem>
+              <MenuItem value="newest">
+                {t("bookingsPage.sort.newest")}
+              </MenuItem>
+              <MenuItem value="oldest">
+                {t("bookingsPage.sort.oldest")}
+              </MenuItem>
             </Select>
             <Button
               variant="submit"
@@ -293,7 +310,7 @@ const Bookings = () => {
               sx={{ minWidth: 40, maxWidth: isMobile ? 40 : "unset" }}
               startIcon={isMobile ? undefined : <AddIcon />}
             >
-              {isMobile ? <AddIcon /> : "Create Booking"}
+              {isMobile ? <AddIcon /> : t("bookingsPage.createBooking")}
             </Button>
           </Box>
         </Card>
@@ -341,7 +358,7 @@ const Bookings = () => {
           </Box>
         ) : (
           <Typography variant="body2" sx={{ fontStyle: "italic", mt: "29vh" }}>
-            No bookings found
+            {t("bookingsPage.noBookings")}
           </Typography>
         )}
 
@@ -358,17 +375,15 @@ const Bookings = () => {
           <ConfirmModal
             open={true}
             onClose={() => setOpenDeleteModal(false)}
-            text={`Are you sure you want to delete the booking for <strong>${
-              selectedBooking?.carModel
-            } ${selectedBooking?.plateNumber}</strong> on <strong>${dayjs(
-              selectedBooking.date
-            ).format("DD.MM.YYYY")}</strong> at <strong>${dayjs(
-              selectedBooking.date
-            ).format("HH:mm")} - ${dayjs(selectedBooking.date)
-              .add(selectedBooking.duration, "hour")
-              .format(
-                "HH:mm"
-              )}</strong>? This action <strong>cannot be undone</strong>.`}
+            text={t("bookingsPage.confirmDelete", {
+              carModel: selectedBooking?.carModel,
+              plateNumber: selectedBooking?.plateNumber,
+              date: dayjs(selectedBooking.date).format("DD.MM.YYYY"),
+              startTime: dayjs(selectedBooking.date).format("HH:mm"),
+              endTime: dayjs(selectedBooking.date)
+                .add(selectedBooking.duration, "hour")
+                .format("HH:mm"),
+            })}
             onConfirm={handleDelete}
           />
         )}

@@ -14,10 +14,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 import useScreenSize from "../../hooks/useScreenSize";
+import { useTranslation } from "react-i18next";
 
 const LocationCard = ({ location, setLocations, onDelete }) => {
   const { isMobile, isTablet } = useScreenSize();
   const { token } = useAuth();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(location.title);
   const [tempTitle, setTempTitle] = useState(location.title);
@@ -32,8 +34,11 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
         },
         body: JSON.stringify({ title: tempTitle }),
       });
+
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to update location");
+        throw new Error(result.error);
       }
       setLocations((prevLocations) =>
         prevLocations.map((loc) =>
@@ -41,11 +46,11 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
         )
       );
       setTitle(tempTitle);
-      alert.success("Location updated successfully!");
+      alert.success(t("alert.locationUpdateSuccess"));
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating location:", error);
-      alert.error(`Error: ${error.message}`);
+      alert.error(`${t("alert.error")}: ${error.message}`);
     }
   };
 
@@ -98,7 +103,7 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
           <Box
             component="img"
             src={`/icons/location.webp`}
-            alt="User Icon"
+            alt="Location Icon"
             sx={{
               width: isMobile ? "20px" : isTablet ? "24px" : "28px",
               height: isMobile ? "20px" : isTablet ? "24px" : "28px",
@@ -107,6 +112,7 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
           {isEditing ? (
             <TextField
               value={tempTitle}
+              placeholder={t("locationCard.titlePlaceholder")}
               onChange={(e) => setTempTitle(e.target.value)}
               variant="standard"
               fullWidth
@@ -181,7 +187,7 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
         }}
       >
         <Typography variant="body2" fontWeight="bold">
-          Users:
+          {t("locationCard.usersLabel")}
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, ml: 1 }}>
           {location.users.length > 0 ? (
@@ -192,7 +198,7 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
             ))
           ) : (
             <Typography variant="body2" fontStyle="italic">
-              No users assigned
+              {t("locationCard.noUsersMessage")}
             </Typography>
           )}
         </Box>

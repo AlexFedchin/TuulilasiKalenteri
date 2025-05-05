@@ -15,10 +15,12 @@ import ConfirmModal from "../ConfirmModal";
 import UserModal from "../UserModal";
 import UserCard from "./UserCard";
 import useScreenSize from "../../hooks/useScreenSize";
+import { useTranslation } from "react-i18next";
 
 const UsersTab = () => {
   const { isMobile } = useScreenSize();
   const { token, user } = useAuth();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,10 +41,12 @@ const UsersTab = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
+
         const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error);
+        }
 
         // Filter out the current user from the list
         const users = data.filter((u) => u._id !== user.id);
@@ -50,14 +54,14 @@ const UsersTab = () => {
         setUsers(users);
       } catch (error) {
         console.error("Error fetching users:", error);
-        alert.error(`Error: ${error.message}`);
+        alert.error(`${t("alert.error")}: ${error.message}`);
       } finally {
         setLoading(false);
       }
     };
 
     fetchUsers();
-  }, [token, user.id]);
+  }, [token, user.id, t]);
 
   // Debounced search function
   const debounceSearch = useCallback(
@@ -115,14 +119,17 @@ const UsersTab = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to delete user");
+        throw new Error(result.error);
       }
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
-      alert.success("User deleted successfully!");
+      alert.success(t("alert.userDeleteSuccess"));
     } catch (error) {
       console.error("Error deleting user:", error);
-      alert.error(`Error: ${error.message}`);
+      alert.error(`${t("alert.error")}: ${error.message}`);
     } finally {
       setOpenConfirmModal(false);
       setSelectedUser(null);
@@ -148,7 +155,7 @@ const UsersTab = () => {
         }}
       >
         <TextField
-          placeholder="Search for users..."
+          placeholder={t("usersTab.searchPlaceholder")}
           variant="outlined"
           fullWidth
           size="small"
@@ -213,7 +220,9 @@ const UsersTab = () => {
         <ConfirmModal
           onConfirm={() => deleteUser(selectedUser._id)}
           onClose={() => setOpenConfirmModal(false)}
-          text={`Are you sure you want to delete the <b>${selectedUser?.username}</b> user? The user and all of their bookings will be deleted. This action <b>cannot be undone</b>.`}
+          text={t("usersTab.confirmDelete", {
+            username: selectedUser?.username,
+          })}
         />
       )}
 
