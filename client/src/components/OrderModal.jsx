@@ -298,7 +298,14 @@ const OrderModal = ({ onClose, order, setOrders }) => {
 
         <Box
           component="form"
-          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            pr: 1,
+            maxHeight: "60vh",
+            overflowY: "auto",
+          }}
         >
           {/* Client & Client Name */}
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
@@ -373,9 +380,9 @@ const OrderModal = ({ onClose, order, setOrders }) => {
               gap: 2,
               flexDirection: "column",
               flexWrap: "nowrap",
-              p: 2,
-              pr: 1,
-              pt: 2,
+              p: isMobile ? 1 : 2,
+              pr: isMobile ? 0.5 : 1,
+              pt: isMobile ? 1 : 2,
               mt: 1,
               borderRadius: 1,
               border: "1px solid var(--primary)",
