@@ -17,7 +17,7 @@ const bookingValidationSchema = Joi.object({
     "boolean.base": "Work done status must be a boolean.",
   }),
   phoneNumber: Joi.string()
-    .pattern(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/)
+    .pattern(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?\s?[0-9]{3}[-\s.]?\s?[0-9]{4,6}$/)
     .min(10)
     .max(20)
     .required()

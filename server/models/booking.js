@@ -16,7 +16,7 @@ const bookingSchema = new mongoose.Schema(
       required: true,
       minlength: 10,
       maxlength: 20,
-      match: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/,
+      match: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?\s?[0-9]{3}[-\s.]?\s?[0-9]{4,6}$/,
     },
     eurocode: { type: String, required: true, minlength: 2, maxlength: 20 },
     price: { type: Number, required: true, min: 0 },
