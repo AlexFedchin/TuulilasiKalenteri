@@ -47,6 +47,7 @@
     "profileUpdateSuccess": "Profiili päivitetty onnistuneesti!",
     "invoiceStatusUpdateSuccess": "Laskun tila päivitetty onnistuneesti!",
     "passwordChangeSuccess": "Salasana vaihdettu onnistuneesti!",
+    "loginSuccess": "Olet nyt kirjautunut sisään käyttäjänä {{username}}",
     "copiedToClipboard": "Kopioitu leikepöydälle",
     "unexpectedError": "Tapahtui odottamaton virhe"
   },
@@ -124,7 +125,6 @@
   },
   "usersTab": {
     "searchPlaceholder": "Etsi käyttäjiä...",
-    "fetchError": "Käyttäjien haku epäonnistui",
     "confirmDelete": "Oletko varma, että haluat poistaa käyttäjän <b>{{username}}</b>? Käyttäjä ja kaikki hänen varauksensa poistetaan. Tätä toimintoa <b>ei voi peruuttaa</b>."
   },
   "locationsTab": {
@@ -300,5 +300,197 @@
   "bookingBox": {
     "phone": "p.",
     "insurance": "vak."
+  },
+  "bookingValidationSchema": {
+    "plateNumber": {
+      "pattern": "Rekisterinumero on virheellisessä muodossa.",
+      "min": "Rekisterinumeron on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Rekisterinumero ei saa ylittää 14 merkkiä.",
+      "required": "Rekisterinumero on pakollinen."
+    },
+    "isWorkDone": {
+      "required": "Työn valmistumistila on pakollinen."
+    },
+    "phoneNumber": {
+      "pattern": "Puhelinnumero on virheellisessä muodossa.",
+      "min": "Puhelinnumeron on oltava vähintään 10 merkkiä pitkä.",
+      "max": "Puhelinnumero ei saa ylittää 20 merkkiä.",
+      "required": "Puhelinnumero on pakollinen."
+    },
+    "carModel": {
+      "min": "Auton mallin on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Auton malli ei saa ylittää 25 merkkiä.",
+      "required": "Auton malli on pakollinen."
+    },
+    "eurocode": {
+      "min": "Eurokoodin on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Eurokoodi ei saa ylittää 20 merkkiä.",
+      "required": "Eurokoodi on pakollinen."
+    },
+    "price": {
+      "min": "Hinnan on oltava positiivinen luku.",
+      "required": "Hinta on pakollinen."
+    },
+    "inStock": {
+      "required": "Varastotila on pakollinen."
+    },
+    "warehouseLocation": {
+      "min": "Varaston sijainnin on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Varaston sijainti ei saa ylittää 50 merkkiä.",
+      "required": "Varaston sijainti on pakollinen, jos tuote on varastossa."
+    },
+    "isOrdered": {
+      "required": "Tilauksen tila on pakollinen.",
+      "boolean": "Tilauksen tila on oltava totuusarvo."
+    },
+    "clientType": {
+      "only": "Asiakastyyppi on oltava 'yksityinen' tai 'yritys'.",
+      "required": "Asiakastyyppi on pakollinen."
+    },
+    "companyName": {
+      "min": "Yrityksen nimen on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Yrityksen nimi ei saa ylittää 50 merkkiä."
+    },
+    "payerType": {
+      "only": "Maksajan tyyppi on oltava 'henkilö', 'yritys' tai 'vakuutusyhtiö'.",
+      "required": "Maksajan tyyppi on pakollinen."
+    },
+    "insuranceCompany": {
+      "only": "Virheellinen vakuutusyhtiö.",
+      "required": "Vakuutusyhtiö on pakollinen maksajan tyypille 'vakuutusyhtiö'."
+    },
+    "insuranceCompanyName": {
+      "min": "Vakuutusyhtiön nimen on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Vakuutusyhtiön nimi ei saa ylittää 50 merkkiä.",
+      "required": "Vakuutusyhtiön nimi on pakollinen, jos valittu 'Muu'."
+    },
+    "insuranceNumber": {
+      "min": "Vakuutusnumeron on oltava vähintään 5 merkkiä pitkä.",
+      "max": "Vakuutusnumero ei saa ylittää 50 merkkiä.",
+      "required": "Vakuutusnumero on pakollinen."
+    },
+    "deductible": {
+      "min": "Omavastuun on oltava vähintään 0.",
+      "required": "Omavastuu on pakollinen."
+    },
+    "date": {
+      "base": "Virheellinen päivämäärän muoto.",
+      "required": "Päivämäärä on pakollinen."
+    },
+    "duration": {
+      "min": "Keston on oltava vähintään 0.5 tuntia.",
+      "max": "Kesto ei saa ylittää 6 tuntia.",
+      "required": "Kesto on pakollinen."
+    },
+    "notes": {
+      "max": "Huomautukset eivät saa ylittää 500 merkkiä."
+    },
+    "location": {
+      "length": "Sijainnin on oltava kelvollinen 24-merkkinen heksadesimaalijono.",
+      "required": "Sijainti on pakollinen."
+    },
+    "invoiceMade": {
+      "boolean": "Laskun tila on oltava totuusarvo.",
+      "required": "Laskun tila on pakollinen."
+    }
+  },
+  "orderValidationSchema": {
+    "eurocode": {
+      "stringBase": "Eurokoodin on oltava merkkijono.",
+      "required": "Eurokoodi on pakollinen.",
+      "min": "Eurokoodin on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Eurokoodi ei saa ylittää 20 merkkiä."
+    },
+    "amount": {
+      "numberBase": "Määrän on oltava numero.",
+      "integer": "Määrän on oltava kokonaisluku.",
+      "min": "Määrän on oltava vähintään 1.",
+      "required": "Määrä on pakollinen."
+    },
+    "price": {
+      "numberBase": "Hinnan on oltava numero.",
+      "integer": "Hinnan on oltava kokonaisluku.",
+      "min": "Hinnan on oltava vähintään 0.",
+      "required": "Hinta on pakollinen."
+    },
+    "status": {
+      "stringBase": "Tilan on oltava merkkijono.",
+      "valid": "Tilan on oltava joko 'Varastossa' tai 'Tilattu'."
+    },
+    "products": {
+      "arrayBase": "Tuotteiden on oltava taulukko.",
+      "includesRequiredUnknowns": "Jokaisella tuotteella on oltava eurokoodi, määrä ja hinta.",
+      "required": "Tuotteet ovat pakollisia."
+    },
+    "client": {
+      "stringBase": "Asiakkaan on oltava merkkijono.",
+      "valid": "Asiakkaan on oltava yksi ennalta määritellyistä arvoista."
+    },
+    "clientName": {
+      "stringBase": "Asiakkaan nimen on oltava merkkijono.",
+      "required": "Asiakkaan nimi on pakollinen, kun asiakas on 'muu'.",
+      "min": "Asiakkaan nimen on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Asiakkaan nimi ei saa ylittää 50 merkkiä."
+    },
+    "notes": {
+      "stringBase": "Huomautusten on oltava merkkijono.",
+      "max": "Huomautukset eivät saa ylittää 500 merkkiä."
+    }
+  },
+  "userValidationSchema": {
+    "username": {
+      "pattern": "Käyttäjänimi voi sisältää vain kirjaimia, numeroita, alaviivoja, pisteitä ja tavuviivoja.",
+      "min": "Käyttäjänimen on oltava vähintään 3 merkkiä pitkä.",
+      "max": "Käyttäjänimi ei saa ylittää 30 merkkiä.",
+      "required": "Käyttäjänimi on pakollinen.",
+      "empty": "Käyttäjänimi ei voi olla tyhjä."
+    },
+    "firstName": {
+      "min": "Etunimen on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Etunimi ei saa ylittää 50 merkkiä.",
+      "required": "Etunimi on pakollinen.",
+      "empty": "Etunimi ei voi olla tyhjä."
+    },
+    "lastName": {
+      "min": "Sukunimen on oltava vähintään 2 merkkiä pitkä.",
+      "max": "Sukunimi ei saa ylittää 50 merkkiä.",
+      "required": "Sukunimi on pakollinen.",
+      "empty": "Sukunimi ei voi olla tyhjä."
+    },
+    "role": {
+      "only": "Roolin on oltava joko 'tavallinen' tai 'ylläpitäjä'.",
+      "required": "Rooli on pakollinen."
+    },
+    "email": {
+      "email": "Anna kelvollinen sähköpostiosoite.",
+      "required": "Sähköposti on pakollinen.",
+      "empty": "Sähköposti ei voi olla tyhjä."
+    },
+    "password": {
+      "pattern": "Salasana voi sisältää vain kirjaimia, numeroita, alaviivoja, pisteitä ja tavuviivoja.",
+      "min": "Salasanan on oltava vähintään 8 merkkiä pitkä.",
+      "max": "Salasana ei saa ylittää 128 merkkiä.",
+      "required": "Salasana on pakollinen.",
+      "empty": "Salasana ei voi olla tyhjä."
+    },
+    "location": {
+      "length": "Sijainnin tunnisteen on oltava täsmälleen 24 merkkiä pitkä.",
+      "hex": "Sijainnin tunnisteen on oltava kelvollinen heksadesimaalijono.",
+      "required": "Sijainti on pakollinen.",
+      "empty": "Sijainti ei voi olla tyhjä."
+    }
+  },
+  "notFound": {
+    "subtitle": "Sivua ei löydy",
+    "description": "Etsimääsi sivua ei ole olemassa."
+  },
+  "authentication": {
+    "title": "Kirjaudu sisään",
+    "username": "Käyttäjänimi",
+    "usernamePlaceholder": "Syötä käyttäjänimi",
+    "password": "Salasana",
+    "passwordPlaceholder": "Syötä salasana",
+    "loginButton": "Kirjaudu sisään",
+    "expiredSession": "Istuntosi on vanhentunut. Kirjaudu sisään uudelleen."
   }
 }

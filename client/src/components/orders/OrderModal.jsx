@@ -124,27 +124,27 @@ const OrderModal = ({ onClose, order, setOrders }) => {
       products: cleanedProducts,
     };
 
-    try {
-      const { error } = orderValidationSchema.validate(payload, {
-        abortEarly: false,
+    const { error } = orderValidationSchema.validate(payload, {
+      abortEarly: false,
+    });
+
+    if (error) {
+      const validationErrors = {};
+      error.details.forEach((detail) => {
+        validationErrors[detail.path.join(".")] = detail.message;
       });
+      setErrors(validationErrors);
 
-      if (error) {
-        const validationErrors = {};
-        error.details.forEach((detail) => {
-          validationErrors[detail.path.join(".")] = detail.message;
-        });
-        setErrors(validationErrors);
+      setSubmitting(false);
+      return;
+    }
 
-        const errorMessage = error.details.map((d) => d.message).join(", ");
-        throw new Error(errorMessage || t("alert.unexpectedError"));
-      }
+    setErrors({});
 
-      setErrors({});
+    const endpoint = isEdit ? `/api/orders/${order._id}` : "/api/orders";
+    const method = isEdit ? "PUT" : "POST";
 
-      const endpoint = isEdit ? `/api/orders/${order._id}` : "/api/orders";
-      const method = isEdit ? "PUT" : "POST";
-
+    try {
       const response = await fetch(endpoint, {
         method,
         headers: {

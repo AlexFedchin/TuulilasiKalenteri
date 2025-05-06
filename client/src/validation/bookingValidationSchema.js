@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { t } from "i18next";
 
 export const bookingValidationSchema = Joi.object({
   plateNumber: Joi.string()
@@ -7,42 +8,57 @@ export const bookingValidationSchema = Joi.object({
     .max(14)
     .required()
     .messages({
-      "string.pattern.base": "Invalid plate number format.",
-      "string.min": "Plate number must be at least 2 characters long.",
-      "string.max": "Plate number must not exceed 14 characters.",
-      "any.required": "Plate number is required.",
+      "string.pattern.base": t("bookingValidationSchema.plateNumber.pattern"),
+      "string.min": t("bookingValidationSchema.plateNumber.min"),
+      "string.max": t("bookingValidationSchema.plateNumber.max"),
+      "any.required": t("bookingValidationSchema.plateNumber.required"),
     }),
-  isWorkDone: Joi.boolean().required().messages({
-    "any.required": "Work done status is required.",
-  }),
+  isWorkDone: Joi.boolean()
+    .required()
+    .messages({
+      "any.required": t("bookingValidationSchema.isWorkDone.required"),
+    }),
   phoneNumber: Joi.string()
     .pattern(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/)
     .min(10)
     .max(20)
     .required()
     .messages({
-      "string.pattern.base": "Invalid phone number format.",
-      "string.min": "Phone number must be at least 10 characters long.",
-      "string.max": "Phone number must not exceed 20 characters.",
-      "any.required": "Phone number is required.",
+      "string.pattern.base": t("bookingValidationSchema.phoneNumber.pattern"),
+      "string.min": t("bookingValidationSchema.phoneNumber.min"),
+      "string.max": t("bookingValidationSchema.phoneNumber.max"),
+      "any.required": t("bookingValidationSchema.phoneNumber.required"),
     }),
-  carModel: Joi.string().min(2).max(25).required().messages({
-    "string.min": "Car model must be at least 2 characters long.",
-    "string.max": "Car model must not exceed 25 characters.",
-    "any.required": "Car model is required.",
-  }),
-  eurocode: Joi.string().min(2).max(20).required().messages({
-    "string.min": "Eurocode must be at least 2 characters long.",
-    "string.max": "Eurocode must not exceed 20 characters.",
-    "any.required": "Eurocode is required.",
-  }),
-  price: Joi.number().min(0).required().messages({
-    "number.min": "Price must be a positive number.",
-    "any.required": "Price is required.",
-  }),
-  inStock: Joi.boolean().required().messages({
-    "any.required": "In-stock status is required.",
-  }),
+  carModel: Joi.string()
+    .min(2)
+    .max(25)
+    .required()
+    .messages({
+      "string.min": t("bookingValidationSchema.carModel.min"),
+      "string.max": t("bookingValidationSchema.carModel.max"),
+      "any.required": t("bookingValidationSchema.carModel.required"),
+    }),
+  eurocode: Joi.string()
+    .min(2)
+    .max(20)
+    .required()
+    .messages({
+      "string.min": t("bookingValidationSchema.eurocode.min"),
+      "string.max": t("bookingValidationSchema.eurocode.max"),
+      "any.required": t("bookingValidationSchema.eurocode.required"),
+    }),
+  price: Joi.number()
+    .min(0)
+    .required()
+    .messages({
+      "number.min": t("bookingValidationSchema.price.min"),
+      "any.required": t("bookingValidationSchema.price.required"),
+    }),
+  inStock: Joi.boolean()
+    .required()
+    .messages({
+      "any.required": t("bookingValidationSchema.inStock.required"),
+    }),
   warehouseLocation: Joi.string()
     .min(2)
     .max(50)
@@ -52,9 +68,9 @@ export const bookingValidationSchema = Joi.object({
       otherwise: Joi.allow(""),
     })
     .messages({
-      "string.min": "Warehouse location must be at least 2 characters long.",
-      "string.max": "Warehouse location must not exceed 50 characters.",
-      "any.required": "Warehouse location is required when in stock.",
+      "string.min": t("bookingValidationSchema.warehouseLocation.min"),
+      "string.max": t("bookingValidationSchema.warehouseLocation.max"),
+      "any.required": t("bookingValidationSchema.warehouseLocation.required"),
     }),
   isOrdered: Joi.boolean()
     .when("inStock", {
@@ -63,23 +79,30 @@ export const bookingValidationSchema = Joi.object({
     })
     .default(false)
     .messages({
-      "any.required": "Ordered status is required.",
-      "boolean.base": "Ordered status must be a boolean.",
+      "any.required": t("bookingValidationSchema.isOrdered.required"),
+      "boolean.base": t("bookingValidationSchema.isOrdered.boolean"),
     }),
-  clientType: Joi.string().valid("private", "company").required().messages({
-    "any.only": "Client type must be either 'private' or 'company'.",
-    "any.required": "Client type is required.",
-  }),
-  companyName: Joi.string().min(2).max(50).allow("").messages({
-    "string.min": "Company name must be at least 2 characters long.",
-    "string.max": "Company name must not exceed 50 characters.",
-  }),
+  clientType: Joi.string()
+    .valid("private", "company")
+    .required()
+    .messages({
+      "any.only": t("bookingValidationSchema.clientType.only"),
+      "any.required": t("bookingValidationSchema.clientType.required"),
+    }),
+  companyName: Joi.string()
+    .min(2)
+    .max(50)
+    .allow("")
+    .messages({
+      "string.min": t("bookingValidationSchema.companyName.min"),
+      "string.max": t("bookingValidationSchema.companyName.max"),
+    }),
   payerType: Joi.string()
     .valid("person", "company", "insurance")
     .required()
     .messages({
-      "any.only": "Payer type must be 'person', 'company', or 'insurance'.",
-      "any.required": "Payer type is required.",
+      "any.only": t("bookingValidationSchema.payerType.only"),
+      "any.required": t("bookingValidationSchema.payerType.required"),
     }),
   insuranceCompany: Joi.string()
     .valid(
@@ -98,8 +121,8 @@ export const bookingValidationSchema = Joi.object({
       otherwise: Joi.allow(""),
     })
     .messages({
-      "any.only": "Invalid insurance company.",
-      "any.required": "Insurance company is required for insurance payer type.",
+      "any.only": t("bookingValidationSchema.insuranceCompany.only"),
+      "any.required": t("bookingValidationSchema.insuranceCompany.required"),
     }),
   insuranceCompanyName: Joi.string()
     .min(2)
@@ -114,11 +137,11 @@ export const bookingValidationSchema = Joi.object({
       otherwise: Joi.allow(""),
     })
     .messages({
-      "string.min":
-        "Insurance company name must be at least 2 characters long.",
-      "string.max": "Insurance company name must not exceed 50 characters.",
-      "any.required":
-        "Insurance company name is required when 'Other' is selected.",
+      "string.min": t("bookingValidationSchema.insuranceCompanyName.min"),
+      "string.max": t("bookingValidationSchema.insuranceCompanyName.max"),
+      "any.required": t(
+        "bookingValidationSchema.insuranceCompanyName.required"
+      ),
     }),
   insuranceNumber: Joi.string()
     .min(5)
@@ -129,9 +152,9 @@ export const bookingValidationSchema = Joi.object({
       otherwise: Joi.allow(""),
     })
     .messages({
-      "string.min": "Insurance number must be at least 5 characters long.",
-      "string.max": "Insurance number must not exceed 50 characters.",
-      "any.required": "Insurance number is required.",
+      "string.min": t("bookingValidationSchema.insuranceNumber.min"),
+      "string.max": t("bookingValidationSchema.insuranceNumber.max"),
+      "any.required": t("bookingValidationSchema.insuranceNumber.required"),
     }),
   deductible: Joi.number()
     .min(0)
@@ -141,27 +164,45 @@ export const bookingValidationSchema = Joi.object({
       otherwise: Joi.allow(""),
     })
     .messages({
-      "number.min": "Deductible must be at least 0.",
-      "any.required": "Deductible is required.",
+      "number.min": t("bookingValidationSchema.deductible.min"),
+      "any.required": t("bookingValidationSchema.deductible.required"),
     }),
-  date: Joi.date().required().messages({
-    "date.base": "Invalid date format.",
-    "any.required": "Date is required.",
-  }),
-  duration: Joi.number().min(0.5).max(6).required().messages({
-    "number.min": "Duration must be at least 0.5 hours.",
-    "number.max": "Duration must not exceed 6 hours.",
-    "any.required": "Duration is required.",
-  }),
-  notes: Joi.string().min(0).max(500).allow("").messages({
-    "string.max": "Notes must not exceed 500 characters.",
-  }),
-  location: Joi.string().length(24).hex().required().allow("").messages({
-    "string.length": "Location must be a valid 24-character hex string.",
-    "any.required": "Location is required.",
-  }),
-  invoiceMade: Joi.boolean().required().default(false).messages({
-    "boolean.base": "Invoice status must be a boolean.",
-    "any.required": "Invoice status is required.",
-  }),
+  date: Joi.date()
+    .required()
+    .messages({
+      "date.base": t("bookingValidationSchema.date.base"),
+      "any.required": t("bookingValidationSchema.date.required"),
+    }),
+  duration: Joi.number()
+    .min(0.5)
+    .max(6)
+    .required()
+    .messages({
+      "number.min": t("bookingValidationSchema.duration.min"),
+      "number.max": t("bookingValidationSchema.duration.max"),
+      "any.required": t("bookingValidationSchema.duration.required"),
+    }),
+  notes: Joi.string()
+    .min(0)
+    .max(500)
+    .allow("")
+    .messages({
+      "string.max": t("bookingValidationSchema.notes.max"),
+    }),
+  location: Joi.string()
+    .length(24)
+    .hex()
+    .required()
+    .allow("")
+    .messages({
+      "string.length": t("bookingValidationSchema.location.length"),
+      "any.required": t("bookingValidationSchema.location.required"),
+    }),
+  invoiceMade: Joi.boolean()
+    .required()
+    .default(false)
+    .messages({
+      "boolean.base": t("bookingValidationSchema.invoiceMade.boolean"),
+      "any.required": t("bookingValidationSchema.invoiceMade.required"),
+    }),
 });

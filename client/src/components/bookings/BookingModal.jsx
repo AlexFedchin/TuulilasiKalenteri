@@ -274,24 +274,22 @@ const BookingModal = ({
       abortEarly: false,
     });
 
+    if (error) {
+      const validationErrors = {};
+      error.details.forEach((detail) => {
+        validationErrors[detail.path.join(".")] = detail.message;
+      });
+      setErrors(validationErrors);
+
+      setSubmitting(false);
+      return;
+    }
+
+    setErrors({});
+    const endpoint = isEdit ? `/api/bookings/${booking._id}` : "/api/bookings";
+    const method = isEdit ? "PUT" : "POST";
+
     try {
-      if (error) {
-        const validationErrors = {};
-        error.details.forEach((detail) => {
-          validationErrors[detail.path.join(".")] = detail.message;
-        });
-        setErrors(validationErrors);
-
-        const errorMessage = error.details.map((d) => d.message).join(", ");
-        throw new Error(errorMessage || t("alert.unexpectedError"));
-      }
-
-      setErrors({});
-      const endpoint = isEdit
-        ? `/api/bookings/${booking._id}`
-        : "/api/bookings";
-      const method = isEdit ? "PUT" : "POST";
-
       const response = await fetch(endpoint, {
         method,
         headers: {

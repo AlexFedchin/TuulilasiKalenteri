@@ -125,37 +125,37 @@ const UserModal = ({ onClose, user, setUsers }) => {
       context: { isEdit },
     });
 
+    if (error) {
+      const validationErrors = {};
+      error.details.forEach((detail) => {
+        validationErrors[detail.path.join(".")] = detail.message;
+      });
+      setErrors(validationErrors);
+
+      setSubmitting(false);
+      return;
+    }
+
+    setErrors({});
+
+    // Add only not empty fields to updatedInfo
+    const updatedInfo = {};
+    if (formData.username.trim())
+      updatedInfo.username = formData.username.trim();
+    if (formData.firstName.trim())
+      updatedInfo.firstName = formData.firstName.trim();
+    if (formData.lastName.trim())
+      updatedInfo.lastName = formData.lastName.trim();
+    if (formData.email.trim()) updatedInfo.email = formData.email.trim();
+    if (formData.location) updatedInfo.location = formData.location;
+    if (formData.role) updatedInfo.role = formData.role;
+    if (formData.password.trim())
+      updatedInfo.password = formData.password.trim();
+
+    const endpoint = isEdit ? `/api/users/${user._id}` : "/api/auth/register";
+    const method = isEdit ? "PUT" : "POST";
+
     try {
-      if (error) {
-        const validationErrors = {};
-        error.details.forEach((detail) => {
-          validationErrors[detail.path.join(".")] = detail.message;
-        });
-        setErrors(validationErrors);
-
-        const errorMessage = error.details.map((d) => d.message).join(", ");
-        throw new Error(errorMessage || t("alert.unexpectedError"));
-      }
-
-      setErrors({});
-
-      // Add only not empty fields to updatedInfo
-      const updatedInfo = {};
-      if (formData.username.trim())
-        updatedInfo.username = formData.username.trim();
-      if (formData.firstName.trim())
-        updatedInfo.firstName = formData.firstName.trim();
-      if (formData.lastName.trim())
-        updatedInfo.lastName = formData.lastName.trim();
-      if (formData.email.trim()) updatedInfo.email = formData.email.trim();
-      if (formData.location) updatedInfo.location = formData.location;
-      if (formData.role) updatedInfo.role = formData.role;
-      if (formData.password.trim())
-        updatedInfo.password = formData.password.trim();
-
-      const endpoint = isEdit ? `/api/users/${user._id}` : "/api/auth/register";
-      const method = isEdit ? "PUT" : "POST";
-
       const response = await fetch(endpoint, {
         method,
         headers: {

@@ -3,15 +3,21 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import LanguageIcon from "@mui/icons-material/Language";
 import { useAuth } from "../context/AuthContext.jsx";
 import DefaultContainer from "../components/DefaultContainer.jsx";
 import useScreenSize from "../hooks/useScreenSize.js";
+import { useTranslation } from "react-i18next";
+import { alert } from "../utils/alert.js";
 
 const Authentication = () => {
+  const { t, i18n } = useTranslation();
   const { login, isTokenExpired, token } = useAuth();
   const { isMobile } = useScreenSize();
   const [form, setForm] = useState({
@@ -21,6 +27,12 @@ const Authentication = () => {
   });
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    setAnchorEl(null);
+  };
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -40,16 +52,19 @@ const Authentication = () => {
         headers,
         body: JSON.stringify(form),
       });
+
       const data = await res.json();
+
       if (!res.ok) {
-        setError(data.error || "Something went wrong");
-        return;
+        throw new Error(data.error || t("alert.unexpectedError"));
       }
+
       login(data.user, data.token);
+      alert.info(t("alert.loginSuccess", { username: form.username }));
       setError("");
-    } catch (err) {
-      setError("Something went wrong. Try again later.");
-      console.error("Login error:", err);
+    } catch (error) {
+      setError(error.message || t("alert.unexpectedError"));
+      console.error("Login error:", error);
     }
   };
 
@@ -91,20 +106,77 @@ const Authentication = () => {
           width: "100%",
         }}
       >
-        <Typography variant="h3" sx={{ mb: isMobile ? 1 : 2 }}>
-          Login
-        </Typography>
+        <Box
+          sx={{
+            mb: isMobile ? 1 : 2,
+            width: "100%",
+            textAlign: "center",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h3" width="100%">
+            {t("authentication.title")}
+          </Typography>
+          <IconButton
+            sx={{ position: "absolute", right: 0 }}
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+          >
+            <LanguageIcon fontSize={isMobile ? "small" : "normal"} />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
+          >
+            <MenuItem
+              onClick={() => changeLanguage("en")}
+              sx={{
+                bgcolor:
+                  i18n.language === "en"
+                    ? "var(--white-onhover)"
+                    : "transparent",
+              }}
+            >
+              English
+            </MenuItem>
+            <MenuItem
+              onClick={() => changeLanguage("fi")}
+              sx={{
+                bgcolor:
+                  i18n.language === "fi"
+                    ? "var(--white-onhover)"
+                    : "transparent",
+              }}
+            >
+              Finnish
+            </MenuItem>
+            <MenuItem
+              onClick={() => changeLanguage("ru")}
+              sx={{
+                bgcolor:
+                  i18n.language === "ru"
+                    ? "var(--white-onhover)"
+                    : "transparent",
+              }}
+            >
+              Русский
+            </MenuItem>
+          </Menu>
+        </Box>
         {isTokenExpired && (
           <Typography
             variant="body2"
             sx={{ textAlign: "center", mb: isMobile ? 1 : 2 }}
           >
-            Your session has expired. Please log in again.
+            {t("authentication.expiredSession")}
           </Typography>
         )}
         <TextField
           fullWidth
-          label="Username"
+          label={t("authentication.username")}
+          type="text"
           name="username"
           autoComplete="username"
           autoFocus
@@ -115,7 +187,7 @@ const Authentication = () => {
         />
         <TextField
           fullWidth
-          label="Password"
+          label={t("authentication.password")}
           name="password"
           type={showPassword ? "text" : "password"}
           margin={isMobile ? "dense" : "normal"}
@@ -157,7 +229,7 @@ const Authentication = () => {
           size={isMobile ? "normal" : "large"}
           sx={{ mt: isMobile ? 1 : 2, width: "100%" }}
         >
-          Login
+          {t("authentication.loginButton")}
         </Button>
       </form>
     </DefaultContainer>

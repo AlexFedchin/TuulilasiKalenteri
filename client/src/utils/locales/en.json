@@ -48,7 +48,8 @@
     "invoiceStatusUpdateSuccess": "Invoice status updated successfully!",
     "passwordChangeSuccess": "Password changed successfully!",
     "copiedToClipboard": "Copied to clipboard",
-    "unexpectedError": "An unexpected error occurred"
+    "loginSuccess": "You are now logged in as {{username}}",
+    "unexpectedError": "An unexpected error occurred. Please try again later."
   },
   "userModal": {
     "titleNew": "New User",
@@ -124,7 +125,6 @@
   },
   "usersTab": {
     "searchPlaceholder": "Search for users...",
-    "fetchError": "Failed to fetch users",
     "confirmDelete": "Are you sure you want to delete the <b>{{username}}</b> user? The user and all of their bookings will be deleted. This action <b>cannot be undone</b>."
   },
   "locationsTab": {
@@ -300,5 +300,197 @@
   "bookingBox": {
     "phone": "p.",
     "insurance": "insur."
+  },
+  "bookingValidationSchema": {
+    "plateNumber": {
+      "pattern": "Invalid plate number format.",
+      "min": "Plate number must be at least 2 characters long.",
+      "max": "Plate number must not exceed 14 characters.",
+      "required": "Plate number is required."
+    },
+    "isWorkDone": {
+      "required": "Work done status is required."
+    },
+    "phoneNumber": {
+      "pattern": "Invalid phone number format.",
+      "min": "Phone number must be at least 10 characters long.",
+      "max": "Phone number must not exceed 20 characters.",
+      "required": "Phone number is required."
+    },
+    "carModel": {
+      "min": "Car model must be at least 2 characters long.",
+      "max": "Car model must not exceed 25 characters.",
+      "required": "Car model is required."
+    },
+    "eurocode": {
+      "min": "Eurocode must be at least 2 characters long.",
+      "max": "Eurocode must not exceed 20 characters.",
+      "required": "Eurocode is required."
+    },
+    "price": {
+      "min": "Price must be a positive number.",
+      "required": "Price is required."
+    },
+    "inStock": {
+      "required": "In-stock status is required."
+    },
+    "warehouseLocation": {
+      "min": "Warehouse location must be at least 2 characters long.",
+      "max": "Warehouse location must not exceed 50 characters.",
+      "required": "Warehouse location is required when in stock."
+    },
+    "isOrdered": {
+      "required": "Ordered status is required.",
+      "boolean": "Ordered status must be a boolean."
+    },
+    "clientType": {
+      "only": "Client type must be either 'private' or 'company'.",
+      "required": "Client type is required."
+    },
+    "companyName": {
+      "min": "Company name must be at least 2 characters long.",
+      "max": "Company name must not exceed 50 characters."
+    },
+    "payerType": {
+      "only": "Payer type must be 'person', 'company', or 'insurance'.",
+      "required": "Payer type is required."
+    },
+    "insuranceCompany": {
+      "only": "Invalid insurance company.",
+      "required": "Insurance company is required for insurance payer type."
+    },
+    "insuranceCompanyName": {
+      "min": "Insurance company name must be at least 2 characters long.",
+      "max": "Insurance company name must not exceed 50 characters.",
+      "required": "Insurance company name is required when 'Other' is selected."
+    },
+    "insuranceNumber": {
+      "min": "Insurance number must be at least 5 characters long.",
+      "max": "Insurance number must not exceed 50 characters.",
+      "required": "Insurance number is required."
+    },
+    "deductible": {
+      "min": "Deductible must be at least 0.",
+      "required": "Deductible is required."
+    },
+    "date": {
+      "base": "Invalid date format.",
+      "required": "Date is required."
+    },
+    "duration": {
+      "min": "Duration must be at least 0.5 hours.",
+      "max": "Duration must not exceed 6 hours.",
+      "required": "Duration is required."
+    },
+    "notes": {
+      "max": "Notes must not exceed 500 characters."
+    },
+    "location": {
+      "length": "Location must be a valid 24-character hex string.",
+      "required": "Location is required."
+    },
+    "invoiceMade": {
+      "boolean": "Invoice status must be a boolean.",
+      "required": "Invoice status is required."
+    }
+  },
+  "orderValidationSchema": {
+    "eurocode": {
+      "stringBase": "Eurocode must be a string.",
+      "required": "Eurocode is required.",
+      "min": "Eurocode must be at least 2 characters long.",
+      "max": "Eurocode must not exceed 20 characters."
+    },
+    "amount": {
+      "numberBase": "Amount must be a number.",
+      "integer": "Amount must be an integer.",
+      "min": "Amount must be at least 1.",
+      "required": "Amount is required."
+    },
+    "price": {
+      "numberBase": "Price must be a number.",
+      "integer": "Price must be an integer.",
+      "min": "Price must be at least 0.",
+      "required": "Price is required."
+    },
+    "status": {
+      "stringBase": "Status must be a string.",
+      "valid": "Status must be either 'In Stock' or 'Order'."
+    },
+    "products": {
+      "arrayBase": "Products must be an array.",
+      "includesRequiredUnknowns": "Each product must have eurocode, amount, and price.",
+      "required": "Products are required."
+    },
+    "client": {
+      "stringBase": "Client must be a string.",
+      "valid": "Client must be one of the predefined values."
+    },
+    "clientName": {
+      "stringBase": "Client name must be a string.",
+      "required": "Client name is required when client is 'other'.",
+      "min": "Client name must be at least 2 characters long.",
+      "max": "Client name must be at most 50 characters long."
+    },
+    "notes": {
+      "stringBase": "Notes must be a string.",
+      "max": "Notes must be at most 500 characters long."
+    }
+  },
+  "userValidationSchema": {
+    "username": {
+      "pattern": "Username can only contain letters, numbers, underscores, dots, and hyphens.",
+      "min": "Username must be at least 3 characters long.",
+      "max": "Username must not exceed 30 characters.",
+      "required": "Username is required.",
+      "empty": "Username cannot be empty."
+    },
+    "firstName": {
+      "min": "First name must be at least 2 characters long.",
+      "max": "First name must not exceed 50 characters.",
+      "required": "First name is required.",
+      "empty": "First name cannot be empty."
+    },
+    "lastName": {
+      "min": "Last name must be at least 2 characters long.",
+      "max": "Last name must not exceed 50 characters.",
+      "required": "Last name is required.",
+      "empty": "Last name cannot be empty."
+    },
+    "role": {
+      "only": "Role must be either 'regular' or 'admin'.",
+      "required": "Role is required."
+    },
+    "email": {
+      "email": "Please provide a valid email address.",
+      "required": "Email is required.",
+      "empty": "Email cannot be empty."
+    },
+    "password": {
+      "pattern": "Password can only contain letters, numbers, underscores, dots, and hyphens.",
+      "min": "Password must be at least 8 characters long.",
+      "max": "Password must not exceed 128 characters.",
+      "required": "Password is required.",
+      "empty": "Password cannot be empty."
+    },
+    "location": {
+      "length": "Location ID must be exactly 24 characters long.",
+      "hex": "Location ID must be a valid hexadecimal string.",
+      "required": "Location is required.",
+      "empty": "Location cannot be empty."
+    }
+  },
+  "notFound": {
+    "subtitle": "Page Not Found",
+    "description": "The page you are looking for does not exist."
+  },
+  "authentication": {
+    "title": "Login",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "loginButton": "Login",
+    "expiredSession": "Your session has expired. Please log in again."
   }
 }
