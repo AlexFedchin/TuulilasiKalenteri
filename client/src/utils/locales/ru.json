@@ -10,11 +10,6 @@
     "edit": "Редактировать",
     "delete": "Удалить"
   },
-  "language": {
-    "english": "English",
-    "finnish": "Suomi",
-    "russian": "Русский"
-  },
   "orderModal": {
     "titleNew": "Новый заказ",
     "titleEdit": "Редактировать заказ",
@@ -46,7 +41,12 @@
     "bookingUpdateSuccess": "Бронирование успешно обновлено!",
     "bookingCreateSuccess": "Бронирование успешно создано!",
     "bookingDeleteSuccess": "Бронирование успешно удалено!",
+    "noteUpdateSuccess": "Заметка успешно обновлена!",
+    "noteCreateSuccess": "Заметка успешно создана!",
+    "noteDeleteSuccess": "Заметка успешно удалена!",
+    "profileUpdateSuccess": "Профиль успешно обновлен!",
     "invoiceStatusUpdateSuccess": "Статус счета успешно обновлен!",
+    "passwordChangeSuccess": "Пароль успешно изменен!",
     "copiedToClipboard": "Скопировано в буфер обмена",
     "unexpectedError": "Произошла непредвиденная ошибка"
   },
@@ -226,5 +226,78 @@
     "create": "Создать",
     "update": "Обновить",
     "delete": "Удалить"
+  },
+  "ordersBlock": {
+    "addOrder": "Добавить заказ",
+    "confirmDelete": "Вы уверены, что хотите удалить заказ на {{productCount}} товаров для <b>{{client}}</b>? Это действие <b>не может быть отменено</b>."
+  },
+  "notesBlock": {
+    "title": "Заметки",
+    "addNote": "Добавить заметку"
+  },
+  "calendar": {
+    "searchPlaceholder": "Поиск..."
+  },
+  "bookingBoxTooltip": {
+    "car": "Авто",
+    "plate": "Номер",
+    "phoneNumber": "Телефон",
+    "eurocode": "Еврокод",
+    "price": "Цена",
+    "inStock": "В наличии",
+    "yes": "Да",
+    "no": "Нет",
+    "warehouse": "Склад",
+    "ordered": "Заказано",
+    "client": "Клиент",
+    "privateClient": "Частный клиент",
+    "businessClient": "Бизнес-клиент",
+    "payer": "Плательщик",
+    "insuranceCompany": "Страховая компания",
+    "person": "Физическое лицо",
+    "business": "Бизнес",
+    "insuranceNumber": "Номер страховки",
+    "dateAndTime": "Дата и время",
+    "notes": "Заметки",
+    "na": "Н/Д",
+    "workDone": "Работа выполнена",
+    "invoiceSent": "Счет отправлен",
+    "unknown": "Неизвестно"
+  },
+  "myProfile": {
+    "title": "Мой профиль",
+    "usernameLabel": "Имя пользователя",
+    "usernamePlaceholder": "Введите имя пользователя",
+    "firstNameLabel": "Имя",
+    "firstNamePlaceholder": "Введите ваше имя",
+    "lastNameLabel": "Фамилия",
+    "lastNamePlaceholder": "Введите вашу фамилию",
+    "emailLabel": "Почта",
+    "emailPlaceholder": "Введите вашу почту",
+    "passwordLabel": "Пароль"
+  },
+  "changePasswordModal": {
+    "title": "Сменить пароль",
+    "enterCurrentPassword": "Введите ваш текущий пароль",
+    "currentPassword": "Текущий пароль",
+    "togglePasswordVisibility": "Показать или скрыть пароль",
+    "next": "Далее",
+    "enterNewPassword": "Введите новый пароль",
+    "newPassword": "Новый пароль",
+    "confirmNewPassword": "Подтвердите новый пароль",
+    "toggleNewPasswordVisibility": "Показать или скрыть новый пароль",
+    "toggleConfirmNewPasswordVisibility": "Показать или скрыть подтвержденный пароль",
+    "changePassword": "Сменить пароль",
+    "passwordsDoNotMatch": "Пароли не совпадают",
+    "tryAgainLater": "Пожалуйста, попробуйте позже."
+  },
+  "footer": {
+    "tuulilasiPojatLogoAlt": "Логотип TuulilasiPojat",
+    "tuulilasiTukkuLogoAlt": "Логотип TuulilasiTukku",
+    "copyright": "TuulilasiPojat. Все права защищены."
+  },
+  "bookingBox": {
+    "phone": "т.",
+    "insurance": "страх."
   }
 }

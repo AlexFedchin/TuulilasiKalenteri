@@ -22,21 +22,28 @@ import timezone from "dayjs/plugin/timezone";
 import isoWeek from "dayjs/plugin/isoWeek";
 import updateLocale from "dayjs/plugin/updateLocale";
 import "dayjs/locale/fi";
+import "dayjs/locale/en";
+import "dayjs/locale/ru";
 import useScreenSize from "../hooks/useScreenSize";
 import Notes from "../components/notes/NotesBlock";
 import WeekCalendar from "../components/calendar/WeekCalendar";
 import LocationsCalendar from "../components/calendar/LocationsCalendar";
 import Orders from "../components/orders/OrdersBlock";
+import { useTranslation } from "react-i18next";
 
 const Calendar = () => {
+  const { i18n, t } = useTranslation();
   dayjs.extend(isoWeek);
   dayjs.extend(utc);
   dayjs.extend(timezone);
   dayjs.extend(updateLocale);
+  useEffect(() => {
+    dayjs.locale(i18n.language);
 
-  dayjs.updateLocale("en", {
-    weekStart: 1,
-  });
+    dayjs.updateLocale(i18n.language, {
+      weekStart: 1,
+    });
+  }, [i18n.language]);
 
   const getInitialDate = () => {
     const today = dayjs();
@@ -119,11 +126,11 @@ const Calendar = () => {
 
   const getHeaderText = () => {
     if (mode === "week") {
-      const startOfWeek = currentDate.startOf("isoWeek");
-      const endOfWeek = currentDate.endOf("isoWeek");
+      const startOfWeek = currentDate.startOf("isoWeek").locale(i18n.language);
+      const endOfWeek = currentDate.endOf("isoWeek").locale(i18n.language);
       return `${startOfWeek.format("DD.MM")} - ${endOfWeek.format("DD.MM")}`;
     } else if (mode === "locations") {
-      return currentDate.format("ddd, MMMM D");
+      return currentDate.locale(i18n.language).format("ddd, MMMM D");
     }
     return "";
   };
@@ -161,18 +168,21 @@ const Calendar = () => {
           gap: isMobile ? 1 : isTablet ? 2 : 8,
         }}
       >
-        {/* Desktop Calendar Section */}
-        {!isMobile && (
-          <Card
-            sx={{
-              p: 1,
-              maxWidth: "300px",
-              width: "25%",
-              boxSizing: "border-box",
-              flexShrink: 1,
-            }}
-          >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider
+          dateAdapter={AdapterDayjs}
+          adapterLocale={i18n.language}
+        >
+          {/* Desktop Calendar Section */}
+          {!isMobile && (
+            <Card
+              sx={{
+                p: 1,
+                maxWidth: "300px",
+                width: "25%",
+                boxSizing: "border-box",
+                flexShrink: 1,
+              }}
+            >
               <DatePicker
                 value={currentDate}
                 format="D MMM YYYY"
@@ -200,105 +210,103 @@ const Calendar = () => {
                   },
                 }}
               />
-            </LocalizationProvider>
-          </Card>
-        )}
+            </Card>
+          )}
 
-        {/* Middle Section */}
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            alignItems: "center",
-            minWidth: isMobile ? "200px" : isTablet ? "275px" : "275px",
-            maxWidth: isMobile ? "250px" : "unset",
-            justifyContent: "space-between",
-          }}
-        >
-          <IconButton
-            onClick={() => handleChangeDate("prev")}
-            sx={{
-              display: "grid",
-              placeItems: "center",
-            }}
-          >
-            <ArrowForwardIcon />
-          </IconButton>
-          <Box sx={{ flexShrink: 0 }}>
-            <Typography variant="h3">{getHeaderText()}</Typography>
-            {selectedLocation && mode === "week" ? (
-              <Typography variant="body2" letterSpacing={2}>
-                {selectedLocation.title}
-              </Typography>
-            ) : null}
-          </Box>
-          <IconButton
-            onClick={() => handleChangeDate("next")}
-            sx={{
-              display: "grid",
-              placeItems: "center",
-            }}
-          >
-            <ArrowForwardIcon sx={{ transform: "rotate(180deg)" }} />
-          </IconButton>
-        </Box>
-
-        {/* Desktop Search Section */}
-        {!isMobile && (
-          <Card
-            sx={{
-              p: 1,
-              maxWidth: "300px",
-              width: "25%",
-              boxSizing: "border-box",
-              flexShrink: 1,
-            }}
-          >
-            <TextField
-              placeholder="Search..."
-              variant="outlined"
-              fullWidth
-              size="small"
-              sx={{ width: "100%" }}
-              value={searchTerm}
-              onChange={handleSearchChange}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "var(--off-grey)" }} />
-                    </InputAdornment>
-                  ),
-                  endAdornment: searchTerm && (
-                    <InputAdornment position="end" sx={{ mr: "-12px" }}>
-                      <IconButton onClick={() => setSearchTerm("")}>
-                        <CloseIcon
-                          fontSize="small"
-                          sx={{ color: "var(--off-grey)" }}
-                        />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </Card>
-        )}
-
-        {/* Mobile calendar and search */}
-        {isMobile && (
-          <Card
+          {/* Middle Section */}
+          <Box
             sx={{
               display: "flex",
-              gap: 1,
-              width: "100%",
+              gap: 2,
               alignItems: "center",
-              justifyContent: "center",
-              p: 1,
-              boxSizing: "border-box",
+              minWidth: isMobile ? "200px" : isTablet ? "275px" : "275px",
+              maxWidth: isMobile ? "250px" : "unset",
+              justifyContent: "space-between",
             }}
           >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <IconButton
+              onClick={() => handleChangeDate("prev")}
+              sx={{
+                display: "grid",
+                placeItems: "center",
+              }}
+            >
+              <ArrowForwardIcon />
+            </IconButton>
+            <Box sx={{ flexShrink: 0 }}>
+              <Typography variant="h3">{getHeaderText()}</Typography>
+              {selectedLocation && mode === "week" ? (
+                <Typography variant="body2" letterSpacing={2}>
+                  {selectedLocation.title}
+                </Typography>
+              ) : null}
+            </Box>
+            <IconButton
+              onClick={() => handleChangeDate("next")}
+              sx={{
+                display: "grid",
+                placeItems: "center",
+              }}
+            >
+              <ArrowForwardIcon sx={{ transform: "rotate(180deg)" }} />
+            </IconButton>
+          </Box>
+
+          {/* Desktop Search Section */}
+          {!isMobile && (
+            <Card
+              sx={{
+                p: 1,
+                maxWidth: "300px",
+                width: "25%",
+                boxSizing: "border-box",
+                flexShrink: 1,
+              }}
+            >
+              <TextField
+                placeholder={t("calendar.searchPlaceholder")}
+                variant="outlined"
+                fullWidth
+                size="small"
+                sx={{ width: "100%" }}
+                value={searchTerm}
+                onChange={handleSearchChange}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon sx={{ color: "var(--off-grey)" }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: searchTerm && (
+                      <InputAdornment position="end" sx={{ mr: "-12px" }}>
+                        <IconButton onClick={() => setSearchTerm("")}>
+                          <CloseIcon
+                            fontSize="small"
+                            sx={{ color: "var(--off-grey)" }}
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Card>
+          )}
+
+          {/* Mobile calendar and search */}
+          {isMobile && (
+            <Card
+              sx={{
+                display: "flex",
+                gap: 1,
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+                p: 1,
+                boxSizing: "border-box",
+              }}
+            >
               <MobileDatePicker
                 value={currentDate}
                 format="D.M.YYYY"
@@ -326,38 +334,38 @@ const Calendar = () => {
                   },
                 }}
               />
-            </LocalizationProvider>
 
-            <TextField
-              placeholder="Search..."
-              variant="outlined"
-              fullWidth
-              size="small"
-              sx={{ width: "100%" }}
-              value={searchTerm}
-              onChange={handleSearchChange}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "var(--off-grey)" }} />
-                    </InputAdornment>
-                  ),
-                  endAdornment: searchTerm && (
-                    <InputAdornment position="end" sx={{ mr: "-12px" }}>
-                      <IconButton onClick={() => setSearchTerm("")}>
-                        <CloseIcon
-                          fontSize="small"
-                          sx={{ color: "var(--off-grey)" }}
-                        />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </Card>
-        )}
+              <TextField
+                placeholder="Search..."
+                variant="outlined"
+                fullWidth
+                size="small"
+                sx={{ width: "100%" }}
+                value={searchTerm}
+                onChange={handleSearchChange}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon sx={{ color: "var(--off-grey)" }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: searchTerm && (
+                      <InputAdornment position="end" sx={{ mr: "-12px" }}>
+                        <IconButton onClick={() => setSearchTerm("")}>
+                          <CloseIcon
+                            fontSize="small"
+                            sx={{ color: "var(--off-grey)" }}
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Card>
+          )}
+        </LocalizationProvider>
       </Box>
 
       <Box

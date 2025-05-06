@@ -124,11 +124,6 @@ const CustomAppBar = () => {
               open={drawerOpen}
               toggleDrawer={toggleDrawer}
               navItems={navItems}
-              user={user}
-              handleLogout={handleLogout}
-              languageAnchorEl={languageAnchorEl}
-              setLanguageAnchorEl={setLanguageAnchorEl}
-              handleLanguageChange={handleLanguageChange}
             />
           </>
         )}
@@ -194,14 +189,38 @@ const CustomAppBar = () => {
               open={Boolean(languageAnchorEl)}
               onClose={() => setLanguageAnchorEl(null)}
             >
-              <MenuItem onClick={() => handleLanguageChange("en")}>
-                {t("language.english")}
+              <MenuItem
+                onClick={() => handleLanguageChange("en")}
+                sx={{
+                  bgcolor:
+                    i18n.language === "en"
+                      ? "var(--white-onhover)"
+                      : "transparent",
+                }}
+              >
+                English
               </MenuItem>
-              <MenuItem onClick={() => handleLanguageChange("fi")}>
-                {t("language.finnish")}
+              <MenuItem
+                onClick={() => handleLanguageChange("fi")}
+                sx={{
+                  bgcolor:
+                    i18n.language === "fi"
+                      ? "var(--white-onhover)"
+                      : "transparent",
+                }}
+              >
+                Suomi
               </MenuItem>
-              <MenuItem onClick={() => handleLanguageChange("ru")}>
-                {t("language.russian")}
+              <MenuItem
+                onClick={() => handleLanguageChange("ru")}
+                sx={{
+                  bgcolor:
+                    i18n.language === "ru"
+                      ? "var(--white-onhover)"
+                      : "transparent",
+                }}
+              >
+                Русский
               </MenuItem>
             </Menu>
           </Box>

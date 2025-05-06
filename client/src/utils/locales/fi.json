@@ -10,11 +10,6 @@
     "edit": "Muokkaa",
     "delete": "Poista"
   },
-  "language": {
-    "english": "English",
-    "finnish": "Suomi",
-    "russian": "Русский"
-  },
   "orderModal": {
     "titleNew": "Uusi tilaus",
     "titleEdit": "Muokkaa tilausta",
@@ -46,7 +41,12 @@
     "bookingUpdateSuccess": "Varaus päivitetty onnistuneesti!",
     "bookingCreateSuccess": "Varaus luotu onnistuneesti!",
     "bookingDeleteSuccess": "Varaus poistettu onnistuneesti!",
+    "noteUpdateSuccess": "Huomautus päivitetty onnistuneesti!",
+    "noteCreateSuccess": "Huomautus luotu onnistuneesti!",
+    "noteDeleteSuccess": "Huomautus poistettu onnistuneesti!",
+    "profileUpdateSuccess": "Profiili päivitetty onnistuneesti!",
     "invoiceStatusUpdateSuccess": "Laskun tila päivitetty onnistuneesti!",
+    "passwordChangeSuccess": "Salasana vaihdettu onnistuneesti!",
     "copiedToClipboard": "Kopioitu leikepöydälle",
     "unexpectedError": "Tapahtui odottamaton virhe"
   },
@@ -106,7 +106,7 @@
     "insuranceNumber": "Vakuutusnumero",
     "deductible": "Omavastuu",
     "price": "Hinta",
-    "serviceDate": "Päivä",
+    "serviceDate": "Päivämäärä",
     "unknown": "Tuntematon",
     "invoiceSent": "Lasku lähetetty",
     "invoiceNotSent": "Laskua ei lähetetty"
@@ -227,5 +227,78 @@
     "create": "Luo",
     "update": "Päivitä",
     "delete": "Poista"
+  },
+  "ordersBlock": {
+    "addOrder": "Lisää tilaus",
+    "confirmDelete": "Haluatko varmasti poistaa tilauksen {{productCount}} tuotteelle asiakkaalle <b>{{client}}</b>? Tätä toimintoa <b>ei voi peruuttaa</b>."
+  },
+  "notesBlock": {
+    "title": "Huomautukset",
+    "addNote": "Lisää huomautus"
+  },
+  "calendar": {
+    "searchPlaceholder": "Etsi..."
+  },
+  "bookingBoxTooltip": {
+    "car": "Auto",
+    "plate": "Rekisterinumero",
+    "phoneNumber": "Puhelinnumero",
+    "eurocode": "Eurokoodi",
+    "price": "Hinta",
+    "inStock": "Varastossa",
+    "yes": "Kyllä",
+    "no": "Ei",
+    "warehouse": "Varasto",
+    "ordered": "Tilattu",
+    "client": "Asiakas",
+    "privateClient": "Yksityisasiakas",
+    "businessClient": "Yritysasiakas",
+    "payer": "Maksaja",
+    "insuranceCompany": "Vakuutusyhtiö",
+    "person": "Henkilö",
+    "business": "Yritys",
+    "insuranceNumber": "Vakuutusnumero",
+    "dateAndTime": "Päivämäärä ja aika",
+    "notes": "Huomautukset",
+    "na": "Ei tietoa",
+    "workDone": "Työ valmis",
+    "invoiceSent": "Lasku lähetetty",
+    "unknown": "Tuntematon"
+  },
+  "myProfile": {
+    "title": "Profiilini",
+    "usernameLabel": "Käyttäjänimi",
+    "usernamePlaceholder": "Syötä käyttäjänimesi",
+    "firstNameLabel": "Etunimi",
+    "firstNamePlaceholder": "Syötä etunimesi",
+    "lastNameLabel": "Sukunimi",
+    "lastNamePlaceholder": "Syötä sukunimesi",
+    "emailLabel": "Sähköposti",
+    "emailPlaceholder": "Syötä sähköpostisi",
+    "passwordLabel": "Salasana"
+  },
+  "changePasswordModal": {
+    "title": "Vaihda salasana",
+    "enterCurrentPassword": "Syötä nykyinen salasanasi",
+    "currentPassword": "Nykyinen salasana",
+    "togglePasswordVisibility": "Näytä tai piilota salasana",
+    "next": "Seuraava",
+    "enterNewPassword": "Syötä uusi salasana",
+    "newPassword": "Uusi salasana",
+    "confirmNewPassword": "Vahvista uusi salasana",
+    "toggleNewPasswordVisibility": "Näytä tai piilota uusi salasana",
+    "toggleConfirmNewPasswordVisibility": "Näytä tai piilota vahvistettu salasana",
+    "changePassword": "Vaihda salasana",
+    "passwordsDoNotMatch": "Salasanat eivät täsmää",
+    "tryAgainLater": "Yritä uudelleen myöhemmin."
+  },
+  "footer": {
+    "tuulilasiPojatLogoAlt": "TuulilasiPojat-logo",
+    "tuulilasiTukkuLogoAlt": "TuulilasiTukku-logo",
+    "copyright": "TuulilasiPojat. Kaikki oikeudet pidätetään."
+  },
+  "bookingBox": {
+    "phone": "p.",
+    "insurance": "vak."
   }
 }

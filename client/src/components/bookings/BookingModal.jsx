@@ -34,7 +34,6 @@ import InsuranceCompanyIcon from "@mui/icons-material/AccountBalance";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
-import Joi from "joi";
 import dayjs from "dayjs";
 import "dayjs/locale/fi";
 import "dayjs/locale/en";
@@ -45,177 +44,17 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import useScreenSize from "../hooks/useScreenSize";
-import { useAuth } from "../context/AuthContext";
-import { alert } from "../utils/alert";
-import { insuranceCompanies } from "../utils/insuranceCompanies";
+import useScreenSize from "../../hooks/useScreenSize";
+import { useAuth } from "../../context/AuthContext";
+import { alert } from "../../utils/alert";
+import { insuranceCompanies } from "../../utils/insuranceCompanies";
+import { clientTypes } from "../../utils/clientTypes";
+import { payerTypes } from "../../utils/payerTypes";
+import { deductibleValues } from "../../utils/deductibleValues";
 import { useTranslation } from "react-i18next";
-
-const bookingValidationSchema = Joi.object({
-  plateNumber: Joi.string()
-    .pattern(/^[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{1,4}[-\s]?[A-Z0-9]{0,4}$/)
-    .min(2)
-    .max(14)
-    .required()
-    .messages({
-      "string.pattern.base": "Invalid plate number format.",
-      "string.min": "Plate number must be at least 2 characters long.",
-      "string.max": "Plate number must not exceed 14 characters.",
-      "any.required": "Plate number is required.",
-    }),
-  isWorkDone: Joi.boolean().required().messages({
-    "any.required": "Work done status is required.",
-  }),
-  phoneNumber: Joi.string()
-    .pattern(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/)
-    .min(10)
-    .max(20)
-    .required()
-    .messages({
-      "string.pattern.base": "Invalid phone number format.",
-      "string.min": "Phone number must be at least 10 characters long.",
-      "string.max": "Phone number must not exceed 20 characters.",
-      "any.required": "Phone number is required.",
-    }),
-  carModel: Joi.string().min(2).max(25).required().messages({
-    "string.min": "Car model must be at least 2 characters long.",
-    "string.max": "Car model must not exceed 25 characters.",
-    "any.required": "Car model is required.",
-  }),
-  eurocode: Joi.string().min(2).max(20).required().messages({
-    "string.min": "Eurocode must be at least 2 characters long.",
-    "string.max": "Eurocode must not exceed 20 characters.",
-    "any.required": "Eurocode is required.",
-  }),
-  price: Joi.number().min(0).required().messages({
-    "number.min": "Price must be a positive number.",
-    "any.required": "Price is required.",
-  }),
-  inStock: Joi.boolean().required().messages({
-    "any.required": "In-stock status is required.",
-  }),
-  warehouseLocation: Joi.string()
-    .min(2)
-    .max(50)
-    .when("inStock", {
-      is: true,
-      then: Joi.required(),
-      otherwise: Joi.allow(""),
-    })
-    .messages({
-      "string.min": "Warehouse location must be at least 2 characters long.",
-      "string.max": "Warehouse location must not exceed 50 characters.",
-      "any.required": "Warehouse location is required when in stock.",
-    }),
-  isOrdered: Joi.boolean()
-    .when("inStock", {
-      is: false,
-      then: Joi.required(),
-    })
-    .default(false)
-    .messages({
-      "any.required": "Ordered status is required.",
-      "boolean.base": "Ordered status must be a boolean.",
-    }),
-  clientType: Joi.string().valid("private", "company").required().messages({
-    "any.only": "Client type must be either 'private' or 'company'.",
-    "any.required": "Client type is required.",
-  }),
-  companyName: Joi.string().min(2).max(50).allow("").messages({
-    "string.min": "Company name must be at least 2 characters long.",
-    "string.max": "Company name must not exceed 50 characters.",
-  }),
-  payerType: Joi.string()
-    .valid("person", "company", "insurance")
-    .required()
-    .messages({
-      "any.only": "Payer type must be 'person', 'company', or 'insurance'.",
-      "any.required": "Payer type is required.",
-    }),
-  insuranceCompany: Joi.string()
-    .valid(
-      "pohjolaVakuutus",
-      "lahiTapiola",
-      "ifVakuutus",
-      "fennia",
-      "turva",
-      "pohjantahti",
-      "alandia",
-      "other"
-    )
-    .when("payerType", {
-      is: "insurance",
-      then: Joi.required(),
-      otherwise: Joi.allow(""),
-    })
-    .messages({
-      "any.only": "Invalid insurance company.",
-      "any.required": "Insurance company is required for insurance payer type.",
-    }),
-  insuranceCompanyName: Joi.string()
-    .min(2)
-    .max(50)
-    .when("payerType", {
-      is: "insurance",
-      then: Joi.when("insuranceCompany", {
-        is: "other",
-        then: Joi.required(),
-        otherwise: Joi.allow(""),
-      }),
-      otherwise: Joi.allow(""),
-    })
-    .messages({
-      "string.min":
-        "Insurance company name must be at least 2 characters long.",
-      "string.max": "Insurance company name must not exceed 50 characters.",
-      "any.required":
-        "Insurance company name is required when 'Other' is selected.",
-    }),
-  insuranceNumber: Joi.string()
-    .min(5)
-    .max(50)
-    .when("payerType", {
-      is: "insurance",
-      then: Joi.required(),
-      otherwise: Joi.allow(""),
-    })
-    .messages({
-      "string.min": "Insurance number must be at least 5 characters long.",
-      "string.max": "Insurance number must not exceed 50 characters.",
-      "any.required": "Insurance number is required.",
-    }),
-  deductible: Joi.number()
-    .min(0)
-    .when("payerType", {
-      is: "insurance",
-      then: Joi.required(),
-      otherwise: Joi.allow(""),
-    })
-    .messages({
-      "number.min": "Deductible must be at least 0.",
-      "any.required": "Deductible is required.",
-    }),
-  date: Joi.date().required().messages({
-    "date.base": "Invalid date format.",
-    "any.required": "Date is required.",
-  }),
-  duration: Joi.number().min(0.5).max(6).required().messages({
-    "number.min": "Duration must be at least 0.5 hours.",
-    "number.max": "Duration must not exceed 6 hours.",
-    "any.required": "Duration is required.",
-  }),
-  notes: Joi.string().min(0).max(500).allow("").messages({
-    "string.max": "Notes must not exceed 500 characters.",
-  }),
-  location: Joi.string().length(24).hex().required().allow("").messages({
-    "string.length": "Location must be a valid 24-character hex string.",
-    "any.required": "Location is required.",
-  }),
-  invoiceMade: Joi.boolean().required().default(false).messages({
-    "boolean.base": "Invoice status must be a boolean.",
-    "any.required": "Invoice status is required.",
-  }),
-});
+import { bookingValidationSchema } from "../../validation/bookingValidationSchema";
+import { validateEuropeanPlateNumber } from "../../validation/validateEuropeanPlateNumber";
+import { validateFinnishPhoneNumber } from "../../validation/validateFinnishPhoneNumber";
 
 const BookingModal = ({
   open,
@@ -264,61 +103,6 @@ const BookingModal = ({
     !submitting &&
     !deleting;
   const isSubmittable = isAdmin || !dayjs(date).isBefore(dayjs(), "day");
-
-  const validateFinnishPhoneNumber = (value) => {
-    const finnishPhoneRegex =
-      /^((04[0-9]{1})(\s?|-?)|050(\s?|-?)|0457(\s?|-?)|[+]?358(\s?|-?)50|0358(\s?|-?)50|00358(\s?|-?)50|[+]?358(\s?|-?)4[0-9]{1}|0358(\s?|-?)4[0-9]{1}|00358(\s?|-?)4[0-9]{1})(\s?|-?)(([0-9]{3,4})(\s|-)?[0-9]{1,4})$/;
-    return !finnishPhoneRegex.test(value) && value.length >= 10;
-  };
-  const validateEuropeanPlateNumber = (value) => {
-    const finnishPlateRegex = /^[A-ZÄÖÅ]{2,3}-[0-9]{1,3}$/;
-    const swedishPlateRegex = /^[A-Z]{3}[0-9]{2}[0-9A-Z]{1}$/;
-    const estonianPlateRegex = /^[0-9]{3}\s?[A-Z]{3}$|^[A-Z]{2}\s?[0-9]{3}$/;
-
-    return (
-      !finnishPlateRegex.test(value) &&
-      !swedishPlateRegex.test(value) &&
-      !estonianPlateRegex.test(value) &&
-      value.length >= 5
-    );
-  };
-
-  const clientTypes = [
-    {
-      name: "Private Client",
-      value: "private",
-      icon: <PersonIcon fontSize="small" />,
-    },
-    {
-      name: "Business Client",
-      value: "company",
-      icon: <BusinessIcon fontSize="small" />,
-    },
-  ];
-  const payerTypes = [
-    {
-      name: "Person",
-      value: "person",
-      icon: <PersonIcon fontSize="small" />,
-    },
-    {
-      name: "Business",
-      value: "company",
-      icon: <BusinessIcon fontSize="small" />,
-    },
-    {
-      name: "Insurance Company",
-      value: "insurance",
-      icon: <InsuranceCompanyIcon fontSize="small" />,
-    },
-  ];
-  const deductibleValues = [
-    { name: "€ 0", value: 0 },
-    { name: "€ 50", value: 50 },
-    { name: "€ 100", value: 100 },
-    { name: "€ 150", value: 150 },
-    { name: "€ 200", value: 200 },
-  ];
 
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -490,21 +274,24 @@ const BookingModal = ({
       abortEarly: false,
     });
 
-    if (error) {
-      const validationErrors = {};
-      error.details.forEach((detail) => {
-        validationErrors[detail.path[0]] = detail.message;
-      });
-      setErrors(validationErrors);
-      console.error("Validation errors:", validationErrors);
-      return;
-    }
-
-    setErrors({});
-    const endpoint = isEdit ? `/api/bookings/${booking._id}` : "/api/bookings";
-    const method = isEdit ? "PUT" : "POST";
-
     try {
+      if (error) {
+        const validationErrors = {};
+        error.details.forEach((detail) => {
+          validationErrors[detail.path.join(".")] = detail.message;
+        });
+        setErrors(validationErrors);
+
+        const errorMessage = error.details.map((d) => d.message).join(", ");
+        throw new Error(errorMessage || t("alert.unexpectedError"));
+      }
+
+      setErrors({});
+      const endpoint = isEdit
+        ? `/api/bookings/${booking._id}`
+        : "/api/bookings";
+      const method = isEdit ? "PUT" : "POST";
+
       const response = await fetch(endpoint, {
         method,
         headers: {
@@ -517,7 +304,7 @@ const BookingModal = ({
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error);
+        throw new Error(result.error || t("alert.unexpectedError"));
       }
 
       if (isEdit) {
@@ -556,7 +343,7 @@ const BookingModal = ({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error);
+        throw new Error(data.error || t("alert.unexpectedError"));
       }
 
       const deletedBookingId = data.deletedBookingId;
@@ -565,11 +352,13 @@ const BookingModal = ({
         prevBookings.filter((note) => note._id !== deletedBookingId)
       );
 
-      alert.success("Booking deleted successfully!");
+      alert.success(t("alert.bookingDeleteSuccess"));
 
       onClose();
     } catch (error) {
-      alert.error(`Error: ${error.message || t("alert.unexpectedError")}`);
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
       console.error("Request failed:", error);
     } finally {
       setDeleting(false);
@@ -926,7 +715,7 @@ const BookingModal = ({
                       sx={{ display: "flex", alignItems: "center", gap: 1 }}
                     >
                       {client.icon}
-                      {t(`bookingModal.clientTypes.${client.value}`)}
+                      {client.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -982,7 +771,7 @@ const BookingModal = ({
                     sx={{ display: "flex", alignItems: "center", gap: 1 }}
                   >
                     {payer.icon}
-                    {t(`bookingModal.payerTypes.${payer.value}`)}
+                    {payer.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -1036,31 +825,6 @@ const BookingModal = ({
                 </FormControl>
               </Box>
 
-              {/* Insurance Company Name */}
-              {formData["insuranceCompany"] === "other" && (
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="textFieldLabel">
-                    <InsuranceCompanyIcon fontSize="small" />
-                    {t("bookingModal.insuranceCompanyName")}
-                  </Typography>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    margin="none"
-                    disabled={!isEditable}
-                    type="text"
-                    placeholder={t(
-                      "bookingModal.insuranceCompanyNamePlaceholder"
-                    )}
-                    name="insuranceCompanyName"
-                    value={formData["insuranceCompanyName"]}
-                    onChange={handleChange}
-                    error={!!errors["insuranceCompanyName"]}
-                    helperText={errors["insuranceCompanyName"] || ""}
-                  />
-                </Box>
-              )}
-
               {/* Insurance Number */}
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="textFieldLabel">
@@ -1113,6 +877,31 @@ const BookingModal = ({
                   <FormHelperText>{errors["deductible"] || ""}</FormHelperText>
                 </FormControl>
               </Box>
+
+              {/* Insurance Company Name */}
+              {formData["insuranceCompany"] === "other" && (
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography variant="textFieldLabel">
+                    <InsuranceCompanyIcon fontSize="small" />
+                    {t("bookingModal.insuranceCompanyName")}
+                  </Typography>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    margin="none"
+                    disabled={!isEditable}
+                    type="text"
+                    placeholder={t(
+                      "bookingModal.insuranceCompanyNamePlaceholder"
+                    )}
+                    name="insuranceCompanyName"
+                    value={formData["insuranceCompanyName"]}
+                    onChange={handleChange}
+                    error={!!errors["insuranceCompanyName"]}
+                    helperText={errors["insuranceCompanyName"] || ""}
+                  />
+                </Box>
+              )}
             </Box>
           ) : null}
 

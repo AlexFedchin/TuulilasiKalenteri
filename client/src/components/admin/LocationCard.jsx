@@ -38,7 +38,7 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error);
+        throw new Error(result.error || t("alert.unexpectedError"));
       }
       setLocations((prevLocations) =>
         prevLocations.map((loc) =>
@@ -50,7 +50,9 @@ const LocationCard = ({ location, setLocations, onDelete }) => {
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating location:", error);
-      alert.error(`${t("alert.error")}: ${error.message}`);
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
     }
   };
 

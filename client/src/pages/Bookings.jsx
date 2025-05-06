@@ -21,7 +21,7 @@ import Loader from "../components/loader/Loader";
 import { useAuth } from "../context/AuthContext";
 import { alert } from "../utils/alert";
 import BookingCard from "../components/bookings/BookingCard";
-import BookingModal from "../components/BookingModal";
+import BookingModal from "../components/bookings/BookingModal";
 import ConfirmModal from "../components/ConfirmModal";
 import dayjs from "dayjs";
 import useScreenSize from "../hooks/useScreenSize";
@@ -59,14 +59,18 @@ const Bookings = () => {
           },
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-          throw new Error("Failed to fetch bookings");
+          throw new Error(data.error || t("alert.unexpectedError"));
         }
 
-        const data = await response.json();
         setBookings(data);
       } catch (error) {
         console.error("Error fetching bookings:", error);
+        alert.error(
+          `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+        );
       } finally {
         setLoading(false);
       }
@@ -115,14 +119,16 @@ const Bookings = () => {
         },
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to delete booking");
+        throw new Error(data.error || t("alert.unexpectedError"));
       }
 
       setBookings((prevBookings) =>
         prevBookings.filter((booking) => booking._id !== selectedBooking._id)
       );
-      alert.success("Booking deleted successfully!");
+      alert.success(t("alert.bookingDeleteSuccess"));
     } catch (error) {
       alert.error(
         `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`

@@ -18,7 +18,7 @@ import dayjs from "dayjs";
 import useScreenSize from "../../hooks/useScreenSize";
 import BookingBox from "./BookingBox";
 import Loader from "../loader/Loader";
-import BookingModal from "../BookingModal";
+import BookingModal from "../bookings/BookingModal";
 import { useAuth } from "../../context/AuthContext";
 
 const LocationsCalendar = ({

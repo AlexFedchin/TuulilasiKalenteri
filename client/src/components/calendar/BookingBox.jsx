@@ -1,8 +1,11 @@
 import React from "react";
-import { Box, Typography, Tooltip } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import BookingBoxTooltip from "./BookingBoxTooltip";
+import { useTranslation } from "react-i18next";
 
 const BookingBox = ({ booking, onClick, left, width }) => {
+  const { t } = useTranslation();
+
   const infoRowStyle = {
     width: "100%",
     display: "flex",
@@ -88,7 +91,7 @@ const BookingBox = ({ booking, onClick, left, width }) => {
                 color="inherit"
                 sx={infoTextStyle}
               >
-                p. {booking.phoneNumber}
+                {t("bookingBox.phone")} {booking.phoneNumber}
               </Typography>
               {booking?.price > 0 ? (
                 <Typography
@@ -108,7 +111,7 @@ const BookingBox = ({ booking, onClick, left, width }) => {
                   color="inherit"
                   sx={infoTextStyle}
                 >
-                  vak. {booking.insuranceNumber}
+                  {t("bookingBox.insurance")} {booking.insuranceNumber}
                 </Typography>
               </Box>
             )}

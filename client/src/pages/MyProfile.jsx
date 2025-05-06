@@ -20,8 +20,8 @@ import ChangePasswordModal from "../components/ChangePasswordModal";
 import { useAuth } from "../context/AuthContext";
 import useScreenSize from "../hooks/useScreenSize";
 import { alert } from "../utils/alert";
+import { useTranslation } from "react-i18next";
 
-// Globalized styles
 const getStyles = (isMobile, isTablet) => ({
   boxContainer: {
     width: "100%",
@@ -29,7 +29,9 @@ const getStyles = (isMobile, isTablet) => ({
     boxSizing: "border-box",
     justifyContent: "space-between",
     alignItems: "center",
-    p: 1,
+    height: isMobile ? "48.4px" : isTablet ? "54.8px" : "58.8px",
+    minHeight: isMobile ? "48.4px" : isTablet ? "54.8px" : "58.8px",
+    maxHeight: isMobile ? "48.4px" : isTablet ? "54.8px" : "58.8px",
     gap: 1,
     ".edit-button": {
       display: isMobile || isTablet ? "block" : "none",
@@ -65,6 +67,7 @@ const getStyles = (isMobile, isTablet) => ({
 const MyProfile = () => {
   const { user, setUser, token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
+  const { t } = useTranslation();
   const [editField, setEditField] = useState(null);
   const [formData, setFormData] = useState({
     username: user?.username || "",
@@ -107,14 +110,16 @@ const MyProfile = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to update user");
+        throw new Error(result.error || t("alert.unexpectedError"));
       }
 
-      alert.success("Profile updated successfully!");
+      alert.success(t("alert.profileUpdateSuccess"));
       setUser(result);
       setEditField(null);
     } catch (error) {
-      alert.error(`Error: ${error.message}`);
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
       console.error("Error saving changes:", error);
     } finally {
       setSubmitting(false);
@@ -127,7 +132,7 @@ const MyProfile = () => {
 
   return (
     <DefaultContainer>
-      <Typography variant="h2">My Profile</Typography>
+      <Typography variant="h2">{t("myProfile.title")}</Typography>
       <Card sx={{ width: "100%", bgcolor: "var(--white)" }}>
         <CardContent sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           {/* Username */}
@@ -136,8 +141,8 @@ const MyProfile = () => {
               <TextField
                 size={isMobile ? "small" : "medium"}
                 variant="outlined"
-                placeholder="Username"
-                label="Username"
+                placeholder={t("myProfile.usernamePlaceholder")}
+                label={t("myProfile.usernameLabel")}
                 fullWidth
                 type="text"
                 autoComplete="given-name"
@@ -164,7 +169,7 @@ const MyProfile = () => {
                   gap={0.5}
                 >
                   <SettingsIcon fontSize={isMobile ? "small" : "medium"} />
-                  Username
+                  {t("myProfile.usernameLabel")}
                 </Typography>
                 <Typography variant="body1">{user.username}</Typography>
               </Box>
@@ -205,8 +210,8 @@ const MyProfile = () => {
               <TextField
                 size={isMobile ? "small" : "medium"}
                 variant="outlined"
-                placeholder="First Name"
-                label="First Name"
+                placeholder={t("myProfile.firstNamePlaceholder")}
+                label={t("myProfile.firstNameLabel")}
                 fullWidth
                 type="text"
                 autoComplete="given-name"
@@ -228,7 +233,7 @@ const MyProfile = () => {
                   gap={0.5}
                 >
                   <PersonIcon fontSize={isMobile ? "small" : "medium"} />
-                  First Name
+                  {t("myProfile.firstNameLabel")}
                 </Typography>
                 <Typography variant="body1">{user.firstName}</Typography>
               </Box>
@@ -270,8 +275,8 @@ const MyProfile = () => {
               <TextField
                 size={isMobile ? "small" : "medium"}
                 variant="outlined"
-                placeholder="Last Name"
-                label="Last Name"
+                placeholder={t("myProfile.lastNamePlaceholder")}
+                label={t("myProfile.lastNameLabel")}
                 fullWidth
                 type="text"
                 autoComplete="family-name"
@@ -293,7 +298,7 @@ const MyProfile = () => {
                   gap={0.5}
                 >
                   <PersonIcon fontSize={isMobile ? "small" : "medium"} />
-                  Last Name
+                  {t("myProfile.lastNameLabel")}
                 </Typography>
                 <Typography variant="body1">{user.lastName}</Typography>
               </Box>
@@ -334,8 +339,8 @@ const MyProfile = () => {
               <TextField
                 size={isMobile ? "small" : "medium"}
                 variant="outlined"
-                placeholder="Email"
-                label="Email"
+                placeholder={t("myProfile.emailPlaceholder")}
+                label={t("myProfile.emailLabel")}
                 fullWidth
                 type="email"
                 autoFocus
@@ -357,7 +362,7 @@ const MyProfile = () => {
                   gap={0.5}
                 >
                   <EmailIcon fontSize={isMobile ? "small" : "medium"} />
-                  Email
+                  {t("myProfile.emailLabel")}
                 </Typography>
                 <Typography variant="body1">{user.email}</Typography>
               </Box>
@@ -402,7 +407,7 @@ const MyProfile = () => {
                 gap={0.5}
               >
                 <LockIcon fontSize={isMobile ? "small" : "medium"} />
-                Password
+                {t("myProfile.passwordLabel")}
               </Typography>
               <Typography variant="body1">●●●●●●●●●</Typography>
             </Box>

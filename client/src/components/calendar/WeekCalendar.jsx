@@ -11,11 +11,16 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBackIosNew";
 import dayjs from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
+import "dayjs/locale/fi";
+import "dayjs/locale/en";
+import "dayjs/locale/ru";
 import useScreenSize from "../../hooks/useScreenSize";
 import BookingBox from "./BookingBox";
 import Loader from "../loader/Loader";
-import BookingModal from "../BookingModal";
+import BookingModal from "../bookings/BookingModal";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const WeekCalendar = ({
   currentDate,
@@ -23,6 +28,15 @@ const WeekCalendar = ({
   setMode,
   searchTerm,
 }) => {
+  const { i18n } = useTranslation();
+  dayjs.extend(updateLocale);
+  useEffect(() => {
+    dayjs.locale(i18n.language);
+
+    dayjs.updateLocale(i18n.language, {
+      weekStart: 1,
+    });
+  }, [i18n.language]);
   const { user, token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
 
@@ -111,17 +125,17 @@ const WeekCalendar = ({
 
   const generateDayColumns = () => {
     const columns = [];
-    const startOfWeek = currentDate.startOf("isoWeek");
+    const startOfWeek = currentDate.startOf("isoWeek").locale(i18n.language);
     for (let i = 0; i < 5; i++) {
       const day = startOfWeek.add(i, "day");
       columns.push({
-        date: day.format("YYYY-MM-DD"),
+        date: day.locale(i18n.language).format("YYYY-MM-DD"),
         dayOfWeek: isMobile
-          ? day.format("dd")
+          ? day.locale(i18n.language).format("dd")
           : isTablet
-          ? day.format("ddd")
-          : day.format("ddd"),
-        dayNumber: day.format("D.M"),
+          ? day.locale(i18n.language).format("ddd")
+          : day.locale(i18n.language).format("ddd"),
+        dayNumber: day.locale(i18n.language).format("D.M"),
       });
     }
     return columns;

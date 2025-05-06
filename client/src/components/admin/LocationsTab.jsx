@@ -44,7 +44,7 @@ const LocationsTab = () => {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error);
+          throw new Error(data.error || t("alert.unexpectedError"));
         }
 
         setLocations(data);
@@ -100,16 +100,21 @@ const LocationsTab = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to delete location");
+        throw new Error(result.error || t("alert.unexpectedError"));
       }
+
       setLocations((prevLocations) =>
         prevLocations.filter((location) => location._id !== locationId)
       );
       alert.success(t("alert.locationDeleteSuccess"));
     } catch (error) {
       console.error("Error deleting location:", error);
-      alert.error(`${t("alert.error")}: ${error.message}`);
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
     }
   };
 

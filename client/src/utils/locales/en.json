@@ -10,11 +10,6 @@
     "edit": "Edit",
     "delete": "Delete"
   },
-  "language": {
-    "english": "English",
-    "finnish": "Suomi",
-    "russian": "Русский"
-  },
   "orderModal": {
     "titleNew": "New Order",
     "titleEdit": "Edit Order",
@@ -46,7 +41,12 @@
     "bookingUpdateSuccess": "Booking updated successfully!",
     "bookingCreateSuccess": "Booking created successfully!",
     "bookingDeleteSuccess": "Booking deleted successfully!",
+    "noteUpdateSuccess": "Note updated successfully!",
+    "noteCreateSuccess": "Note created successfully!",
+    "noteDeleteSuccess": "Note deleted successfully!",
+    "profileUpdateSuccess": "Profile updated successfully!",
     "invoiceStatusUpdateSuccess": "Invoice status updated successfully!",
+    "passwordChangeSuccess": "Password changed successfully!",
     "copiedToClipboard": "Copied to clipboard",
     "unexpectedError": "An unexpected error occurred"
   },
@@ -227,5 +227,78 @@
     "update": "Update",
     "cancel": "Cancel",
     "delete": "Delete"
+  },
+  "ordersBlock": {
+    "addOrder": "Add Order",
+    "confirmDelete": "Are you sure you want to delete the order for {{productCount}} products for <b>{{client}}</b>? This action <b>cannot be undone</b>."
+  },
+  "notesBlock": {
+    "title": "Notes",
+    "addNote": "Add Note"
+  },
+  "calendar": {
+    "searchPlaceholder": "Search..."
+  },
+  "bookingBoxTooltip": {
+    "car": "Car",
+    "plate": "Plate",
+    "phoneNumber": "Phone Number",
+    "eurocode": "Eurocode",
+    "price": "Price",
+    "inStock": "In Stock",
+    "yes": "Yes",
+    "no": "No",
+    "warehouse": "Warehouse",
+    "ordered": "Ordered",
+    "client": "Client",
+    "privateClient": "Private Client",
+    "businessClient": "Business Client",
+    "payer": "Payer",
+    "insuranceCompany": "Insurance Company",
+    "person": "Person",
+    "business": "Business",
+    "insuranceNumber": "Insurance Number",
+    "dateAndTime": "Date and Time",
+    "notes": "Notes",
+    "na": "N/A",
+    "workDone": "Work done",
+    "invoiceSent": "Invoice sent",
+    "unknown": "Unknown"
+  },
+  "myProfile": {
+    "title": "My Profile",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "firstNameLabel": "First Name",
+    "firstNamePlaceholder": "Enter your first name",
+    "lastNameLabel": "Last Name",
+    "lastNamePlaceholder": "Enter your last name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password"
+  },
+  "changePasswordModal": {
+    "title": "Change Password",
+    "enterCurrentPassword": "Enter your current password",
+    "currentPassword": "Current Password",
+    "togglePasswordVisibility": "Toggle password visibility",
+    "next": "Next",
+    "enterNewPassword": "Enter new password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "toggleNewPasswordVisibility": "Toggle new password visibility",
+    "toggleConfirmNewPasswordVisibility": "Toggle confirm new password visibility",
+    "changePassword": "Change Password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "tryAgainLater": "Please try again later."
+  },
+  "footer": {
+    "tuulilasiPojatLogoAlt": "TuulilasiPojat Logo",
+    "tuulilasiTukkuLogoAlt": "TuulilasiTukku Logo",
+    "copyright": "TuulilasiPojat. All rights reserved."
+  },
+  "bookingBox": {
+    "phone": "p.",
+    "insurance": "insur."
   }
 }

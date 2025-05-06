@@ -18,8 +18,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import useScreenSize from "../hooks/useScreenSize";
 import { alert } from "../utils/alert";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const ChangePasswordModal = ({ onClose }) => {
+  const { t } = useTranslation();
   const { isMobile } = useScreenSize();
   const { user, token } = useAuth();
 
@@ -59,12 +61,12 @@ const ChangePasswordModal = ({ onClose }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "An error occurred.");
+        throw new Error(data.error || `${t("alert.unexpectedError")}`);
       }
 
       setStep(2);
     } catch (error) {
-      setError(error.message || "An error occurred. Please try again.");
+      setError(error.message || t("alert.unexpectedError"));
       console.error("Error while checking password:", error);
     } finally {
       setLoading(false);
@@ -73,7 +75,7 @@ const ChangePasswordModal = ({ onClose }) => {
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmNewPassword) {
-      setError("Passwords do not match.");
+      setError(t("changePasswordModal.passwordsDoNotMatch"));
       return;
     }
 
@@ -91,16 +93,16 @@ const ChangePasswordModal = ({ onClose }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "An error occurred.");
+        throw new Error(data.error || t("alert.unexpectedError"));
       }
       setStep(3);
 
       setTimeout(() => {
         onClose();
-        alert.success("Password changed successfully!");
+        alert.success(t("alert.passwordChangeSuccess"));
       }, 1500);
     } catch (error) {
-      setError(error.message || "An error occurred. Please try again.");
+      setError(error.message || t("alert.unexpectedError"));
       console.error("Error while changing password:", error);
     } finally {
       setLoading(false);
@@ -138,7 +140,7 @@ const ChangePasswordModal = ({ onClose }) => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h4">Change Password</Typography>
+          <Typography variant="h4">{t("changePasswordModal.title")}</Typography>
           <IconButton
             onClick={onClose}
             disabled={loading}
@@ -187,7 +189,7 @@ const ChangePasswordModal = ({ onClose }) => {
                   color: "var(--off-black)",
                 }}
               >
-                Enter your current password
+                {t("changePasswordModal.enterCurrentPassword")}
               </Typography>
               <Box
                 sx={{
@@ -200,9 +202,10 @@ const ChangePasswordModal = ({ onClose }) => {
                 <TextField
                   size="small"
                   variant="outlined"
-                  label="Current Password"
+                  label={t("changePasswordModal.currentPassword")}
                   type={showPassword ? "text" : "password"}
                   value={currentPassword}
+                  disabled={loading}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -214,7 +217,9 @@ const ChangePasswordModal = ({ onClose }) => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton
-                            aria-label="toggle password visibility"
+                            aria-label={t(
+                              "changePasswordModal.togglePasswordVisibility"
+                            )}
                             onClick={togglePasswordVisibility}
                             edge="end"
                             sx={{
@@ -251,7 +256,7 @@ const ChangePasswordModal = ({ onClose }) => {
               loading={loading}
               loadingPosition="end"
             >
-              Next
+              {t("changePasswordModal.next")}
             </Button>
           </>
         )}
@@ -277,7 +282,7 @@ const ChangePasswordModal = ({ onClose }) => {
                   color: "var(--off-black)",
                 }}
               >
-                Enter new password
+                {t("changePasswordModal.enterNewPassword")}
               </Typography>
               <Box
                 sx={{
@@ -291,9 +296,10 @@ const ChangePasswordModal = ({ onClose }) => {
                   size="small"
                   fullWidth
                   variant="outlined"
-                  label="New Password"
+                  label={t("changePasswordModal.newPassword")}
                   type={showNewPassword ? "text" : "password"}
                   value={newPassword}
+                  disabled={loading}
                   onChange={(e) => setNewPassword(e.target.value)}
                   sx={{ mb: 1 }}
                   slotProps={{
@@ -301,7 +307,9 @@ const ChangePasswordModal = ({ onClose }) => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton
-                            aria-label="toggle new password visibility"
+                            aria-label={t(
+                              "changePasswordModal.toggleNewPasswordVisibility"
+                            )}
                             onClick={toggleNewPasswordVisibility}
                             edge="end"
                             sx={{
@@ -325,9 +333,10 @@ const ChangePasswordModal = ({ onClose }) => {
                   size="small"
                   fullWidth
                   variant="outlined"
-                  label="Confirm New Password"
+                  label={t("changePasswordModal.confirmNewPassword")}
                   type={showConfirmNewPassword ? "text" : "password"}
                   value={confirmNewPassword}
+                  disabled={loading}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -339,7 +348,9 @@ const ChangePasswordModal = ({ onClose }) => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton
-                            aria-label="toggle confirm new password visibility"
+                            aria-label={t(
+                              "changePasswordModal.toggleConfirmNewPasswordVisibility"
+                            )}
                             onClick={toggleConfirmNewPasswordVisibility}
                             edge="end"
                             sx={{
@@ -376,7 +387,7 @@ const ChangePasswordModal = ({ onClose }) => {
               loading={loading}
               loadingPosition="end"
             >
-              Change Password
+              {t("changePasswordModal.changePassword")}
             </Button>
           </>
         )}
@@ -403,7 +414,7 @@ const ChangePasswordModal = ({ onClose }) => {
                 color: "var(--success)",
               }}
             >
-              Password changed successfully!
+              {t("alert.passwordChangeSuccess")}
             </Typography>
             <Box
               sx={{

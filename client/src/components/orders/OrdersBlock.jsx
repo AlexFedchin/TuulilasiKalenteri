@@ -4,38 +4,52 @@ import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../../context/AuthContext";
 import useScreenSize from "../../hooks/useScreenSize";
 import ConfirmModal from "../ConfirmModal";
-import OrderModal from "../OrderModal";
+import OrderModal from "./OrderModal";
 import OrderCard from "./OrderCard";
 import { alert } from "../../utils/alert";
+import { clients } from "../../utils/clients";
+import { useTranslation } from "react-i18next";
+import Loader from "../loader/Loader";
 
 const Orders = () => {
   const { user, token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/orders", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
+    const fetchOrders = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("/api/orders", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+
         if (!response.ok) {
-          return response.json().then((error) => {
-            throw new Error(error.message || "Failed to fetch orders");
-          });
+          throw new Error(data.error || t("alert.unexpectedError"));
         }
-        return response.json();
-      })
-      .then((data) => {
+
         setOrders(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching orders:", error.message);
-      });
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        alert.error(
+          `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
   }, [user, token]);
 
   const handleCreateClick = () => {
@@ -53,6 +67,17 @@ const Orders = () => {
     setOpenDeleteModal(true);
   };
 
+  const getClientName = () => {
+    if (selectedOrder.client === "other") {
+      return selectedOrder.clientName;
+    } else {
+      const client = clients.find(
+        (client) => client.value === selectedOrder.client
+      );
+      return client ? client.name : selectedOrder.client;
+    }
+  };
+
   const handleDelete = async () => {
     try {
       const response = await fetch(`/api/orders/${selectedOrder._id}`, {
@@ -61,17 +86,23 @@ const Orders = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to delete order");
+        throw new Error(data.error || t("alert.unexpectedError"));
       }
+
       setOrders((prevOrders) =>
         prevOrders.filter((order) => order._id !== selectedOrder._id)
       );
       setOpenDeleteModal(false);
       setSelectedOrder(null);
-      alert.success("Order deleted successfully!");
+      alert.success(t("alert.orderDeleteSuccess"));
     } catch (error) {
-      alert.error(`Error: ${error.message}`);
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
       console.error("Error deleting order:", error);
     }
   };
@@ -92,72 +123,86 @@ const Orders = () => {
       <Typography variant="h4" sx={{ textAlign: "center" }}>
         Tukku
       </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          width: "100%",
-          maxHeight: "100%",
-          height: "100%",
-          bgcolor: "var(--off-white)",
-          borderRadius: 1,
-          boxSizing: "border-box",
-          p: 1,
-          gap: 1,
-          boxShadow: "inset 0 0 8px rgba(0, 0, 0, 0.1)",
-          overflowY: "auto",
-        }}
-      >
-        {orders.map((order) => (
-          <OrderCard
-            key={order._id}
-            order={order}
-            onEditClick={handleEditClick}
-            onDeleteClick={handleDeleteClick}
-          />
-        ))}
-
-        <Button
-          startIcon={<AddIcon fontSize="small" />}
-          onClick={handleCreateClick}
+      {loading ? (
+        <Box
           sx={{
-            borderRadius: 0.5,
-            py: 0.5,
-            px: 1,
-            bgcolor: "var(--white)",
-            color: "var(--off-black)",
+            display: "grid",
+            boxShadow: "inset 0 0 8px rgba(0, 0, 0, 0.1)",
+            bgcolor: "var(--off-white)",
+            borderRadius: 1,
+            placeItems: "center",
+            height: "100%",
             width: "100%",
-            fontSize: isMobile ? "0.8rem" : isTablet ? "0.85rem" : "0.9rem",
-            textTransform: "none",
-            "&:hover": { bgcolor: "var(--white-onhover)" },
+            minHeight: "616.13px",
           }}
         >
-          Add Order
-        </Button>
+          <Loader />
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+            maxHeight: "100%",
+            height: "100%",
+            bgcolor: "var(--off-white)",
+            borderRadius: 1,
+            boxSizing: "border-box",
+            p: 1,
+            gap: 1,
+            boxShadow: "inset 0 0 8px rgba(0, 0, 0, 0.1)",
+            overflowY: "auto",
+          }}
+        >
+          {orders.map((order) => (
+            <OrderCard
+              key={order._id}
+              order={order}
+              onEditClick={handleEditClick}
+              onDeleteClick={handleDeleteClick}
+            />
+          ))}
 
-        {openEditModal && (
-          <OrderModal
-            onClose={() => setOpenEditModal(false)}
-            order={selectedOrder}
-            setOrders={setOrders}
-          />
-        )}
+          <Button
+            startIcon={<AddIcon fontSize="small" />}
+            onClick={handleCreateClick}
+            sx={{
+              borderRadius: 0.5,
+              py: 0.5,
+              px: 1,
+              bgcolor: "var(--white)",
+              color: "var(--off-black)",
+              width: "100%",
+              fontSize: isMobile ? "0.8rem" : isTablet ? "0.85rem" : "0.9rem",
+              textTransform: "none",
+              "&:hover": { bgcolor: "var(--white-onhover)" },
+            }}
+          >
+            {t("ordersBlock.addOrder")}
+          </Button>
 
-        {openDeleteModal && (
-          <ConfirmModal
-            onConfirm={handleDelete}
-            onClose={() => setOpenDeleteModal(false)}
-            text={`Are you sure you want to delete the order for ${
-              selectedOrder.products.length
-            } products for <b>${
-              selectedOrder.client === "other"
-                ? selectedOrder.clientName
-                : selectedOrder.client
-            }</b>? This action <b>cannot be undone</b>.`}
-          />
-        )}
-      </Box>
+          {openEditModal && (
+            <OrderModal
+              onClose={() => setOpenEditModal(false)}
+              order={selectedOrder}
+              setOrders={setOrders}
+            />
+          )}
+
+          {openDeleteModal && (
+            <ConfirmModal
+              onConfirm={handleDelete}
+              onClose={() => setOpenDeleteModal(false)}
+              text={t("ordersBlock.confirmDelete", {
+                productCount: selectedOrder.products.length,
+                client: getClientName(),
+              })}
+            />
+          )}
+        </Box>
+      )}
     </Card>
   );
 };

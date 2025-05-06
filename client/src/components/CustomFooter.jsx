@@ -1,8 +1,10 @@
 import { Box, Typography } from "@mui/material";
 import useScreenSize from "../hooks/useScreenSize";
+import { useTranslation } from "react-i18next";
 
-const CustomFoter = () => {
+const CustomFooter = () => {
   const { isMobile } = useScreenSize();
+  const { t } = useTranslation();
 
   return (
     <Box
@@ -35,7 +37,7 @@ const CustomFoter = () => {
           <img
             src="/logo.webp"
             draggable="false"
-            alt="TuulilasiPojat Logo"
+            alt={t("footer.tuulilasiPojatLogoAlt")}
             style={{
               maxWidth: isMobile ? "120px" : "150px",
               height: "auto",
@@ -57,7 +59,7 @@ const CustomFoter = () => {
           <img
             src="/tuulilasitukku-logo.webp"
             draggable="false"
-            alt="TuulilasiTukku Logo"
+            alt={t("footer.tuulilasiTukkuLogoAlt")}
             style={{
               maxWidth: isMobile ? "120px" : "150px",
               height: "auto",
@@ -71,9 +73,9 @@ const CustomFoter = () => {
         fontWeight={400}
         sx={{ color: "var(--off-grey)" }}
       >
-        © {new Date().getFullYear()} TuulilasiPojat. All rights reserved.
+        © {new Date().getFullYear()} {t("footer.copyright")}
       </Typography>
     </Box>
   );
 };
-export default CustomFoter;
+export default CustomFooter;

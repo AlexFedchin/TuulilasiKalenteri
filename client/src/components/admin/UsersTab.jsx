@@ -45,7 +45,7 @@ const UsersTab = () => {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error);
+          throw new Error(data.error || t("alert.unexpectedError"));
         }
 
         // Filter out the current user from the list
@@ -54,7 +54,9 @@ const UsersTab = () => {
         setUsers(users);
       } catch (error) {
         console.error("Error fetching users:", error);
-        alert.error(`${t("alert.error")}: ${error.message}`);
+        alert.error(
+          `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+        );
       } finally {
         setLoading(false);
       }
@@ -123,13 +125,15 @@ const UsersTab = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error);
+        throw new Error(result.error || t("alert.unexpectedError"));
       }
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
       alert.success(t("alert.userDeleteSuccess"));
     } catch (error) {
       console.error("Error deleting user:", error);
-      alert.error(`${t("alert.error")}: ${error.message}`);
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
     } finally {
       setOpenConfirmModal(false);
       setSelectedUser(null);

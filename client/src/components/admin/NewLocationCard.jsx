@@ -31,7 +31,7 @@ const NewLocationCard = ({ setLocations, onCancel }) => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error);
+        throw new Error(result.error || t("alert.unexpectedError"));
       }
 
       setLocations((prevLocations) => [...prevLocations, result]);

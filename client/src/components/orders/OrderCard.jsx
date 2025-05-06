@@ -12,8 +12,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { clients } from "../../utils/clients";
+import { useTranslation } from "react-i18next";
 
 const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -93,7 +95,7 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
             <ListItemIcon sx={{ color: "inherit" }}>
               <EditIcon fontSize="small" />
             </ListItemIcon>
-            Edit
+            {t("menu.edit")}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -108,7 +110,7 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
             <ListItemIcon sx={{ color: "inherit" }}>
               <DeleteIcon fontSize="small" />
             </ListItemIcon>
-            Delete
+            {t("menu.delete")}
           </MenuItem>
         </Menu>
       </Box>

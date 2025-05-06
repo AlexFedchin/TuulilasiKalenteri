@@ -5,9 +5,11 @@ import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import { insuranceCompanies } from "../../utils/insuranceCompanies";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const BookingBoxTooltip = ({ booking, children }) => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const isAdmin = user?.role === "admin";
 
   const infoRowStyle = {
@@ -25,7 +27,7 @@ const BookingBoxTooltip = ({ booking, children }) => {
     const company = insuranceCompanies.find(
       (company) => company.value === booking.insuranceCompany
     );
-    return company ? company.name : "Unknown";
+    return company ? company.name : t("bookingBoxTooltip.unknown");
   };
 
   const getInsuranceCompanyLogo = () => {
@@ -53,55 +55,65 @@ const BookingBoxTooltip = ({ booking, children }) => {
         >
           <Box sx={infoRowStyle}>
             <Typography variant="body2">
-              <strong>Car:</strong> {booking.carModel}
+              <strong>{t("bookingBoxTooltip.car")}:</strong> {booking.carModel}
             </Typography>
             <Typography variant="body2">
-              <strong>Plate:</strong> {booking.plateNumber}
+              <strong>{t("bookingBoxTooltip.plate")}:</strong>{" "}
+              {booking.plateNumber}
             </Typography>
           </Box>
 
           <Typography variant="body2">
-            <strong>Phone Number:</strong> {booking.phoneNumber}
+            <strong>{t("bookingBoxTooltip.phoneNumber")}:</strong>{" "}
+            {booking.phoneNumber}
           </Typography>
 
           <Box sx={infoRowStyle}>
             <Typography variant="body2">
-              <strong>Eurocode:</strong> {booking.eurocode}
+              <strong>{t("bookingBoxTooltip.eurocode")}:</strong>{" "}
+              {booking.eurocode}
             </Typography>
             <Typography variant="body2">
-              <strong>Price:</strong> €{booking.price}
+              <strong>{t("bookingBoxTooltip.price")}:</strong> €{booking.price}
             </Typography>
           </Box>
 
           <Box sx={infoRowStyle}>
             <Typography variant="body2">
-              <strong>In Stock:</strong> {booking.inStock ? "Yes" : "No"}
+              <strong>{t("bookingBoxTooltip.inStock")}:</strong>{" "}
+              {booking.inStock
+                ? t("bookingBoxTooltip.yes")
+                : t("bookingBoxTooltip.no")}
             </Typography>
             {booking.inStock ? (
               <Typography variant="body2">
-                <strong>Warehouse:</strong> {booking.warehouseLocation}
+                <strong>{t("bookingBoxTooltip.warehouse")}:</strong>{" "}
+                {booking.warehouseLocation}
               </Typography>
             ) : (
               <Typography variant="body2">
-                <strong>Ordered:</strong> {booking.isOrdered ? "Yes" : "No"}
+                <strong>{t("bookingBoxTooltip.ordered")}:</strong>{" "}
+                {booking.isOrdered
+                  ? t("bookingBoxTooltip.yes")
+                  : t("bookingBoxTooltip.no")}
               </Typography>
             )}
           </Box>
 
           <Typography variant="body2">
-            <strong>Client:</strong>{" "}
+            <strong>{t("bookingBoxTooltip.client")}:</strong>{" "}
             {booking.clientType === "private"
-              ? "Private Client"
-              : "Business Client"}
+              ? t("bookingBoxTooltip.privateClient")
+              : t("bookingBoxTooltip.businessClient")}
           </Typography>
 
           <Typography variant="body2">
-            <strong>Payer:</strong>{" "}
+            <strong>{t("bookingBoxTooltip.payer")}:</strong>{" "}
             {booking.payerType === "insurance"
-              ? "Insurance Company"
+              ? t("bookingBoxTooltip.insuranceCompany")
               : booking.payerType === "person"
-              ? "Person"
-              : "Business"}
+              ? t("bookingBoxTooltip.person")
+              : t("bookingBoxTooltip.business")}
           </Typography>
 
           {booking.payerType === "insurance" && (
@@ -110,7 +122,7 @@ const BookingBoxTooltip = ({ booking, children }) => {
                 variant="body2"
                 sx={{ display: "flex", alignItems: "center", gap: 1 }}
               >
-                <strong>Insurance Company:</strong>{" "}
+                <strong>{t("bookingBoxTooltip.insuranceCompany")}:</strong>{" "}
                 {getInsuranceCompanyLogo() && (
                   <Box
                     component="img"
@@ -126,27 +138,34 @@ const BookingBoxTooltip = ({ booking, children }) => {
               </Typography>
 
               <Typography variant="body2">
-                <strong>Insurance Number:</strong> {booking.insuranceNumber}
+                <strong>{t("bookingBoxTooltip.insuranceNumber")}:</strong>{" "}
+                {booking.insuranceNumber}
               </Typography>
             </>
           )}
           <Typography variant="body2">
-            <strong>Date and Time:</strong>{" "}
+            <strong>{t("bookingBoxTooltip.dateAndTime")}:</strong>{" "}
             {dayjs(booking.date).format("DD.MM.YYYY, HH:mm")} -{" "}
             {dayjs(booking.date).add(booking.duration, "hour").format("HH:mm")}
           </Typography>
           {booking.notes && (
             <Typography variant="body2">
-              <strong>Notes:</strong> {booking.notes || "N/A"}
+              <strong>{t("bookingBoxTooltip.notes")}:</strong>{" "}
+              {booking.notes || t("bookingBoxTooltip.na")}
             </Typography>
           )}
           <Typography variant="body2">
-            <strong>Work done:</strong> {booking.isWorkDone ? "Yes" : "No"}
+            <strong>{t("bookingBoxTooltip.workDone")}:</strong>{" "}
+            {booking.isWorkDone
+              ? t("bookingBoxTooltip.yes")
+              : t("bookingBoxTooltip.no")}
           </Typography>
           {isAdmin && booking.payerType === "insurance" && (
             <Typography variant="body2">
-              <strong>Invoice sent:</strong>{" "}
-              {booking.invoiceMade ? "Yes" : "No"}
+              <strong>{t("bookingBoxTooltip.invoiceSent")}:</strong>{" "}
+              {booking.invoiceMade
+                ? t("bookingBoxTooltip.yes")
+                : t("bookingBoxTooltip.no")}
             </Typography>
           )}
         </Box>

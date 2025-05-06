@@ -1,3 +1,5 @@
+import { t } from "i18next";
+
 export const clients = [
   { value: "pauli", name: "Pauli" },
   { value: "vip", name: "VIP" },
@@ -5,5 +7,5 @@ export const clients = [
   { value: "tammerwheels", name: "TammerWheels" },
   { value: "colormaster", name: "ColorMaster" },
   { value: "rantaperkionkatu", name: "Rantaperkionkatu" },
-  { value: "other", name: "Other" },
+  { value: "other", name: t("bookingModal.other") },
 ];

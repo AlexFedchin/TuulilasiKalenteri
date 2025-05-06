@@ -14,9 +14,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 import EditableNoteCard from "./EditableNoteCard";
+import { useTranslation } from "react-i18next";
 
 const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
   const { token } = useAuth();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -80,14 +82,16 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (response.ok) {
-        onDeleteNote(note._id);
-        alert.success("Note deleted successfully!");
-      } else {
-        console.error("Failed to delete the note");
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || t("alert.unexpectedError"));
       }
+      alert.success(t("alert.noteDeleteSuccess"));
+      onDeleteNote(note._id);
     } catch (error) {
-      alert.error("Failed to delete the note");
+      alert.error(`${t("alert.error")}: ${error.message}`);
       console.error("Error deleting the note:", error);
     } finally {
       handleMenuClose();
@@ -157,7 +161,7 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
             <ListItemIcon sx={{ color: "inherit" }}>
               <EditIcon fontSize="small" />
             </ListItemIcon>
-            Edit
+            {t("menu.edit")}
           </MenuItem>
           <MenuItem
             disabled={isDeleting}
@@ -174,7 +178,7 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
                 <DeleteIcon fontSize="small" />
               )}
             </ListItemIcon>
-            Delete
+            {t("menu.delete")}
           </MenuItem>
         </Menu>
       </Box>
