@@ -101,6 +101,24 @@
       },
       "noSentInvoices": "You don't have any sent invoices.",
       "noUnsentInvoices": "You don't have any unsent invoices."
+    },
+    "orders": {
+      "searchPlaceholder": "Search...",
+      "completed": "Completed",
+      "uncompleted": "Uncompleted",
+      "markAsCompleted": "Mark as Completed",
+      "markAsUncompleted": "Mark as Uncompleted",
+      "noUncompletedOrders": "You don't have any uncompleted orders.",
+      "noCompletedOrders": "You don't have any completed orders.",
+      "unknown": "Unknown",
+      "products": "Products",
+      "eurocode": "Eurocode",
+      "amount": "Amount",
+      "price": "Price",
+      "status": "Status",
+      "inStock": "In Stock",
+      "order": "Order",
+      "notes": "Notes"
     }
   },
   "invoiceCard": {

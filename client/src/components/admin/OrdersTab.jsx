@@ -7,11 +7,13 @@ import {
   Card,
   Pagination,
   Typography,
-  Select,
-  MenuItem,
+  TextField,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import SearchIcon from "@mui/icons-material/Search";
 import Loader from "../loader/Loader";
 import OrderCard from "./OrderCard";
 import { useAuth } from "../../context/AuthContext";
@@ -30,10 +32,44 @@ const InvoicesTab = () => {
   const [removingOrders, setRemovingOrders] = useState([]);
   const [page, setPage] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredOrders, setFilteredOrders] = useState([]);
+
+  // Fetch orders based on the selected view
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoading(true);
+      setOrders([]);
+      try {
+        const response = await fetch(
+          `/api/orders?completed=${view === "completed"}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || t("alert.unexpectedError"));
+        }
+
+        setOrders(data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [view, token]);
 
   const handleView = (event) => {
     setView(event.target.value);
-    setSelectedOrders([]);
     setPage(1);
   };
 
@@ -41,21 +77,45 @@ const InvoicesTab = () => {
     setPage(value);
   };
 
+  useEffect(() => {
+    // Apply search
+    const containsSearchTerm = (value, term) => {
+      if (typeof value === "string") {
+        return value.toLowerCase().includes(term);
+      } else if (Array.isArray(value)) {
+        return value.some((item) => containsSearchTerm(item, term));
+      } else if (typeof value === "object" && value !== null) {
+        return Object.values(value).some((v) => containsSearchTerm(v, term));
+      } else if (typeof value === "number") {
+        return value.toString().includes(term);
+      }
+      return false;
+    };
+
+    if (searchTerm) {
+      setPage(1);
+      const lowerCaseTerm = searchTerm.toLowerCase();
+      const processedOrders = orders.filter((order) =>
+        containsSearchTerm(order, lowerCaseTerm)
+      );
+      setFilteredOrders(processedOrders);
+    } else {
+      setFilteredOrders(orders);
+    }
+  }, [orders, searchTerm]);
+
   const ordersPerPage = 5;
 
-  const paginatedOrders = orders.slice(
+  const paginatedOrders = filteredOrders.slice(
     (page - 1) * ordersPerPage,
     page * ordersPerPage
   );
 
   // Function to handle marking invoices as sent or unsent
-  const handleMarkAsCompleted = async () => {
+  const handleChangeStatus = async () => {
     if (submitting) return;
     setSubmitting(true);
-    const url =
-      view === "completed"
-        ? "/api/orders/mark-as-uncompleted"
-        : "/api/orders/mark-as-completed";
+    const url = `/api/orders/change-status?completed=${view === "uncompleted"}`;
 
     try {
       const response = await fetch(url, {
@@ -100,38 +160,6 @@ const InvoicesTab = () => {
     }
   };
 
-  // Fetch orders based on the selected view
-  useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `/api/orders?completed=${view === "completed"}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || t("alert.unexpectedError"));
-        }
-
-        setOrders(data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, [view, token]);
-
   return (
     <Box
       sx={{
@@ -144,106 +172,83 @@ const InvoicesTab = () => {
         alignItems: "center",
       }}
     >
-      {isMobile ? (
-        <Card
+      <Card
+        sx={{
+          width: "100%",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 1,
+          p: 1,
+          alignItems: "center",
+          boxSizing: "content-box",
+          position: "sticky",
+          top: 16,
+          zIndex: 5,
+        }}
+      >
+        <ToggleButtonGroup
+          color="primary"
+          size="small"
+          value={view}
+          exclusive
+          onChange={handleView}
+          sx={{ width: isMobile ? "100%" : "auto" }}
+        >
+          <ToggleButton value="completed" sx={{ flexGrow: 1 }}>
+            {t("admin.orders.completed")}
+          </ToggleButton>
+          <ToggleButton value="uncompleted" sx={{ flexGrow: 1 }}>
+            {t("admin.orders.uncompleted")}
+          </ToggleButton>
+        </ToggleButtonGroup>
+
+        <TextField
+          placeholder={t("admin.orders.searchPlaceholder")}
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ width: isMobile ? "100%" : "auto" }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: "var(--off-grey)" }} />
+                </InputAdornment>
+              ),
+              endAdornment: searchTerm && (
+                <InputAdornment position="end" sx={{ mr: "-12px" }}>
+                  <IconButton
+                    onClick={() => setSearchTerm("")}
+                    sx={{ color: "var(--off-grey)" }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+
+        <Button
+          variant="contained"
+          loading={submitting}
+          loadingPosition="start"
+          color={view === "completed" ? "error" : "primary"}
+          disabled={selectedOrders.length === 0 || submitting}
+          startIcon={view === "completed" ? <CloseIcon /> : <CheckIcon />}
+          onClick={handleChangeStatus}
           sx={{
-            width: "100%",
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1,
-            p: 1,
-            alignItems: "center",
-            justifyContent: "space-between",
-            boxSizing: "content-box",
-            position: "sticky",
-            top: 16,
-            zIndex: 5,
+            flexShrink: 0,
+            ml: "auto",
+            width: isMobile ? "100%" : "auto",
           }}
         >
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              gap: 1,
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <ToggleButtonGroup
-              color="primary"
-              size="small"
-              value={view}
-              exclusive
-              onChange={handleView}
-              aria-label={t("admin.invoices.view")}
-            >
-              <ToggleButton value="completed">Completed</ToggleButton>
-              <ToggleButton value="uncompleted">Uncompleted</ToggleButton>
-            </ToggleButtonGroup>
-
-            <Button
-              variant="contained"
-              loading={submitting}
-              loadingPosition="start"
-              color={view === "completed" ? "error" : "primary"}
-              disabled={selectedOrders.length === 0 || submitting}
-              startIcon={view === "completed" ? <CloseIcon /> : <CheckIcon />}
-              onClick={handleMarkAsCompleted}
-            >
-              Mark as {view === "completed" ? "Uncompleted" : "Completed"}
-            </Button>
-          </Box>
-        </Card>
-      ) : (
-        <Card
-          sx={{
-            width: "100%",
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 2,
-            p: 1,
-            alignItems: "center",
-            justifyContent: "space-between",
-            boxSizing: "border-box",
-            position: "sticky",
-            top: 16,
-            zIndex: 5,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <ToggleButtonGroup
-              color="primary"
-              size="small"
-              value={view}
-              exclusive
-              onChange={handleView}
-              aria-label={t("admin.invoices.view")}
-            >
-              <ToggleButton value="completed">Completed</ToggleButton>
-              <ToggleButton value="uncompleted">Uncompleted</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-
-          <Button
-            variant="contained"
-            color={view === "completed" ? "error" : "primary"}
-            loading={submitting}
-            loadingPosition="start"
-            disabled={selectedOrders.length === 0 || submitting}
-            startIcon={view === "completed" ? <CloseIcon /> : <CheckIcon />}
-            onClick={handleMarkAsCompleted}
-          >
-            Mark as {view === "completed" ? "uncompleted" : "completed"}
-          </Button>
-        </Card>
-      )}
+          {view === "completed"
+            ? t("admin.orders.markAsUncompleted")
+            : t("admin.orders.markAsCompleted")}
+        </Button>
+      </Card>
 
       {loading ? (
         <Loader style={{ marginTop: "20vh" }} />
@@ -269,19 +274,19 @@ const InvoicesTab = () => {
             />
           ))}
 
-          {orders.length === 0 ? (
+          {filteredOrders.length === 0 ? (
             <Typography
               variant="body2"
               sx={{ mt: "20vh", fontStyle: "italic", maxWidth: "66%" }}
             >
               {view === "completed"
-                ? "You don't have any completed invoices"
-                : "You don't have any uncompleted invoices"}
+                ? t("admin.orders.noCompletedOrders")
+                : t("admin.orders.noUncompletedOrders")}
             </Typography>
           ) : (
             <Pagination
               color="primary"
-              count={Math.ceil(orders.length / ordersPerPage)}
+              count={Math.ceil(filteredOrders.length / ordersPerPage)}
               page={page}
               onChange={handlePageChange}
               boundaryCount={1}

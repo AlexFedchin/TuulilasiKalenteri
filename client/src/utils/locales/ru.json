@@ -101,6 +101,24 @@
       },
       "noSentInvoices": "У вас нет отправленных счетов.",
       "noUnsentInvoices": "У вас нет неотправленных счетов."
+    },
+    "orders": {
+      "searchPlaceholder": "Поиск...",
+      "completed": "Выполнено",
+      "uncompleted": "Не выполнено",
+      "markAsCompleted": "Отметить как выполненное",
+      "markAsUncompleted": "Отметить как не выполненное",
+      "noUncompletedOrders": "У вас нет невыполненных заказов.",
+      "noCompletedOrders": "У вас нет выполненных заказов.",
+      "unknown": "Неизвестно",
+      "products": "Товары",
+      "eurocode": "Еврокод",
+      "amount": "Количество",
+      "price": "Цена",
+      "status": "Статус",
+      "inStock": "В наличии",
+      "order": "Заказать",
+      "notes": "Заметки"
     }
   },
   "invoiceCard": {

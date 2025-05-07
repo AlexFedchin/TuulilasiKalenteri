@@ -71,22 +71,15 @@ const Orders = () => {
 
   const handleCompletedClick = async (order) => {
     setCompleting(true);
-    const payload = {
-      ...order,
-      _id: undefined,
-      // eslint-disable-next-line no-unused-vars
-      products: order.products.map(({ _id, ...product }) => product),
-      completed: true,
-    };
 
     try {
-      const response = await fetch(`/api/orders/${order._id}`, {
-        method: "PUT",
+      const response = await fetch(`/api/orders/change-status?completed=true`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ orders: [order._id] }),
       });
 
       const data = await response.json();

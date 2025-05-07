@@ -136,8 +136,9 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-const markAsCompleted = async (req, res) => {
+const changeStatus = async (req, res) => {
   const { orders } = req.body;
+  const completed = req.query.completed === "true";
 
   if (!Array.isArray(orders) || orders.length === 0) {
     return res.status(400).json({ error: "Invalid orders array" });
@@ -147,37 +148,21 @@ const markAsCompleted = async (req, res) => {
     // Update the completed field for all orders
     const updatedOrders = await Order.updateMany(
       { _id: { $in: orders } },
-      { completed: true }
+      { completed: completed }
     );
     if (updatedOrders.nModified === 0) {
       return res.status(404).json({ error: "No orders were updated" });
     }
-    res.status(200).json({ message: "Orders are now marked as completed" });
+    res.status(200).json({
+      message: `Orders are now marked as ${
+        completed ? "completed" : "uncompleted"
+      }`,
+    });
   } catch (error) {
-    console.error("Error marking orders as completed:", error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-const markAsUncompleted = async (req, res) => {
-  const { orders } = req.body;
-
-  if (!Array.isArray(orders) || orders.length === 0) {
-    return res.status(400).json({ error: "Invalid orders array" });
-  }
-
-  try {
-    // Update the completed field for all orders
-    const updatedOrders = await Order.updateMany(
-      { _id: { $in: orders } },
-      { completed: false }
+    console.error(
+      `Error marking orders as ${completed ? "completed" : "uncompleted"}:`,
+      error
     );
-    if (updatedOrders.nModified === 0) {
-      return res.status(404).json({ error: "No orders were updated" });
-    }
-    res.status(200).json({ message: "Orders are now marked as completed" });
-  } catch (error) {
-    console.error("Error marking orders as completed:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -188,6 +173,5 @@ module.exports = {
   createOrder,
   updateOrder,
   deleteOrder,
-  markAsCompleted,
-  markAsUncompleted,
+  changeStatus,
 };

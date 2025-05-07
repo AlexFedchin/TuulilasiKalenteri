@@ -12,7 +12,6 @@ import {
   TableCell,
 } from "@mui/material";
 import { clients } from "../../utils/clients";
-import { alert } from "../../utils/alert";
 import { useTranslation } from "react-i18next";
 
 const OrderCard = ({
@@ -29,7 +28,7 @@ const OrderCard = ({
       return order.clientName;
     }
     const client = clients.find((client) => client.value === order.client);
-    return client ? client.name : t("invoiceCard.unknown");
+    return client ? client.name : t("admin.orders.unknown");
   };
 
   const handleCheckboxChange = (event) => {
@@ -38,20 +37,6 @@ const OrderCard = ({
     } else {
       setSelectedOrders((prev) => prev.filter((id) => id !== order._id));
     }
-  };
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
-      alert.info(t("alert.copiedToClipboard"));
-    });
-  };
-
-  const copyableTextStyles = {
-    cursor: "pointer",
-    "&:hover": {
-      color: "var(--primary-onhover)",
-      textDecoration: "underline",
-    },
   };
 
   return (
@@ -64,7 +49,6 @@ const OrderCard = ({
         gap: 0.5,
         p: 2,
         color: "var(--off-black)",
-        position: "relative",
         transition: "transform 0.3s ease, opacity 0.3s ease-in-out",
         transform: isRemoving
           ? view === "uncompleted"
@@ -74,52 +58,96 @@ const OrderCard = ({
         opacity: isRemoving ? 0 : 1,
       }}
     >
-      <Typography variant="h4">{getClientName()}</Typography>
-      <Box sx={{ position: "absolute", top: 8, right: 8 }}>
-        <Checkbox
-          checked={selectedOrders.includes(order._id)}
-          onChange={handleCheckboxChange}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1.5,
+          alignItems: "center",
+          position: "relative",
+        }}
+      >
+        <Box
+          sx={{
+            width: 16,
+            height: 16,
+            mt: "2px",
+            borderRadius: "50%",
+            bgcolor: `var(--order-card-${order.client})`,
+            border: "1px solid var(--light-grey)",
+          }}
         />
+        <Typography variant="h4">{getClientName()}</Typography>
+        <Box sx={{ position: "absolute", right: 0 }}>
+          <Checkbox
+            checked={selectedOrders.includes(order._id)}
+            onChange={handleCheckboxChange}
+          />
+        </Box>
       </Box>
       <Divider sx={{ my: 0.5 }} />
       <Typography variant="body2">
-        <strong>Products:</strong>
+        <strong>{t("admin.orders.products")}:</strong>
       </Typography>
 
       <Box sx={{ pl: 1 }}>
-        <TableContainer sx={{ color: "var(--off-grey)" }}>
+        <TableContainer>
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <strong>Eurocode</strong>
+                <TableCell sx={{ color: "var(--off-grey)" }}>
+                  <Typography variant="body2" fontWeight="bold">
+                    {t("admin.orders.eurocode")}
+                  </Typography>
                 </TableCell>
-                <TableCell>
-                  <strong>Amount</strong>
+                <TableCell align="right" sx={{ color: "var(--off-grey)" }}>
+                  <Typography variant="body2" fontWeight="bold">
+                    {t("admin.orders.amount")}
+                  </Typography>
                 </TableCell>
-                <TableCell>
-                  <strong>Price</strong>
+                <TableCell align="right" sx={{ color: "var(--off-grey)" }}>
+                  <Typography variant="body2" fontWeight="bold">
+                    {t("admin.orders.price")}
+                  </Typography>
                 </TableCell>
-                <TableCell>
-                  <strong>Status</strong>
+                <TableCell align="center" sx={{ color: "var(--off-grey)" }}>
+                  <Typography variant="body2" fontWeight="bold">
+                    {t("admin.orders.status")}
+                  </Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {order.products.map((product) => (
-                <TableRow key={product._id}>
-                  <TableCell>{product.eurocode}</TableCell>
-                  <TableCell>{product.amount}</TableCell>
-                  <TableCell>€{product.price}</TableCell>
+                <TableRow
+                  key={product._id}
+                  sx={{
+                    color:
+                      product.status === "inStock"
+                        ? "var(--off-black)"
+                        : "var(--error)",
+                    "&:last-child td, &:last-child th": { border: 0 },
+                    "&:hover": {
+                      backgroundColor: "var(--white-onhover)",
+                    },
+                  }}
+                >
                   <TableCell
                     sx={{
-                      color:
-                        product.status === "inStock"
-                          ? "var(--off-black)"
-                          : "var(--error)",
+                      color: "inherit",
                     }}
                   >
-                    {product.status === "inStock" ? "In Stock" : "Out of Stock"}
+                    {product.eurocode}
+                  </TableCell>
+                  <TableCell align="right" sx={{ color: "inherit" }}>
+                    {product.amount}
+                  </TableCell>
+                  <TableCell align="right" sx={{ color: "inherit" }}>
+                    €{product.price}
+                  </TableCell>
+                  <TableCell align="center" sx={{ color: "inherit" }}>
+                    {product.status === "inStock"
+                      ? t("admin.orders.inStock")
+                      : t("admin.orders.order")}
                   </TableCell>
                 </TableRow>
               ))}
@@ -127,9 +155,11 @@ const OrderCard = ({
           </Table>
         </TableContainer>
       </Box>
-      <Typography variant="body2">
-        <strong>Notes:</strong> {order.notes}
-      </Typography>
+      {order.notes && (
+        <Typography variant="body2">
+          <strong>{t("admin.orders.notes")}:</strong> {order.notes}
+        </Typography>
+      )}
     </Card>
   );
 };

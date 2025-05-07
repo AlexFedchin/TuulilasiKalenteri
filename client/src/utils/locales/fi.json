@@ -101,6 +101,24 @@
       },
       "noSentInvoices": "Teillä ei ole lähetettyjä laskuja.",
       "noUnsentInvoices": "Teillä ei ole lähettämättömiä laskuja."
+    },
+    "orders": {
+      "searchPlaceholder": "Etsi...",
+      "completed": "Valmiit",
+      "uncompleted": "Ei valmiit",
+      "markAsCompleted": "Merkitse valmiiksi",
+      "markAsUncompleted": "Merkitse ei valmiiksi",
+      "noUncompletedOrders": "Teillä ei ole yhtään ei valmista tilausta.",
+      "noCompletedOrders": "Teillä ei ole yhtään valmista tilausta.",
+      "unknown": "Tuntematon",
+      "products": "Tuotteet",
+      "eurocode": "Eurokoodi",
+      "amount": "Määrä",
+      "price": "Hinta",
+      "status": "Tila",
+      "inStock": "Varastossa",
+      "order": "Tilaa",
+      "notes": "Huomautukset"
     }
   },
   "invoiceCard": {
