@@ -33,6 +33,7 @@
     "error": "Error",
     "orderUpdateSuccess": "Order updated successfully!",
     "orderCreateSuccess": "Order created successfully!",
+    "orderDeleteSuccess": "Order deleted successfully!",
     "userUpdateSuccess": "User updated successfully!",
     "userCreateSuccess": "User created successfully!",
     "userDeleteSuccess": "User deleted successfully!",

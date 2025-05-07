@@ -33,6 +33,7 @@
     "error": "Virhe",
     "orderUpdateSuccess": "Tilaus päivitetty onnistuneesti!",
     "orderCreateSuccess": "Tilaus luotu onnistuneesti!",
+    "orderDeleteSuccess": "Tilaus poistettu onnistuneesti!",
     "userUpdateSuccess": "Käyttäjä päivitetty onnistuneesti!",
     "userCreateSuccess": "Käyttäjä luotu onnistuneesti!",
     "userDeleteSuccess": "Käyttäjä poistettu onnistuneesti!",

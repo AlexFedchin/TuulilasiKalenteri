@@ -33,6 +33,7 @@
     "error": "Ошибка",
     "orderUpdateSuccess": "Заказ успешно обновлен!",
     "orderCreateSuccess": "Заказ успешно создан!",
+    "orderDeleteSuccess": "Заказ успешно удален!",
     "userUpdateSuccess": "Пользователь успешно обновлен!",
     "userCreateSuccess": "Пользователь успешно создан!",
     "userDeleteSuccess": "Пользователь успешно удален!",
