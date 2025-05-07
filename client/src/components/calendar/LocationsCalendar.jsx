@@ -12,14 +12,15 @@ import {
   MenuItem,
   Checkbox,
   Button,
+  Skeleton,
 } from "@mui/material";
 import FilterIcon from "@mui/icons-material/FilterAlt";
 import dayjs from "dayjs";
 import useScreenSize from "../../hooks/useScreenSize";
 import BookingBox from "./BookingBox";
-import Loader from "../loader/Loader";
 import BookingModal from "../bookings/BookingModal";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const LocationsCalendar = ({
   currentDate,
@@ -29,6 +30,7 @@ const LocationsCalendar = ({
 }) => {
   const { user, token } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
+  const { t } = useTranslation();
 
   const [bookings, setBookings] = useState([]);
   const [filteredBookings, setFilteredBookings] = useState([]);
@@ -259,7 +261,7 @@ const LocationsCalendar = ({
                       variant="delete"
                       sx={{ width: "90%", mx: "5%", boxSizing: "border-box" }}
                     >
-                      Clear
+                      {t("calendar.clear")}
                     </Button>
                   </Menu>
                 </>
@@ -300,7 +302,112 @@ const LocationsCalendar = ({
           </TableRow>
         </TableHead>
         <TableBody sx={{ position: "relative" }}>
-          {!locationsLoading &&
+          {loading ? (
+            <>
+              {locationsLoading && (
+                <TableRow>
+                  <TableCell
+                    sx={{ border: "none", height: "36px", width: "48px", p: 0 }}
+                  >
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        display: "grid",
+                        placeItems: "center",
+                      }}
+                    >
+                      <Skeleton
+                        variant="circular"
+                        animation="wave"
+                        width={20}
+                        height={20}
+                      />
+                    </Box>
+                  </TableCell>
+                  {[...Array(4)].map((_, index) => (
+                    <TableCell
+                      key={`skeleton-cell-${index}`}
+                      sx={{
+                        border: "none",
+                        p: 0.5,
+                        height: "36px",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          display: "grid",
+                          placeItems: "center",
+                        }}
+                      >
+                        <Skeleton
+                          height={isMobile ? 17 : isTablet ? 20 : 22}
+                          width={isMobile ? 50 : isTablet ? 75 : 100}
+                          variant="rectangular"
+                          animation="wave"
+                          sx={{
+                            borderRadius: 2,
+                          }}
+                        />
+                      </Box>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              )}
+              {times.map((time, rowIndex) => (
+                <TableRow key={`skeleton-row-${rowIndex}`}>
+                  {/* First column: time label*/}
+                  <TableCell
+                    sx={{
+                      py: 0.5,
+                      pr: 0.5,
+                      pl: 0,
+                      height: "40px",
+                      boxSizing: "border-box",
+                      border: "none",
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "var(--off-black)", textAlign: "right" }}
+                    >
+                      {time}
+                    </Typography>
+                  </TableCell>
+
+                  {/* One skeleton per location column */}
+                  {(locationsLoading ? [...Array(4)] : filteredLocations).map(
+                    (_, colIndex) => (
+                      <TableCell
+                        key={`skeleton-cell-${colIndex}`}
+                        sx={{
+                          border: "none",
+                          p: 0.5,
+                          height: "40px",
+                          boxSizing: "border-box",
+                        }}
+                      >
+                        <Skeleton
+                          variant="rectangular"
+                          animation="wave"
+                          height={32}
+                          sx={{
+                            borderRadius: 2,
+                            bgcolor: "var(--white)",
+                            boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
+                          }}
+                        />
+                      </TableCell>
+                    )
+                  )}
+                </TableRow>
+              ))}
+            </>
+          ) : (
+            !locationsLoading &&
             times.map((time) => (
               <TableRow key={time}>
                 <TableCell
@@ -382,37 +489,7 @@ const LocationsCalendar = ({
                   );
                 })}
               </TableRow>
-            ))}
-
-          {loading && (
-            <Box
-              sx={{
-                position: "absolute",
-                width: locationsLoading
-                  ? "100%"
-                  : isMobile
-                  ? "calc(100% - 36px)"
-                  : isTablet
-                  ? "calc(100% - 42px)"
-                  : "calc(100% - 48px)",
-                height: locationsLoading ? "600px" : "100%",
-                display: "grid",
-                placeItems: "center",
-                bgcolor: "rgba(255, 255, 255, 0.3)",
-                borderRadius: 2,
-                ...(locationsLoading
-                  ? {
-                      top: 0,
-                      left: 0,
-                    }
-                  : {
-                      bottom: 0,
-                      right: 0,
-                    }),
-              }}
-            >
-              <Loader />
-            </Box>
+            ))
           )}
         </TableBody>
       </Table>

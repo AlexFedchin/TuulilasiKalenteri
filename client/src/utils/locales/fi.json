@@ -237,7 +237,8 @@
     "addNote": "Lisää huomautus"
   },
   "calendar": {
-    "searchPlaceholder": "Etsi..."
+    "searchPlaceholder": "Etsi...",
+    "clear": "Tyhjennä"
   },
   "bookingBoxTooltip": {
     "car": "Auto",

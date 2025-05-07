@@ -237,7 +237,8 @@
     "addNote": "Добавить заметку"
   },
   "calendar": {
-    "searchPlaceholder": "Поиск..."
+    "searchPlaceholder": "Поиск...",
+    "clear": "Очистить"
   },
   "bookingBoxTooltip": {
     "car": "Авто",

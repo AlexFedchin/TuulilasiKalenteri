@@ -237,7 +237,8 @@
     "addNote": "Add Note"
   },
   "calendar": {
-    "searchPlaceholder": "Search..."
+    "searchPlaceholder": "Search...",
+    "clear": "Clear"
   },
   "bookingBoxTooltip": {
     "car": "Car",

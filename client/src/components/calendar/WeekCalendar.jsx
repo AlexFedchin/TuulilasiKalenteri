@@ -8,6 +8,7 @@ import {
   Box,
   Typography,
   IconButton,
+  Skeleton,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBackIosNew";
 import dayjs from "dayjs";
@@ -17,7 +18,6 @@ import "dayjs/locale/en";
 import "dayjs/locale/ru";
 import useScreenSize from "../../hooks/useScreenSize";
 import BookingBox from "./BookingBox";
-import Loader from "../loader/Loader";
 import BookingModal from "../bookings/BookingModal";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -234,112 +234,138 @@ const WeekCalendar = ({
           </TableRow>
         </TableHead>
         <TableBody sx={{ position: "relative" }}>
-          {times.map((time) => (
-            <TableRow key={time}>
-              <TableCell
-                sx={{
-                  py: 0.5,
-                  pr: 0.5,
-                  pl: 0,
-                  height: "40px",
-                  boxSizing: "border-box",
-                  border: "none",
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--off-black)", textAlign: "right" }}
-                >
-                  {time}
-                </Typography>
-              </TableCell>
-              {columns.map((column) => {
-                const bookingsForSlot = getBookingForTimeSlot(
-                  column.date,
-                  time
-                );
-                const widthNum =
-                  bookingsForSlot.length > 0
-                    ? 100.0 / bookingsForSlot.length
-                    : 100;
-                const bookingWidth = `${widthNum}%`;
-
-                return (
+          {loading
+            ? times.map((time, rowIndex) => (
+                <TableRow key={`skeleton-row-${rowIndex}`}>
+                  {/* First column: time label*/}
                   <TableCell
-                    key={column.date}
                     sx={{
-                      border: "none",
-                      p: 0.5,
+                      py: 0.5,
+                      pr: 0.5,
+                      pl: 0,
                       height: "40px",
                       boxSizing: "border-box",
+                      border: "none",
                     }}
                   >
-                    <Box
-                      onClick={() =>
-                        isValidCell(column.date, bookingsForSlot)
-                          ? handleDateClick(column.date, time)
-                          : undefined
-                      }
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "var(--off-black)", textAlign: "right" }}
+                    >
+                      {time}
+                    </Typography>
+                  </TableCell>
+
+                  {/* One skeleton per location column */}
+                  {columns.map((_, colIndex) => (
+                    <TableCell
+                      key={`skeleton-cell-${colIndex}`}
                       sx={{
-                        position: "relative",
-                        cursor: isValidCell(column.date, bookingsForSlot)
-                          ? "pointer"
-                          : "default",
-                        bgcolor: isValidCell(column.date, bookingsForSlot)
-                          ? "var(--white)"
-                          : "var(--light-grey)",
-                        borderRadius: 2,
-                        boxSizing: "border-box",
-                        height: "100%",
-                        width: "100%",
-                        boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
+                        border: "none",
                         p: 0.5,
-                        ...(isValidCell(column.date, bookingsForSlot) && {
-                          "&:hover": {
-                            bgcolor: "var(--white-onhover)",
-                          },
-                        }),
+                        height: "40px",
+                        boxSizing: "border-box",
                       }}
                     >
-                      {bookingsForSlot.map((booking, index) => {
-                        const left = `${index * widthNum}%`;
-                        return (
-                          <BookingBox
-                            booking={booking}
-                            left={left}
-                            width={bookingWidth}
-                            onClick={handleBookingBoxClick}
-                            key={booking._id}
-                          />
-                        );
-                      })}
-                    </Box>
+                      <Skeleton
+                        variant="rectangular"
+                        animation="wave"
+                        height={32}
+                        sx={{
+                          borderRadius: 2,
+                          bgcolor: "var(--white)",
+                          boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
+                        }}
+                      />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            : times.map((time) => (
+                <TableRow key={time}>
+                  <TableCell
+                    sx={{
+                      py: 0.5,
+                      pr: 0.5,
+                      pl: 0,
+                      height: "40px",
+                      boxSizing: "border-box",
+                      border: "none",
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "var(--off-black)", textAlign: "right" }}
+                    >
+                      {time}
+                    </Typography>
                   </TableCell>
-                );
-              })}
-            </TableRow>
-          ))}
-          {loading && (
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                right: 0,
-                width: isMobile
-                  ? "calc(100% - 36px)"
-                  : isTablet
-                  ? "calc(100% - 42px)"
-                  : "calc(100% - 48px)",
-                height: "100%",
-                display: "grid",
-                placeItems: "center",
-                bgcolor: "rgba(255, 255, 255, 0.3)",
-                borderRadius: 2,
-              }}
-            >
-              <Loader />
-            </Box>
-          )}
+                  {columns.map((column) => {
+                    const bookingsForSlot = getBookingForTimeSlot(
+                      column.date,
+                      time
+                    );
+                    const widthNum =
+                      bookingsForSlot.length > 0
+                        ? 100.0 / bookingsForSlot.length
+                        : 100;
+                    const bookingWidth = `${widthNum}%`;
+
+                    return (
+                      <TableCell
+                        key={column.date}
+                        sx={{
+                          border: "none",
+                          p: 0.5,
+                          height: "40px",
+                          boxSizing: "border-box",
+                        }}
+                      >
+                        <Box
+                          onClick={() =>
+                            isValidCell(column.date, bookingsForSlot)
+                              ? handleDateClick(column.date, time)
+                              : undefined
+                          }
+                          sx={{
+                            position: "relative",
+                            cursor: isValidCell(column.date, bookingsForSlot)
+                              ? "pointer"
+                              : "default",
+                            bgcolor: isValidCell(column.date, bookingsForSlot)
+                              ? "var(--white)"
+                              : "var(--light-grey)",
+                            borderRadius: 2,
+                            boxSizing: "border-box",
+                            height: "100%",
+                            width: "100%",
+                            boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
+                            p: 0.5,
+                            ...(isValidCell(column.date, bookingsForSlot) && {
+                              "&:hover": {
+                                bgcolor: "var(--white-onhover)",
+                              },
+                            }),
+                          }}
+                        >
+                          {bookingsForSlot.map((booking, index) => {
+                            const left = `${index * widthNum}%`;
+                            return (
+                              <BookingBox
+                                booking={booking}
+                                left={left}
+                                width={bookingWidth}
+                                onClick={handleBookingBoxClick}
+                                key={booking._id}
+                              />
+                            );
+                          })}
+                        </Box>
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))}
         </TableBody>
       </Table>
 

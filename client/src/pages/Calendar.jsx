@@ -336,7 +336,7 @@ const Calendar = () => {
               />
 
               <TextField
-                placeholder="Search..."
+                placeholder={t("calendar.searchPlaceholder")}
                 variant="outlined"
                 fullWidth
                 size="small"
