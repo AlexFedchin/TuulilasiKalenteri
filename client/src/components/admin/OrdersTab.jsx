@@ -53,7 +53,7 @@ const InvoicesTab = () => {
     if (submitting) return;
     setSubmitting(true);
     const url =
-      view === "sent"
+      view === "completed"
         ? "/api/orders/mark-as-uncompleted"
         : "/api/orders/mark-as-completed";
 
@@ -177,24 +177,20 @@ const InvoicesTab = () => {
               onChange={handleView}
               aria-label={t("admin.invoices.view")}
             >
-              <ToggleButton value="sent">
-                {t("admin.invoices.sent")}
-              </ToggleButton>
-              <ToggleButton value="notSent">
-                {t("admin.invoices.notSent")}
-              </ToggleButton>
+              <ToggleButton value="completed">Completed</ToggleButton>
+              <ToggleButton value="uncompleted">Uncompleted</ToggleButton>
             </ToggleButtonGroup>
 
             <Button
               variant="contained"
               loading={submitting}
               loadingPosition="start"
-              color={view === "sent" ? "error" : "primary"}
+              color={view === "completed" ? "error" : "primary"}
               disabled={selectedOrders.length === 0 || submitting}
-              startIcon={view === "sent" ? <CloseIcon /> : <CheckIcon />}
+              startIcon={view === "completed" ? <CloseIcon /> : <CheckIcon />}
               onClick={handleMarkAsCompleted}
             >
-              {t(`admin.invoices.markAs${view === "sent" ? "Unsent" : "Sent"}`)}
+              Mark as {view === "completed" ? "Uncompleted" : "Completed"}
             </Button>
           </Box>
         </Card>
@@ -230,25 +226,21 @@ const InvoicesTab = () => {
               onChange={handleView}
               aria-label={t("admin.invoices.view")}
             >
-              <ToggleButton value="sent">
-                {t("admin.invoices.sent")}
-              </ToggleButton>
-              <ToggleButton value="notSent">
-                {t("admin.invoices.notSent")}
-              </ToggleButton>
+              <ToggleButton value="completed">Completed</ToggleButton>
+              <ToggleButton value="uncompleted">Uncompleted</ToggleButton>
             </ToggleButtonGroup>
           </Box>
 
           <Button
             variant="contained"
-            color={view === "sent" ? "error" : "primary"}
+            color={view === "completed" ? "error" : "primary"}
             loading={submitting}
             loadingPosition="start"
             disabled={selectedOrders.length === 0 || submitting}
-            startIcon={view === "sent" ? <CloseIcon /> : <CheckIcon />}
+            startIcon={view === "completed" ? <CloseIcon /> : <CheckIcon />}
             onClick={handleMarkAsCompleted}
           >
-            {t(`admin.invoices.markAs${view === "sent" ? "Unsent" : "Sent"}`)}
+            Mark as {view === "completed" ? "uncompleted" : "completed"}
           </Button>
         </Card>
       )}
@@ -282,9 +274,9 @@ const InvoicesTab = () => {
               variant="body2"
               sx={{ mt: "20vh", fontStyle: "italic", maxWidth: "66%" }}
             >
-              {view === "sent"
-                ? t("admin.invoices.noSentInvoices")
-                : t("admin.invoices.noUnsentInvoices")}
+              {view === "completed"
+                ? "You don't have any completed invoices"
+                : "You don't have any uncompleted invoices"}
             </Typography>
           ) : (
             <Pagination
