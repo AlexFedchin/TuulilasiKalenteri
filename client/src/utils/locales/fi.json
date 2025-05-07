@@ -8,7 +8,8 @@
     "myProfile": "Profiilini",
     "logout": "Kirjaudu ulos",
     "edit": "Muokkaa",
-    "delete": "Poista"
+    "delete": "Poista",
+    "completed": "Valmis"
   },
   "orderModal": {
     "titleNew": "Uusi tilaus",
@@ -48,8 +49,10 @@
     "invoiceStatusUpdateSuccess": "Laskun tila päivitetty onnistuneesti!",
     "passwordChangeSuccess": "Salasana vaihdettu onnistuneesti!",
     "loginSuccess": "Olet nyt kirjautunut sisään käyttäjänä {{username}}",
+    "orderMarkedAsCompleted": "Tilaus merkitty valmiiksi onnistuneesti!",
+    "orderMarkedAsUncompleted": "Tilaus merkitty ei valmiiksi onnistuneesti!",
     "copiedToClipboard": "Kopioitu leikepöydälle",
-    "unexpectedError": "Tapahtui odottamaton virhe"
+    "unexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin."
   },
   "userModal": {
     "titleNew": "Uusi käyttäjä",
@@ -76,6 +79,7 @@
   "admin": {
     "title": "Ylläpito",
     "tabs": {
+      "orders": "Tilaukset",
       "invoices": "Laskut",
       "users": "Käyttäjät",
       "locations": "Sijainnit"

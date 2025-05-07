@@ -8,7 +8,8 @@
     "myProfile": "Мой профиль",
     "logout": "Выйти",
     "edit": "Редактировать",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "completed": "Выполнен"
   },
   "orderModal": {
     "titleNew": "Новый заказ",
@@ -48,8 +49,10 @@
     "invoiceStatusUpdateSuccess": "Статус счета успешно обновлен!",
     "passwordChangeSuccess": "Пароль успешно изменен!",
     "loginSuccess": "Вы вошли как {{username}}",
+    "orderMarkedAsCompleted": "Заказ помечен как выполненный!",
+    "orderMarkedAsUncompleted": "Заказ помечен как не выполненный!",
     "copiedToClipboard": "Скопировано в буфер обмена",
-    "unexpectedError": "Произошла непредвиденная ошибка"
+    "unexpectedError": "Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже."
   },
   "userModal": {
     "titleNew": "Новый пользователь",
@@ -76,6 +79,7 @@
   "admin": {
     "title": "Админ",
     "tabs": {
+      "orders": "Заказы",
       "invoices": "Счета",
       "users": "Пользователи",
       "locations": "Локации"

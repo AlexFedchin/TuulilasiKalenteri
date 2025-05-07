@@ -36,6 +36,7 @@ const orderSchema = new mongoose.Schema(
         return this.client === "other";
       },
     },
+    completed: { type: Boolean, default: false },
     notes: { type: String, minlength: 0, maxlength: 500 },
   },
   {

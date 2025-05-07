@@ -173,7 +173,7 @@ const NoteCard = ({ note, onUpdateNote, onDeleteNote }) => {
           >
             <ListItemIcon sx={{ color: "inherit" }}>
               {isDeleting ? (
-                <CircularProgress size={20} sx={{ color: "var(--error)" }} />
+                <CircularProgress size={20} />
               ) : (
                 <DeleteIcon fontSize="small" />
               )}

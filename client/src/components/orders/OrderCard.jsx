@@ -7,14 +7,22 @@ import {
   MenuItem,
   ListItemIcon,
   Card,
+  CircularProgress,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DoneIcon from "@mui/icons-material/Done";
 import { clients } from "../../utils/clients";
 import { useTranslation } from "react-i18next";
 
-const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
+const OrderCard = ({
+  order,
+  onEditClick,
+  onDeleteClick,
+  onCompletedClick,
+  completing,
+}) => {
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -96,6 +104,26 @@ const OrderCard = ({ order, onEditClick, onDeleteClick }) => {
               <EditIcon fontSize="small" />
             </ListItemIcon>
             {t("menu.edit")}
+          </MenuItem>
+          <MenuItem
+            disabled={completing}
+            onClick={() => {
+              handleMenuClose();
+              onCompletedClick(order);
+            }}
+            sx={{
+              color: "var(--success)",
+              "&:hover": { color: "var(--success-onhover)" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "inherit" }}>
+              {completing ? (
+                <CircularProgress size={20} />
+              ) : (
+                <DoneIcon fontSize="small" />
+              )}
+            </ListItemIcon>
+            {t("menu.completed")}
           </MenuItem>
           <MenuItem
             onClick={() => {

@@ -20,12 +20,14 @@ const Orders = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [completing, setCompleting] = useState(false);
 
+  // Fetch uncompleted orders
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/orders", {
+        const response = await fetch("/api/orders?completed=false", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -65,6 +67,44 @@ const Orders = () => {
   const handleDeleteClick = (order) => {
     setSelectedOrder(order);
     setOpenDeleteModal(true);
+  };
+
+  const handleCompletedClick = async (order) => {
+    setCompleting(true);
+    const payload = {
+      ...order,
+      _id: undefined,
+      // eslint-disable-next-line no-unused-vars
+      products: order.products.map(({ _id, ...product }) => product),
+      completed: true,
+    };
+
+    try {
+      const response = await fetch(`/api/orders/${order._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || t("alert.unexpectedError"));
+      }
+
+      setOrders((prevOrders) => prevOrders.filter((o) => o._id !== order._id));
+      alert.success(t("alert.orderMarkedAsCompleted"));
+    } catch (error) {
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
+      console.error("Error completing order:", error);
+    } finally {
+      setCompleting(false);
+    }
   };
 
   const getClientName = () => {
@@ -162,6 +202,8 @@ const Orders = () => {
               order={order}
               onEditClick={handleEditClick}
               onDeleteClick={handleDeleteClick}
+              onCompletedClick={handleCompletedClick}
+              completing={completing}
             />
           ))}
 

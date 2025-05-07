@@ -69,6 +69,9 @@ const orderValidationSchema = Joi.object({
       "string.max": "Client name must be at most 50 characters long.",
       "any.required": "Client name is required when client is 'other'.",
     }),
+  completed: Joi.boolean().default(false).messages({
+    "boolean.base": "Completed must be a boolean.",
+  }),
   notes: Joi.string().max(500).allow("").messages({
     "string.base": "Notes must be a string.",
     "string.max": "Notes must be at most 500 characters long.",

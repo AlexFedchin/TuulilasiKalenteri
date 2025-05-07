@@ -8,7 +8,8 @@
     "myProfile": "My Profile",
     "logout": "Logout",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "completed": "Completed"
   },
   "orderModal": {
     "titleNew": "New Order",
@@ -48,6 +49,8 @@
     "invoiceStatusUpdateSuccess": "Invoice status updated successfully!",
     "passwordChangeSuccess": "Password changed successfully!",
     "copiedToClipboard": "Copied to clipboard",
+    "orderMarkedAsCompleted": "Order marked as completed!",
+    "orderMarkedAsUncompleted": "Order marked as uncompleted!",
     "loginSuccess": "You are now logged in as {{username}}",
     "unexpectedError": "An unexpected error occurred. Please try again later."
   },
@@ -76,6 +79,7 @@
   "admin": {
     "title": "Admin",
     "tabs": {
+      "orders": "Orders",
       "invoices": "Invoices",
       "users": "Users",
       "locations": "Locations"

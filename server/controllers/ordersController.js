@@ -2,8 +2,11 @@ const Order = require("../models/order");
 
 // Get all orders
 const getAllOrders = async (req, res) => {
+  const { completed } = req.query;
+  const filter =
+    completed !== undefined ? { completed: completed === "true" } : {};
   try {
-    const orders = await Order.find();
+    const orders = await Order.find(filter);
     res.status(200).json(orders);
   } catch (error) {
     console.error("Error getting all orders:", error);
@@ -38,6 +41,7 @@ const createOrder = async (req, res) => {
   const newOrderData = {
     products,
     client,
+    completed: false,
   };
 
   if (notes?.trim()) {
@@ -79,6 +83,9 @@ const updateOrder = async (req, res) => {
 
   if (notes?.trim()) {
     updatedOrderData.notes = notes.trim();
+  }
+  if (req.body.completed !== undefined) {
+    updatedOrderData.completed = req.body.completed;
   }
 
   // Add client name if client is "other"
@@ -129,10 +136,58 @@ const deleteOrder = async (req, res) => {
   }
 };
 
+const markAsCompleted = async (req, res) => {
+  const { orders } = req.body;
+
+  if (!Array.isArray(orders) || orders.length === 0) {
+    return res.status(400).json({ error: "Invalid orders array" });
+  }
+
+  try {
+    // Update the completed field for all orders
+    const updatedOrders = await Order.updateMany(
+      { _id: { $in: orders } },
+      { completed: true }
+    );
+    if (updatedOrders.nModified === 0) {
+      return res.status(404).json({ error: "No orders were updated" });
+    }
+    res.status(200).json({ message: "Orders are now marked as completed" });
+  } catch (error) {
+    console.error("Error marking orders as completed:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const markAsUncompleted = async (req, res) => {
+  const { orders } = req.body;
+
+  if (!Array.isArray(orders) || orders.length === 0) {
+    return res.status(400).json({ error: "Invalid orders array" });
+  }
+
+  try {
+    // Update the completed field for all orders
+    const updatedOrders = await Order.updateMany(
+      { _id: { $in: orders } },
+      { completed: false }
+    );
+    if (updatedOrders.nModified === 0) {
+      return res.status(404).json({ error: "No orders were updated" });
+    }
+    res.status(200).json({ message: "Orders are now marked as completed" });
+  } catch (error) {
+    console.error("Error marking orders as completed:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAllOrders,
   getOrderById,
   createOrder,
   updateOrder,
   deleteOrder,
+  markAsCompleted,
+  markAsUncompleted,
 };
