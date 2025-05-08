@@ -35,7 +35,7 @@ const CustomFooter = () => {
           }}
         >
           <img
-            src="/logo.webp"
+            src="/tuulilasipojat-logo.webp"
             draggable="false"
             alt={t("footer.tuulilasiPojatLogoAlt")}
             style={{

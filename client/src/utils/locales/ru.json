@@ -105,11 +105,11 @@
     },
     "orders": {
       "searchPlaceholder": "Поиск...",
-      "completed": "Выполнено",
-      "uncompleted": "Не выполнено",
-      "markAsCompleted": "Отметить как выполненное",
-      "markAsUncompleted": "Отметить как не выполненное",
-      "noUncompletedOrders": "У вас нет невыполненных заказов.",
+      "completed": "Выполненные",
+      "uncompleted": "Не выполненные",
+      "markAsCompleted": "Выполнено",
+      "markAsUncompleted": "Не выполнено",
+      "noUncompletedOrders": "У вас нет не выполненных заказов.",
       "noCompletedOrders": "У вас нет выполненных заказов.",
       "unknown": "Неизвестно",
       "products": "Товары",
@@ -319,7 +319,7 @@
   "footer": {
     "tuulilasiPojatLogoAlt": "Логотип TuulilasiPojat",
     "tuulilasiTukkuLogoAlt": "Логотип TuulilasiTukku",
-    "copyright": "TuulilasiPojat. Все права защищены."
+    "copyright": "TuulilasiKalenteri. Все права защищены."
   },
   "bookingBox": {
     "phone": "т.",
