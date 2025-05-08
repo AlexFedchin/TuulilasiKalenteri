@@ -18,7 +18,7 @@ const Admin = () => {
 
   return (
     <DefaultContainer>
-      <Typography variant="h2" marginBottom={-2}>
+      <Typography variant="h2" marginBottom={-1}>
         {t("admin.title")}
       </Typography>
 

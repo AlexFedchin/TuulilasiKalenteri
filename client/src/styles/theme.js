@@ -269,9 +269,26 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
           },
         },
       },
+      MuiTabs: {
+        styleOverrides: {
+          root: {
+            boxSizing: "border-box",
+            maxWidth: "100%",
+            minHeight: isMobile ? 34 : isTablet ? 37 : 40,
+          },
+        },
+      },
       MuiTab: {
         styleOverrides: {
           root: {
+            textTransform: "none",
+            paddingLeft: isMobile ? 8 : isTablet ? 10 : 12,
+            paddingRight: isMobile ? 8 : isTablet ? 10 : 12,
+            paddingTop: isMobile ? 4 : isTablet ? 6 : 8,
+            paddingBottom: isMobile ? 4 : isTablet ? 6 : 8,
+            minWidth: isMobile ? 75 : isTablet ? 85 : 95,
+            minHeight: isMobile ? 34 : isTablet ? 37 : 40,
+            boxSizing: "border-box",
             transition: "background-color 0.3s ease, color 0.3s ease",
             color: "var(--off-grey)",
             "&.Mui-selected": {
