@@ -10,18 +10,25 @@ import {
   TableRow,
   TableBody,
   TableCell,
+  IconButton,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { clients } from "../../utils/clients";
 import { useTranslation } from "react-i18next";
+import useScreenSize from "../../hooks/useScreenSize";
 
 const OrderCard = ({
   order,
   selectedOrders,
   setSelectedOrders,
   isRemoving,
+  onEditClick,
+  onDeleteClick,
   view,
 }) => {
   const { t } = useTranslation();
+  const { isMobile } = useScreenSize();
 
   const getClientName = () => {
     if (order.client === "other") {
@@ -38,6 +45,8 @@ const OrderCard = ({
       setSelectedOrders((prev) => prev.filter((id) => id !== order._id));
     }
   };
+
+  const isSelected = selectedOrders.includes(order._id);
 
   return (
     <Card
@@ -78,9 +87,34 @@ const OrderCard = ({
         />
         <Typography variant="h4">{getClientName()}</Typography>
         <Box sx={{ position: "absolute", right: 0 }}>
+          <IconButton
+            onClick={() => onDeleteClick(order)}
+            disabled={isSelected || isRemoving}
+            color="error"
+            sx={{
+              p: isMobile ? "9px" : "11px",
+              color: "var(--error)",
+              "&:hover": { color: "var(--error-onhover)" },
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            onClick={() => onEditClick(order)}
+            disabled={isSelected || isRemoving}
+            color="primary"
+            sx={{
+              p: isMobile ? "9px" : "11px",
+              color: "var(--primary)",
+              "&:hover": { color: "var(--primary-onhover)" },
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
           <Checkbox
-            checked={selectedOrders.includes(order._id)}
+            checked={isSelected}
             onChange={handleCheckboxChange}
+            size={isMobile ? "small" : "medium"}
           />
         </Box>
       </Box>

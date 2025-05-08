@@ -20,6 +20,9 @@ import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 import useScreenSize from "../../hooks/useScreenSize";
 import { useTranslation } from "react-i18next";
+import OrderModal from "../orders/OrderModal";
+import ConfirmModal from "../ConfirmModal";
+import { clients } from "../../utils/clients";
 
 const InvoicesTab = () => {
   const { t } = useTranslation();
@@ -34,6 +37,9 @@ const InvoicesTab = () => {
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredOrders, setFilteredOrders] = useState([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   // Fetch orders based on the selected view
   useEffect(() => {
@@ -77,8 +83,18 @@ const InvoicesTab = () => {
     setPage(value);
   };
 
+  const getClientName = () => {
+    if (selectedOrder.client === "other") {
+      return selectedOrder.clientName;
+    }
+    const client = clients.find(
+      (client) => client.value === selectedOrder.client
+    );
+    return client ? client.name : t("admin.orders.unknown");
+  };
+
+  // Apply search filter to orders
   useEffect(() => {
-    // Apply search
     const containsSearchTerm = (value, term) => {
       if (typeof value === "string") {
         return value.toLowerCase().includes(term);
@@ -157,6 +173,46 @@ const InvoicesTab = () => {
       console.error("Error updating orders:", error);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleEditOrder = (order) => {
+    setSelectedOrder(order);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteClick = (order) => {
+    setSelectedOrder(order);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteOrder = async () => {
+    try {
+      const response = await fetch(`/api/orders/${selectedOrder._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || t("alert.unexpectedError"));
+      }
+
+      // Remove order from state
+      setOrders((prevOrders) =>
+        prevOrders.filter((order) => order._id !== selectedOrder._id)
+      );
+      setSelectedOrder(null);
+      alert.success(t("alert.orderDeleteSuccess"));
+    } catch (error) {
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
+      console.error("Error deleting order:", error);
     }
   };
 
@@ -270,6 +326,8 @@ const InvoicesTab = () => {
               selectedOrders={selectedOrders}
               setSelectedOrders={setSelectedOrders}
               isRemoving={removingOrders.includes(order._id)}
+              onEditClick={handleEditOrder}
+              onDeleteClick={handleDeleteClick}
               view={view}
             />
           ))}
@@ -302,6 +360,25 @@ const InvoicesTab = () => {
             />
           )}
         </Box>
+      )}
+
+      {isEditModalOpen && (
+        <OrderModal
+          order={selectedOrder}
+          onClose={() => setIsEditModalOpen(false)}
+          setOrders={setOrders}
+        />
+      )}
+
+      {isDeleteModalOpen && (
+        <ConfirmModal
+          onConfirm={handleDeleteOrder}
+          onClose={() => setIsDeleteModalOpen(false)}
+          text={t("ordersBlock.confirmDelete", {
+            productCount: selectedOrder.products.length,
+            client: getClientName(),
+          })}
+        />
       )}
     </Box>
   );

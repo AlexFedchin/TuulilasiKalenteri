@@ -24,7 +24,6 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { useAuth } from "../../context/AuthContext";
 import { alert } from "../../utils/alert";
 import { clients } from "../../utils/clients";
-import Joi from "joi";
 import useScreenSize from "../../hooks/useScreenSize";
 import { useTranslation } from "react-i18next";
 import { orderValidationSchema } from "../../validation/orderValidationSchema";
@@ -34,6 +33,7 @@ const OrderModal = ({ onClose, order, setOrders }) => {
   const { isMobile, isTablet } = useScreenSize();
   const { token } = useAuth();
   const isEdit = !!order;
+  console.log("Order:", order);
 
   const [formData, setFormData] = useState({
     products: order?.products.map(({ eurocode, amount, price, status }) => ({
