@@ -327,6 +327,49 @@ const updateBooking = async (req, res) => {
   }
 };
 
+const changeBookingDateTime = async (req, res) => {
+  const { date } = req.body;
+
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
+
+    if (
+      dayjs(booking?.date).isBefore(dayjs(), "day") &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ error: "You cannot modify past bookings" });
+    }
+
+    // Check if the booking ends after 16:00
+    const endTime = dayjs(date).add(booking.duration, "hour");
+    const limitEndTime = dayjs
+      .tz(date, "Europe/Helsinki")
+      .hour(16)
+      .minute(0)
+      .second(0)
+      .millisecond(0);
+    if (endTime.isAfter(limitEndTime)) {
+      return res.status(400).json({ error: "Booking should end before 16:00" });
+    }
+
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { date },
+      { new: true }
+    );
+
+    if (!updatedBooking)
+      return res.status(404).json({ error: "Booking not found" });
+
+    res.json(updatedBooking);
+  } catch (error) {
+    console.error("Error changing booking date/time:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const deleteBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
@@ -360,5 +403,6 @@ module.exports = {
   getBookingById,
   createBooking,
   updateBooking,
+  changeBookingDateTime,
   deleteBooking,
 };

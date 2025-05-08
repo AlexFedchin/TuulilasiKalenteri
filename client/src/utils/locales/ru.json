@@ -43,6 +43,7 @@
     "bookingUpdateSuccess": "Бронирование успешно обновлено!",
     "bookingCreateSuccess": "Бронирование успешно создано!",
     "bookingDeleteSuccess": "Бронирование успешно удалено!",
+    "bookingTimeChangeSuccess": "Бронирование успешно перенесено!",
     "noteUpdateSuccess": "Заметка успешно обновлена!",
     "noteCreateSuccess": "Заметка успешно создана!",
     "noteDeleteSuccess": "Заметка успешно удалена!",

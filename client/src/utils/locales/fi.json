@@ -43,6 +43,7 @@
     "bookingUpdateSuccess": "Varaus päivitetty onnistuneesti!",
     "bookingCreateSuccess": "Varaus luotu onnistuneesti!",
     "bookingDeleteSuccess": "Varaus poistettu onnistuneesti!",
+    "bookingTimeChangeSuccess": "Varausajan muutos onnistui!",
     "noteUpdateSuccess": "Huomautus päivitetty onnistuneesti!",
     "noteCreateSuccess": "Huomautus luotu onnistuneesti!",
     "noteDeleteSuccess": "Huomautus poistettu onnistuneesti!",

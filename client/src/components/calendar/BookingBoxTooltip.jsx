@@ -7,7 +7,7 @@ import { insuranceCompanies } from "../../utils/insuranceCompanies";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 
-const BookingBoxTooltip = ({ booking, children }) => {
+const BookingBoxTooltip = ({ booking, open, children }) => {
   const { user } = useAuth();
   const { t } = useTranslation();
   const isAdmin = user?.role === "admin";
@@ -172,7 +172,6 @@ const BookingBoxTooltip = ({ booking, children }) => {
       }
       placement="top"
       arrow
-      enterDelay={500}
       slotProps={{
         tooltip: {
           sx: {
@@ -191,6 +190,7 @@ const BookingBoxTooltip = ({ booking, children }) => {
           },
         },
       }}
+      open={open}
     >
       {children}
     </Tooltip>

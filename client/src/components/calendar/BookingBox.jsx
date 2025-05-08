@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import BookingBoxTooltip from "./BookingBoxTooltip";
 import { useTranslation } from "react-i18next";
+import useScreenSize from "../../hooks/useScreenSize";
 
 const BookingBox = ({ booking, onClick, left, width }) => {
   const { t } = useTranslation();
+  const { isMobile, isTablet } = useScreenSize();
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isMouseHovered, setIsMouseHovered] = useState(false);
 
   const infoRowStyle = {
     width: "100%",
@@ -22,14 +27,54 @@ const BookingBox = ({ booking, onClick, left, width }) => {
     whiteSpace: "nowrap",
   };
 
+  const handleClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    onClick(booking);
+  };
+
+  const handleDragStart = (e) => {
+    setIsDragging(true);
+    e.dataTransfer.setData("application/json", JSON.stringify(booking));
+  };
+
+  const handleDragEnd = (e) => {
+    setIsDragging(false);
+    setIsTooltipOpen(false);
+    e.dataTransfer.clearData();
+  };
+
+  const handleMouseEnter = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsTooltipOpen(false);
+    setIsMouseHovered(true);
+    setTimeout(() => {
+      setIsTooltipOpen(true);
+    }, 500);
+  };
+
+  const handleMouseLeave = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsMouseHovered(false);
+    setIsTooltipOpen(false);
+  };
+
   return (
-    <BookingBoxTooltip booking={booking}>
+    <BookingBoxTooltip
+      booking={booking}
+      open={
+        isTooltipOpen && !isDragging && isMouseHovered && !isMobile && !isTablet
+      }
+    >
       <Box
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          onClick(booking);
-        }}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        draggable
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
         sx={{
           position: "absolute",
           top: 0,
@@ -52,6 +97,15 @@ const BookingBox = ({ booking, onClick, left, width }) => {
               ? "var(--ordered-onhover)"
               : "var(--error-onhover)",
           },
+          "&:active": {
+            backgroundColor: booking.isWorkDone
+              ? "var(--success-onhover)"
+              : booking.inStock
+              ? "var(--primary-onhover)"
+              : booking.isOrdered
+              ? "var(--ordered-onhover)"
+              : "var(--error-onhover)",
+          },
           transition: "background-color 0.2s ease",
           boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)",
           color: "var(--white)",
@@ -64,6 +118,7 @@ const BookingBox = ({ booking, onClick, left, width }) => {
           overflow: "hidden",
           cursor: "pointer",
           zIndex: 10,
+          userSelect: "none",
         }}
       >
         <Box sx={infoRowStyle}>

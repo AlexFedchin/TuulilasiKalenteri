@@ -21,6 +21,7 @@ import BookingBox from "./BookingBox";
 import BookingModal from "../bookings/BookingModal";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { alert } from "../../utils/alert";
 
 const WeekCalendar = ({
   currentDate,
@@ -28,7 +29,7 @@ const WeekCalendar = ({
   setMode,
   searchTerm,
 }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   dayjs.extend(updateLocale);
   useEffect(() => {
     dayjs.locale(i18n.language);
@@ -94,6 +95,48 @@ const WeekCalendar = ({
 
     fetchBookings();
   }, [user, token, currentDate, isAdmin, location]);
+
+  // Function to handle drag-and-drop time changing
+  const handleDrop = async (e, newDate, newTime) => {
+    const data = e.dataTransfer.getData("application/json");
+    if (!data) return;
+    const booking = JSON.parse(data);
+
+    const localDate = dayjs.tz(`${newDate}T${newTime}`, "Europe/Helsinki");
+    const newDateTime = localDate.format("YYYY-MM-DDTHH:mm:ssZ");
+
+    try {
+      // Make API call
+      const response = await fetch(
+        `/api/bookings/change-date-time/${booking._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ date: newDateTime }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok)
+        throw new Error(result.error || t("alert.unexpectedError"));
+
+      setBookings((prev) =>
+        prev.map((b) =>
+          b._id === booking._id ? { ...b, date: newDateTime } : b
+        )
+      );
+      alert.success(t("alert.bookingTimeChangeSuccess"));
+    } catch (error) {
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
+      console.error("Error updating booking:", error);
+    }
+  };
 
   // Debounced search function
   const debounceSearch = useCallback(
@@ -327,6 +370,11 @@ const WeekCalendar = ({
                               ? handleDateClick(column.date, time)
                               : undefined
                           }
+                          onDragOver={(e) => {
+                            if (isValidCell(column.date, bookingsForSlot))
+                              e.preventDefault();
+                          }}
+                          onDrop={(e) => handleDrop(e, column.date, time)}
                           sx={{
                             position: "relative",
                             cursor: isValidCell(column.date, bookingsForSlot)

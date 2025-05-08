@@ -4,6 +4,7 @@ const {
   getBookingById,
   createBooking,
   updateBooking,
+  changeBookingDateTime,
   deleteBooking,
 } = require("../controllers/bookingsController");
 const validateBookingData = require("../middlewares/validateBooking");
@@ -26,6 +27,13 @@ router.post(
   authenticate(["admin", "regular"]),
   validateBookingData,
   createBooking
+);
+
+router.put(
+  "/change-date-time/:id",
+  authenticate(["admin", "regular"]),
+  checkBookingOwnership,
+  changeBookingDateTime
 );
 
 router.put(

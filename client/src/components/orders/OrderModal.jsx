@@ -33,7 +33,6 @@ const OrderModal = ({ onClose, order, setOrders }) => {
   const { isMobile, isTablet } = useScreenSize();
   const { token } = useAuth();
   const isEdit = !!order;
-  console.log("Order:", order);
 
   const [formData, setFormData] = useState({
     products: order?.products.map(({ eurocode, amount, price, status }) => ({

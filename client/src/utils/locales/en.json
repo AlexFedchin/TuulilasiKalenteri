@@ -43,6 +43,7 @@
     "bookingUpdateSuccess": "Booking updated successfully!",
     "bookingCreateSuccess": "Booking created successfully!",
     "bookingDeleteSuccess": "Booking deleted successfully!",
+    "bookingTimeChangeSuccess": "Booking time changed successfully!",
     "noteUpdateSuccess": "Note updated successfully!",
     "noteCreateSuccess": "Note created successfully!",
     "noteDeleteSuccess": "Note deleted successfully!",

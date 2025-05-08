@@ -311,7 +311,7 @@ const BookingModal = ({
             booking._id === result._id ? result : booking
           )
         );
-        alert.success(t("alert.bookingEditSuccess"));
+        alert.success(t("alert.bookingUpdateSuccess"));
       } else {
         setBookings((prev) => [result, ...prev]);
         alert.success(t("alert.bookingCreateSuccess"));
