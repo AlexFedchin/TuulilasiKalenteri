@@ -93,7 +93,7 @@ const Authentication = () => {
           position: "absolute",
           top: 64,
           maxHeight: isMobile ? "2.5%" : "3.5%",
-          maxWidth: "calc(100% - 32px)",
+          maxWidth: "calc(100% - 64px)",
         }}
       />
 
