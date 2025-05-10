@@ -52,7 +52,7 @@ const ForgotPasswordModal = ({ onClose }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Something went wrong");
+        throw new Error(data.error || "Something went wrong");
       }
 
       setStep(2);
@@ -228,7 +228,7 @@ const ForgotPasswordModal = ({ onClose }) => {
                   width: "50px",
                   height: "50px",
                   color: "var(--success)",
-                  bgcolor: "#38b31915",
+                  bgcolor: "var(--success-bg)",
                 }}
               >
                 <DoneIcon />

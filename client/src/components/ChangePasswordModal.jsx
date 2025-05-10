@@ -433,7 +433,7 @@ const ChangePasswordModal = ({ onClose }) => {
                 width: "50px",
                 height: "50px",
                 color: "var(--success)",
-                bgcolor: "#38b31915",
+                bgcolor: "var(--success-bg)",
               }}
             >
               <DoneIcon />

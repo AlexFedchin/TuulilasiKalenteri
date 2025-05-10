@@ -223,16 +223,24 @@ const forgotPassword = async (req, res) => {
     const user = await User.findOne({ username });
     if (!user) {
       return res
-        .status(400)
+        .status(404)
         .json({ error: "No user with this username found" });
     }
 
-    const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const resetToken = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "30m",
+      }
+    );
 
     const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-    const emailHtml = getResetEmailTemplate(user.username, resetLink);
+    const emailHtml = getResetEmailTemplate(
+      `${user.firstName} ${user.lastName} (${user.username})`,
+      resetLink,
+      process.env.CLIENT_URL
+    );
 
     await sendEmail(user.email, "Password Reset Request", emailHtml);
 
@@ -240,6 +248,74 @@ const forgotPassword = async (req, res) => {
   } catch (error) {
     console.error("Error during password reset:", error);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+const verifyResetToken = async (req, res) => {
+  const { resetToken } = req.body;
+
+  if (!resetToken) {
+    return res.status(400).json({ error: "Reset token is required" });
+  }
+
+  if (isTokenBlacklisted(resetToken)) {
+    return res.status(400).json({ error: "You have already used this link." });
+  }
+
+  try {
+    const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid token" });
+    }
+
+    res.status(200).json({
+      username: user.username,
+    });
+  } catch (error) {
+    console.error("Error during token verification:", error);
+    res
+      .status(400)
+      .json({ error: error.message || "Invalid or expired token" });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { password } = req.body;
+
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the new password is the same as the old one
+    const isSamePassword = await bcrypt.compare(password, user.password);
+    if (isSamePassword) {
+      return res
+        .status(400)
+        .json({ error: "New password cannot be the same as the old one" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user's password
+    user.password = hashedPassword;
+    await user.save();
+
+    // Blacklist the token used for password reset
+    const token = req.headers.authorization?.split(" ")[1];
+    blacklistedTokens.push(token);
+
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error("Error during password reset:", error);
+    res
+      .status(400)
+      .json({ error: error.message || "Invalid or expired token" });
   }
 };
 
@@ -251,4 +327,6 @@ module.exports = {
   isTokenBlacklisted,
   checkPassword,
   forgotPassword,
+  verifyResetToken,
+  resetPassword,
 };

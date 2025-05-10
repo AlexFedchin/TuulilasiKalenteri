@@ -28,7 +28,7 @@ const authenticate = (allowedRoles) => {
       // Check if user exists
       const foundUser = await User.findById(req.user.id);
       if (!foundUser) {
-        return res.status(401).json({ error: "User does not exist" });
+        return res.status(404).json({ error: "User does not exist" });
       }
 
       // Check if the user's role is in the allowed roles
