@@ -15,6 +15,7 @@ import Loader from "./components/loader/Loader";
 import CustomFoter from "./components/CustomFooter";
 
 const Authentication = lazy(() => import("./pages/Authentication"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Bookings = lazy(() => import("./pages/Bookings"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -46,6 +47,10 @@ function App() {
                 <Route
                   path="/"
                   element={user ? <Calendar /> : <Authentication />}
+                />
+                <Route
+                  path="/reset-password/:resetToken"
+                  element={<ResetPassword />}
                 />
                 <Route
                   path="/bookings"
@@ -84,4 +89,3 @@ function App() {
 }
 
 export default App;
-

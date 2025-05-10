@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Modal,
@@ -34,6 +34,15 @@ const ChangePasswordModal = ({ onClose }) => {
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setStep(0);
+    const timer = setTimeout(() => {
+      setStep(1);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -154,7 +163,7 @@ const ChangePasswordModal = ({ onClose }) => {
 
         <LinearProgress
           variant="determinate"
-          value={step === 1 ? 33 : step === 2 ? 66 : 100}
+          value={step === 0 ? 0 : step === 1 ? 33 : step === 2 ? 66 : 100}
           sx={{
             height: 8,
             borderRadius: 5,

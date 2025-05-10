@@ -15,6 +15,7 @@ import DefaultContainer from "../components/DefaultContainer.jsx";
 import useScreenSize from "../hooks/useScreenSize.js";
 import { useTranslation } from "react-i18next";
 import { alert } from "../utils/alert.js";
+import ForgotPasswordModal from "../components/ForgotPasswordModal.jsx";
 
 const Authentication = () => {
   const { t, i18n } = useTranslation();
@@ -28,6 +29,7 @@ const Authentication = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
@@ -231,7 +233,25 @@ const Authentication = () => {
         >
           {t("authentication.loginButton")}
         </Button>
+        <Button
+          variant="secondary"
+          size={isMobile ? "normal" : "large"}
+          sx={{
+            mt: isMobile ? 1 : 2,
+            width: "100%",
+          }}
+          onClick={() => {
+            setIsForgotPasswordOpen(true);
+            setError("");
+          }}
+        >
+          Forgot password?
+        </Button>
       </form>
+
+      {isForgotPasswordOpen && (
+        <ForgotPasswordModal onClose={() => setIsForgotPasswordOpen(false)} />
+      )}
     </DefaultContainer>
   );
 };

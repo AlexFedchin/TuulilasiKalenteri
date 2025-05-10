@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const Location = require("../models/location");
 require("dotenv").config();
+const sendEmail = require("../utils/sendEmail");
+const getResetEmailTemplate = require("../utils/resetEmailTemplate");
 
 // Registration logic
 const register = async (req, res) => {
@@ -214,6 +216,33 @@ const checkPassword = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ error: "No user with this username found" });
+    }
+
+    const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    const emailHtml = getResetEmailTemplate(user.username, resetLink);
+
+    await sendEmail(user.email, "Password Reset Request", emailHtml);
+
+    res.json({ message: "Password reset email sent successfully" });
+  } catch (error) {
+    console.error("Error during password reset:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 module.exports = {
   login,
   register,
@@ -221,4 +250,5 @@ module.exports = {
   verifyToken,
   isTokenBlacklisted,
   checkPassword,
+  forgotPassword,
 };

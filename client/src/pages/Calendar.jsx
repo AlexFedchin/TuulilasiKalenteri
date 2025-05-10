@@ -130,7 +130,9 @@ const Calendar = () => {
       const endOfWeek = currentDate.endOf("isoWeek").locale(i18n.language);
       return `${startOfWeek.format("DD.MM")} - ${endOfWeek.format("DD.MM")}`;
     } else if (mode === "locations") {
-      return currentDate.locale(i18n.language).format("ddd, MMMM D");
+      return currentDate
+        .locale(i18n.language)
+        .format(i18n.language === "en" ? "ddd, MMMM D" : "dd, MMMM D");
     }
     return "";
   };

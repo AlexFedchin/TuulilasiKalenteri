@@ -210,6 +210,23 @@ const createCustomTheme = ({ isMobile, isTablet }) =>
               cursor: "not-allowed",
             },
           },
+          secondary: {
+            borderRadius: "4px",
+            backgroundColor: "transparent",
+            color: "var(--primary)",
+            fontSize: isTablet ? "0.75rem" : "0.875rem",
+            fontWeight: 500,
+            "&:hover": {
+              color: "var(--primary-onhover)",
+              backgroundColor: "var(--primary-bg)",
+            },
+            "&.Mui-disabled": {
+              backgroundColor: "var(--light-grey)",
+              color: "var(--off-grey)",
+              opacity: 0.6,
+              cursor: "not-allowed",
+            },
+          },
         },
       },
       MuiListItemText: {

@@ -175,9 +175,7 @@ const WeekCalendar = ({
         date: day.locale(i18n.language).format("YYYY-MM-DD"),
         dayOfWeek: isMobile
           ? day.locale(i18n.language).format("dd")
-          : isTablet
-          ? day.locale(i18n.language).format("ddd")
-          : day.locale(i18n.language).format("ddd"),
+          : day.locale(i18n.language).format(i18n === "en" ? "ddd" : "dd"),
         dayNumber: day.locale(i18n.language).format("D.M"),
       });
     }
