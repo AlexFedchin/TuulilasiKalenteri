@@ -155,7 +155,11 @@ const Calendar = () => {
 
   return (
     <DefaultContainer
-      sx={{ maxWidth: "1600px !important", gap: isMobile ? 1 : 3 }}
+      sx={{
+        maxWidth: "1600px !important",
+        gap: isMobile ? 1 : 3,
+        ...(isMobile && { px: "8px !important" }),
+      }}
     >
       {/* Header */}
       <Box

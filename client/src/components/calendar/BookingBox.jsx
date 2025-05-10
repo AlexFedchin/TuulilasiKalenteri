@@ -4,7 +4,7 @@ import BookingBoxTooltip from "./BookingBoxTooltip";
 import { useTranslation } from "react-i18next";
 import useScreenSize from "../../hooks/useScreenSize";
 
-const BookingBox = ({ booking, onClick, left, width }) => {
+const BookingBox = ({ booking, onClick, left, width, isDraggable = true }) => {
   const { t } = useTranslation();
   const { isMobile, isTablet } = useScreenSize();
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -72,7 +72,7 @@ const BookingBox = ({ booking, onClick, left, width }) => {
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        draggable
+        draggable={isDraggable && !isMobile && !isTablet}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         sx={{

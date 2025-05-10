@@ -481,6 +481,7 @@ const LocationsCalendar = ({
                               width={bookingWidth}
                               onClick={handleBookingBoxClick}
                               key={booking._id}
+                              isDraggable={false}
                             />
                           );
                         })}
