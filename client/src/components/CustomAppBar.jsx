@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
-  Typography,
   Button,
   Box,
   Menu,
@@ -16,6 +15,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 import AccountIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
+import LanguageSelectionMenu from "./LanguageSelectionMenu";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import useScreenSize from "../hooks/useScreenSize";
@@ -37,11 +37,6 @@ const CustomAppBar = () => {
     setAnchorEl(null);
     logout();
     navigate("/");
-  };
-
-  const handleLanguageChange = (lang) => {
-    i18n.changeLanguage(lang);
-    setLanguageAnchorEl(null);
   };
 
   const toggleDrawer = (open) => () => {
@@ -184,45 +179,10 @@ const CustomAppBar = () => {
               {i18n.language.toUpperCase()}
             </Button>
 
-            <Menu
+            <LanguageSelectionMenu
               anchorEl={languageAnchorEl}
-              open={Boolean(languageAnchorEl)}
-              onClose={() => setLanguageAnchorEl(null)}
-            >
-              <MenuItem
-                onClick={() => handleLanguageChange("en")}
-                sx={{
-                  bgcolor:
-                    i18n.language === "en"
-                      ? "var(--white-onhover)"
-                      : "transparent",
-                }}
-              >
-                English
-              </MenuItem>
-              <MenuItem
-                onClick={() => handleLanguageChange("fi")}
-                sx={{
-                  bgcolor:
-                    i18n.language === "fi"
-                      ? "var(--white-onhover)"
-                      : "transparent",
-                }}
-              >
-                Suomi
-              </MenuItem>
-              <MenuItem
-                onClick={() => handleLanguageChange("ru")}
-                sx={{
-                  bgcolor:
-                    i18n.language === "ru"
-                      ? "var(--white-onhover)"
-                      : "transparent",
-                }}
-              >
-                Русский
-              </MenuItem>
-            </Menu>
+              setAnchorEl={setLanguageAnchorEl}
+            />
           </Box>
         )}
       </Toolbar>

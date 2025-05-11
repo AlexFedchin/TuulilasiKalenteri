@@ -14,6 +14,7 @@ import ResetIcon from "@mui/icons-material/Sync";
 import LanguageIcon from "@mui/icons-material/Language";
 import DoneIcon from "@mui/icons-material/Done";
 import DefaultContainer from "../components/DefaultContainer";
+import LanguageSelectionMenu from "../components/LanguageSelectionMenu";
 import Loader from "../components/loader/Loader";
 import { useTranslation } from "react-i18next";
 import { alert } from "../utils/alert";
@@ -21,7 +22,7 @@ import useScreenSize from "../hooks/useScreenSize.js";
 import { passwordValidationSchema } from "../validation/passwordValidationSchema.js";
 
 const ResetPassword = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { isMobile } = useScreenSize();
   const { resetToken } = useParams();
   const navigate = useNavigate();
@@ -44,10 +45,6 @@ const ResetPassword = () => {
   };
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword((prev) => !prev);
-  };
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-    setAnchorEl(null);
   };
 
   const handleChange = (e) =>
@@ -86,7 +83,7 @@ const ResetPassword = () => {
     };
 
     verifyResetToken();
-  }, []);
+  }, [resetToken]);
 
   // Handle form submission for password reset
   const handleSubmit = async (e) => {
@@ -245,45 +242,10 @@ const ResetPassword = () => {
             >
               <LanguageIcon fontSize={isMobile ? "small" : "normal"} />
             </IconButton>
-            <Menu
+            <LanguageSelectionMenu
               anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={() => setAnchorEl(null)}
-            >
-              <MenuItem
-                onClick={() => changeLanguage("en")}
-                sx={{
-                  bgcolor:
-                    i18n.language === "en"
-                      ? "var(--white-onhover)"
-                      : "transparent",
-                }}
-              >
-                English
-              </MenuItem>
-              <MenuItem
-                onClick={() => changeLanguage("fi")}
-                sx={{
-                  bgcolor:
-                    i18n.language === "fi"
-                      ? "var(--white-onhover)"
-                      : "transparent",
-                }}
-              >
-                Suomi
-              </MenuItem>
-              <MenuItem
-                onClick={() => changeLanguage("ru")}
-                sx={{
-                  bgcolor:
-                    i18n.language === "ru"
-                      ? "var(--white-onhover)"
-                      : "transparent",
-                }}
-              >
-                Русский
-              </MenuItem>
-            </Menu>
+              setAnchorEl={setAnchorEl}
+            />
           </Box>
 
           <TextField

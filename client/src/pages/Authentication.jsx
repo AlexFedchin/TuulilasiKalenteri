@@ -3,8 +3,6 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -16,9 +14,10 @@ import useScreenSize from "../hooks/useScreenSize.js";
 import { useTranslation } from "react-i18next";
 import { alert } from "../utils/alert.js";
 import ForgotPasswordModal from "../components/ForgotPasswordModal.jsx";
+import LanguageSelectionMenu from "../components/LanguageSelectionMenu.jsx";
 
 const Authentication = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { login, isTokenExpired, token } = useAuth();
   const { isMobile } = useScreenSize();
   const [form, setForm] = useState({
@@ -28,13 +27,8 @@ const Authentication = () => {
   });
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
-
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-    setAnchorEl(null);
-  };
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -127,46 +121,8 @@ const Authentication = () => {
           >
             <LanguageIcon fontSize={isMobile ? "small" : "normal"} />
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-          >
-            <MenuItem
-              onClick={() => changeLanguage("en")}
-              sx={{
-                bgcolor:
-                  i18n.language === "en"
-                    ? "var(--white-onhover)"
-                    : "transparent",
-              }}
-            >
-              English
-            </MenuItem>
-            <MenuItem
-              onClick={() => changeLanguage("fi")}
-              sx={{
-                bgcolor:
-                  i18n.language === "fi"
-                    ? "var(--white-onhover)"
-                    : "transparent",
-              }}
-            >
-              Suomi
-            </MenuItem>
-            <MenuItem
-              onClick={() => changeLanguage("ru")}
-              sx={{
-                bgcolor:
-                  i18n.language === "ru"
-                    ? "var(--white-onhover)"
-                    : "transparent",
-              }}
-            >
-              Русский
-            </MenuItem>
-          </Menu>
         </Box>
+        <LanguageSelectionMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
         {isTokenExpired && (
           <Typography
             variant="body2"

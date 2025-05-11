@@ -1,10 +1,14 @@
 import { Box, Typography } from "@mui/material";
 import useScreenSize from "../hooks/useScreenSize";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../context/AuthContext";
 
 const CustomFooter = () => {
+  const { user } = useAuth();
   const { isMobile } = useScreenSize();
   const { t } = useTranslation();
+
+  if (!user) return null;
 
   return (
     <Box

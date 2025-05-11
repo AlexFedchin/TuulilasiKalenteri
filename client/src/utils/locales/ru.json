@@ -522,7 +522,7 @@
     "passwordPlaceholder": "Введите пароль",
     "loginButton": "Войти",
     "expiredSession": "Ваша сессия устарела. Пожалуйста, войдите снова.",
-    "forgotPassword": "Забыл пароль?"
+    "forgotPassword": "Забыли пароль?"
   },
   "forgotPasswordModal": {
     "title": "Восстановление пароля",
