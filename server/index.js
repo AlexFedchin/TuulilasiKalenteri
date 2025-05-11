@@ -42,9 +42,39 @@ app.get("/*splat", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
+// Check for required environment variables
+const requiredEnvVars = [
+  "JWT_SECRET",
+  "DB_URI",
+  "EMAIL_USER",
+  "EMAIL_PASS",
+  "CLIENT_URL",
+];
+const missingEnvVars = requiredEnvVars.filter(
+  (varName) => !process.env[varName]
+);
+
+if (missingEnvVars.length > 0) {
+  console.error(
+    `Error: Missing the following environment variables in .env: ${missingEnvVars.join(
+      ", "
+    )}.`
+  );
+  console.error(`
+    Please add the following variables to your .env file:
+    - JWT_SECRET: A secret key used for signing JSON Web Tokens.
+    - DB_URI: The connection string for your MongoDB.
+    - EMAIL_USER: The email address used for sending emails.
+    - EMAIL_PASS: The password for the email account.
+    - CLIENT_URL: The URL of the client application.
+  `);
+  process.exit(1);
+}
+
 // Start the server after connecting to the database
 const startServer = async () => {
   await connectToDatabase();
+  console.log("Starting server...");
   app.listen(3000, () => {
     console.log(`Server listening on port 3000`);
   });
