@@ -56,9 +56,13 @@ const missingEnvVars = requiredEnvVars.filter(
 );
 
 if (missingEnvVars.length > 0) {
-  console.error(chalk.bold.red("\nError:"), chalk.bold.white(`Missing the following environment variables in .env: ${missingEnvVars.join(
-      ", "
-    )}.`)
+  console.error(
+    chalk.bold.red("\nError:"),
+    chalk.bold.white(
+      `Missing the following environment variables in .env: ${missingEnvVars.join(
+        ", "
+      )}.`
+    )
   );
   console.error(`
     Please add the following variables to your .env file:
@@ -76,8 +80,18 @@ const startServer = async () => {
   await connectToDatabase();
   console.log(chalk.italic("\nStarting the server..."));
   app.listen(3000, () => {
-    console.log(chalk.green("\n  ➜"), chalk.bold.white(" Server is up and running!"));
-    console.log(chalk.green("  ➜"), chalk.bold.white(" Listening on:"), chalk.cyan("http://localhost:") + chalk.bold.cyan("3000") + chalk.cyan("/"), "\n");
+    console.log(
+      chalk.green("\n  ➜"),
+      chalk.bold.white(" Server is up and running!")
+    );
+    console.log(
+      chalk.green("  ➜"),
+      chalk.bold.white(" Listening on:"),
+      chalk.cyan("http://localhost:") +
+        chalk.bold.cyan("3000") +
+        chalk.cyan("/"),
+      "\n"
+    );
   });
 };
 
