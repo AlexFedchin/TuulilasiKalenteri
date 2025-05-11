@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
+import SendIcon from "@mui/icons-material/ForwardToInbox";
 import { useTranslation } from "react-i18next";
 import useScreenSize from "../hooks/useScreenSize.js";
 import { useEffect } from "react";
@@ -52,17 +53,17 @@ const ForgotPasswordModal = ({ onClose }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Something went wrong");
+        throw new Error(data.error || t("alert.unexpectedError"));
       }
 
       setStep(2);
 
       setTimeout(() => {
         onClose();
-        alert.success("An email has been sent");
+        alert.success(t("alert.resetEmailSent"));
       }, 1500);
     } catch (error) {
-      setError(error.message || "An error occurred. Please try again.");
+      setError(error.message || t("alert.unexpectedError"));
     } finally {
       setLoading(false);
     }
@@ -99,7 +100,7 @@ const ForgotPasswordModal = ({ onClose }) => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h4">Restore Password</Typography>
+          <Typography variant="h4">{t("forgotPasswordModal.title")}</Typography>
           <IconButton
             onClick={onClose}
             disabled={loading}
@@ -159,7 +160,7 @@ const ForgotPasswordModal = ({ onClose }) => {
                     color: "var(--off-black)",
                   }}
                 >
-                  Enter your account's username
+                  {t("forgotPasswordModal.subtitle")}
                 </Typography>
                 <Box
                   sx={{
@@ -173,8 +174,8 @@ const ForgotPasswordModal = ({ onClose }) => {
                     variant="outlined"
                     size="small"
                     type="text"
-                    label="Username"
-                    placeholder="Enter your username"
+                    label={t("forgotPasswordModal.usernameLabel")}
+                    placeholder={t("forgotPasswordModal.usernamePlaceholder")}
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
@@ -185,9 +186,7 @@ const ForgotPasswordModal = ({ onClose }) => {
                   )}
                 </Box>
                 <Alert severity="info">
-                  You will get a letter to the email which was given when
-                  registering your account. This email will contain a link to
-                  reset your password.
+                  {t("forgotPasswordModal.details")}
                 </Alert>
               </Box>
 
@@ -197,10 +196,10 @@ const ForgotPasswordModal = ({ onClose }) => {
                 loadingPosition="start"
                 disabled={!username}
                 sx={{ width: "100%" }}
-                startIcon={<DoneIcon />}
+                startIcon={<SendIcon />}
                 onClick={handleSubmit}
               >
-                Submit
+                {t("forgotPasswordModal.sendResetLink")}
               </Button>
             </>
           )}
@@ -241,7 +240,7 @@ const ForgotPasswordModal = ({ onClose }) => {
                   color: "var(--success)",
                 }}
               >
-                An email with a reset link has been sent to you
+                {t("forgotPasswordModal.successMessage")}
               </Typography>
             </Box>
           )}

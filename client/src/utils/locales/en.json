@@ -54,6 +54,9 @@
     "orderMarkedAsCompleted": "Order marked as completed!",
     "orderMarkedAsUncompleted": "Order marked as uncompleted!",
     "loginSuccess": "You are now logged in as {{username}}",
+    "accountDeleteSuccess": "Account deleted successfully!",
+    "resetEmailSent": "An email with reset link has been sent!",
+    "resetPasswordSuccess": "Password reset successfully! Please don't forget it this time.",
     "unexpectedError": "An unexpected error occurred. Please try again later."
   },
   "userModal": {
@@ -149,7 +152,7 @@
   },
   "usersTab": {
     "searchPlaceholder": "Search for users...",
-    "confirmDelete": "Are you sure you want to delete the <b>{{username}}</b> user? The user and all of their bookings will be deleted. This action <b>cannot be undone</b>."
+    "confirmDelete": "Are you sure you want to delete the <b>{{username}}</b> user? The user will lose access to their account forever. All of their bookings will remain. This action <b>cannot be undone</b>."
   },
   "locationsTab": {
     "searchPlaceholder": "Search for locations...",
@@ -300,7 +303,9 @@
     "lastNamePlaceholder": "Enter your last name",
     "emailLabel": "Email",
     "emailPlaceholder": "Enter your email",
-    "passwordLabel": "Password"
+    "passwordLabel": "Password",
+    "deleteAccount": "Delete my account",
+    "deleteAccountConfirm": "Are you sure you want to delete your account? You will lose access to it forever. All of your bookings will remain. This action <strong>cannot be undone</strong>."
   },
   "changePasswordModal": {
     "title": "Change Password",
@@ -516,6 +521,31 @@
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
     "loginButton": "Login",
-    "expiredSession": "Your session has expired. Please log in again."
+    "expiredSession": "Your session has expired. Please log in again.",
+    "forgotPassword": "Forgot password?"
+  },
+  "forgotPasswordModal": {
+    "title": "Restore Password",
+    "subtitle": "Enter your username",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "details": "You will get a letter to the email which was given when registering your account. This email will contain a link to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "successMessage": "An email with a reset link has been sent to you! Please check your inbox."
+  },
+  "resetPassword": {
+    "invalidLinkTitle": "Your reset link is invalid",
+    "invalidLinkSubtitle": "This link has either expired or has already been used. If you need to reset your password, please request a new reset link.",
+    "title": "Reset Password",
+    "subtitle": "Enter your new password",
+    "usernameLabel": "Username",
+    "newPasswordLabel": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your new password",
+    "resetPasswordButton": "Reset Password",
+    "successMessage": "Password changed successfully! You can now log in with your new password.",
+    "fillAllFields": "Please fill in all fields",
+    "passwordsDoNotMatch": "Passwords do not match"
   }
 }

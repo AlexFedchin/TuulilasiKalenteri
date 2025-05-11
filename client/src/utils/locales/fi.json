@@ -54,6 +54,9 @@
     "orderMarkedAsCompleted": "Tilaus merkitty valmiiksi onnistuneesti!",
     "orderMarkedAsUncompleted": "Tilaus merkitty ei valmiiksi onnistuneesti!",
     "copiedToClipboard": "Kopioitu leikepöydälle",
+    "accountDeleteSuccess": "Käyttäjä poistettu onnistuneesti!",
+    "resetEmailSent": "Sähköposti, jossa on palautuslinkki, on lähetetty!",
+    "resetPasswordSuccess": "Salasana palautettu onnistuneesti! Älä unohda sitä tällä kertaa.",
     "unexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin."
   },
   "userModal": {
@@ -149,7 +152,7 @@
   },
   "usersTab": {
     "searchPlaceholder": "Etsi käyttäjiä...",
-    "confirmDelete": "Oletko varma, että haluat poistaa käyttäjän <b>{{username}}</b>? Käyttäjä ja kaikki hänen varauksensa poistetaan. Tätä toimintoa <b>ei voi peruuttaa</b>."
+    "confirmDelete": "Oletko varma, että haluat poistaa käyttäjän <b>{{username}}</b>? Käyttäjä menettää pääsyn tiliinsä pysyvästi. Kaikki hänen varauksensa säilyvät. Tätä toimintoa <b>ei voi peruuttaa</b>."
   },
   "locationsTab": {
     "searchPlaceholder": "Etsi sijainteja...",
@@ -300,7 +303,9 @@
     "lastNamePlaceholder": "Syötä sukunimesi",
     "emailLabel": "Sähköposti",
     "emailPlaceholder": "Syötä sähköpostisi",
-    "passwordLabel": "Salasana"
+    "passwordLabel": "Salasana",
+    "deleteAccount": "Poista tilini",
+    "deleteAccountConfirm": "Oletko varma, että haluat poistaa tilisi? Menetät pääsyn siihen pysyvästi. Kaikki varauksesi säilyvät. Tätä toimintoa <strong>ei voi peruuttaa</strong>."
   },
   "changePasswordModal": {
     "title": "Vaihda salasana",
@@ -516,6 +521,31 @@
     "password": "Salasana",
     "passwordPlaceholder": "Syötä salasana",
     "loginButton": "Kirjaudu sisään",
-    "expiredSession": "Istuntosi on vanhentunut. Kirjaudu sisään uudelleen."
+    "expiredSession": "Istuntosi on vanhentunut. Kirjaudu sisään uudelleen.",
+    "forgotPassword": "Unohditko salasanasi?"
+  },
+  "forgotPasswordModal": {
+    "title": "Palauta salasana",
+    "subtitle": "Syötä käyttäjänimesi",
+    "usernameLabel": "Käyttäjänimi",
+    "usernamePlaceholder": "Syötä käyttäjänimesi",
+    "details": "Saat sähköpostin, joka on annettu rekisteröidessäsi tilin. Tämä sähköposti sisältää linkin salasanan palauttamiseen.",
+    "sendResetLink": "Lähetä palautuslinkki",
+    "successMessage": "Sähköposti, jossa on palautuslinkki, on lähetetty sinulle! Tarkista postilaatikkosi."
+  },
+  "resetPassword": {
+    "invalidLinkTitle": "Palautuslinkkisi on virheellinen",
+    "invalidLinkSubtitle": "Tämä linkki on joko vanhentunut tai sitä on jo käytetty. Jos sinun täytyy palauttaa salasanasi, pyydä uusi palautuslinkki.",
+    "title": "Palauta salasana",
+    "subtitle": "Syötä uusi salasanasi",
+    "usernameLabel": "Käyttäjänimi",
+    "newPasswordLabel": "Uusi salasana",
+    "newPasswordPlaceholder": "Syötä uusi salasanasi",
+    "confirmPasswordLabel": "Vahvista salasana",
+    "confirmPasswordPlaceholder": "Vahvista uusi salasanasi",
+    "resetPasswordButton": "Palauta salasana",
+    "successMessage": "Salasana vaihdettu onnistuneesti! Voit nyt kirjautua sisään uudella salasanallasi.",
+    "fillAllFields": "Täytä kaikki kentät",
+    "passwordsDoNotMatch": "Salasanat eivät täsmää"
   }
 }

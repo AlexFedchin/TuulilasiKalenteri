@@ -107,7 +107,7 @@ const deleteUser = async (req, res) => {
       await location.save();
     }
 
-    res.status(204).json({ deletedUserId: deletedUser._id });
+    res.status(200).json({ deletedUserId: deletedUser._id });
   } catch (error) {
     console.error("Error deleting user:", error);
     res.status(500).json({ error: error.message });

@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import ResetIcon from "@mui/icons-material/Sync";
 import LanguageIcon from "@mui/icons-material/Language";
 import DoneIcon from "@mui/icons-material/Done";
 import DefaultContainer from "../components/DefaultContainer";
@@ -94,17 +95,17 @@ const ResetPassword = () => {
     setSubmitting(true);
 
     try {
-      if (!form.password || !form.confirmPassword) {
-        throw new Error("Please fill in all fields");
+      if (!form.password.trim() || !form.confirmPassword.trim()) {
+        throw new Error(t("resetPassword.fillAllFields"));
       }
 
       if (form.password.trim() !== form.confirmPassword.trim()) {
-        throw new Error("Passwords do not match");
+        throw new Error(t("resetPassword.passwordsDoNotMatch"));
       }
 
       // Validate password and confirm password
       const { error } = passwordValidationSchema.validate(
-        { password: form.password },
+        { password: form.password.trim() },
         {
           abortEarly: false,
         }
@@ -128,17 +129,13 @@ const ResetPassword = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.error || "Something went wrong. Please try again."
-        );
+        throw new Error(data.error || t("alert.unexpectedError"));
       }
 
       setShowSuccess(true);
       setTimeout(() => {
         navigate("/");
-        alert.success(
-          "Password changes successfully! Please don't forget it this time."
-        );
+        alert.success(t("alert.passwordResetSuccess"));
       }, 2000);
     } catch (error) {
       setError(error.message);
@@ -180,11 +177,10 @@ const ResetPassword = () => {
       ) : tokenError ? (
         <Box>
           <Typography variant="h2" sx={{ color: "var(--accent)" }}>
-            Your reset link is invalid
+            {t("resetPassword.invalidLinkTitle")}
           </Typography>
           <Typography variant="body1" marginTop={2}>
-            It has either expired or has already been used. If you need to reset
-            your password, please request a new reset link.
+            {t("resetPassword.invalidLinkSubtitle")}
           </Typography>
         </Box>
       ) : showSuccess ? (
@@ -217,7 +213,7 @@ const ResetPassword = () => {
               color: "var(--success)",
             }}
           >
-            Password changed successfully!
+            {t("resetPassword.successMessage")}
           </Typography>
         </Box>
       ) : (
@@ -241,7 +237,7 @@ const ResetPassword = () => {
             }}
           >
             <Typography variant="h3" width="100%">
-              Reset Password
+              {t("resetPassword.title")}
             </Typography>
             <IconButton
               sx={{ position: "absolute", right: 0 }}
@@ -274,7 +270,7 @@ const ResetPassword = () => {
                       : "transparent",
                 }}
               >
-                Finnish
+                Suomi
               </MenuItem>
               <MenuItem
                 onClick={() => changeLanguage("ru")}
@@ -292,7 +288,7 @@ const ResetPassword = () => {
 
           <TextField
             fullWidth
-            label={"Username"}
+            label={t("resetPassword.usernameLabel")}
             type="text"
             name="username"
             disabled
@@ -302,7 +298,8 @@ const ResetPassword = () => {
           />
           <TextField
             fullWidth
-            label={"New Password"}
+            label={t("resetPassword.newPasswordLabel")}
+            placeholder={t("resetPassword.newPasswordPlaceholder")}
             name="password"
             type={showPassword ? "text" : "password"}
             margin={isMobile ? "dense" : "normal"}
@@ -338,7 +335,8 @@ const ResetPassword = () => {
           />
           <TextField
             fullWidth
-            label={"Confirm Password"}
+            label={t("resetPassword.confirmPasswordLabel")}
+            placeholder={t("resetPassword.confirmPasswordPlaceholder")}
             name="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
             margin={isMobile ? "dense" : "normal"}
@@ -382,11 +380,12 @@ const ResetPassword = () => {
             variant="submit"
             loading={submitting}
             loadingPosition="start"
+            startIcon={<ResetIcon />}
             disabled={!form.password || !form.confirmPassword}
             size={isMobile ? "normal" : "large"}
             sx={{ mt: isMobile ? 1 : 2, width: "100%" }}
           >
-            {"Reset Password"}
+            {t("resetPassword.resetPasswordButton")}
           </Button>
         </form>
       )}

@@ -7,6 +7,7 @@ import {
   Divider,
   IconButton,
   TextField,
+  Button,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import PersonIcon from "@mui/icons-material/Person";
@@ -15,12 +16,14 @@ import LockIcon from "@mui/icons-material/Lock";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteAccountIcon from "@mui/icons-material/PersonRemove";
 import DefaultContainer from "../components/DefaultContainer";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import { useAuth } from "../context/AuthContext";
 import useScreenSize from "../hooks/useScreenSize";
 import { alert } from "../utils/alert";
 import { useTranslation } from "react-i18next";
+import ConfirmModal from "../components/ConfirmModal";
 
 const getStyles = (isMobile, isTablet) => ({
   boxContainer: {
@@ -65,7 +68,7 @@ const getStyles = (isMobile, isTablet) => ({
 });
 
 const MyProfile = () => {
-  const { user, setUser, token } = useAuth();
+  const { user, setUser, token, logout } = useAuth();
   const { isMobile, isTablet } = useScreenSize();
   const { t } = useTranslation();
   const [editField, setEditField] = useState(null);
@@ -77,6 +80,7 @@ const MyProfile = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
   const styles = getStyles(isMobile, isTablet);
 
@@ -128,6 +132,34 @@ const MyProfile = () => {
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await fetch(`/api/users/${user.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || t("alert.unexpectedError"));
+      }
+
+      alert.success(t("alert.accountDeleteSuccess"));
+      logout();
+    } catch (error) {
+      alert.error(
+        `${t("alert.error")}: ${error.message || t("alert.unexpectedError")}`
+      );
+      console.error("Error deleting account:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -418,8 +450,28 @@ const MyProfile = () => {
               <EditIcon fontSize={isMobile ? "small" : "medium"} />
             </IconButton>
           </Box>
+          <Divider />
+
+          {/* Delete Account */}
+          <Button
+            variant="delete"
+            startIcon={<DeleteAccountIcon />}
+            onClick={() => setOpenConfirmModal(true)}
+            sx={{ mt: 1 }}
+          >
+            {t("myProfile.deleteAccount")}
+          </Button>
         </CardContent>
       </Card>
+
+      {/* Delete Account Confirmation Modal */}
+      {openConfirmModal && (
+        <ConfirmModal
+          onClose={() => setOpenConfirmModal(false)}
+          onConfirm={handleDeleteAccount}
+          text={t("myProfile.deleteAccountConfirm")}
+        />
+      )}
 
       {/* Password Modal */}
       {openPasswordModal && (

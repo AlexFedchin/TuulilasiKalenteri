@@ -152,7 +152,7 @@ const Authentication = () => {
                     : "transparent",
               }}
             >
-              Finnish
+              Suomi
             </MenuItem>
             <MenuItem
               onClick={() => changeLanguage("ru")}
@@ -245,7 +245,7 @@ const Authentication = () => {
             setError("");
           }}
         >
-          Forgot password?
+          {t("authentication.forgotPassword")}
         </Button>
       </form>
 
