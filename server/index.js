@@ -11,6 +11,7 @@ const locationsRoutes = require("./routes/locationsRouter");
 const notesRoutes = require("./routes/notesRouter");
 const ordersRoutes = require("./routes/ordersRouter");
 const invoicesRoutes = require("./routes/invoicesRouter");
+const chalk = require("chalk");
 const app = express();
 
 // Parse command line arguments to set the environment mode
@@ -55,10 +56,9 @@ const missingEnvVars = requiredEnvVars.filter(
 );
 
 if (missingEnvVars.length > 0) {
-  console.error(
-    `Error: Missing the following environment variables in .env: ${missingEnvVars.join(
+  console.error(chalk.bold.red("\nError:"), chalk.bold.white(`Missing the following environment variables in .env: ${missingEnvVars.join(
       ", "
-    )}.`
+    )}.`)
   );
   console.error(`
     Please add the following variables to your .env file:
@@ -74,9 +74,10 @@ if (missingEnvVars.length > 0) {
 // Start the server after connecting to the database
 const startServer = async () => {
   await connectToDatabase();
-  console.log("Starting server...");
+  console.log(chalk.italic("\nStarting the server..."));
   app.listen(3000, () => {
-    console.log(`Server listening on port 3000`);
+    console.log(chalk.green("\n  ➜"), chalk.bold.white(" Server is up and running!"));
+    console.log(chalk.green("  ➜"), chalk.bold.white(" Listening on:"), chalk.cyan("http://localhost:") + chalk.bold.cyan("3000") + chalk.cyan("/"), "\n");
   });
 };
 
