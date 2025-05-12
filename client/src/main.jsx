@@ -4,7 +4,7 @@ import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./utils/i18n";
-import SnackbarProviderWrapper from "./context/SnackbarProviderWrapper";
+import SnackbarProviderWrapper from "./utils/snackbars/SnackbarProviderWrapper";
 import useScreenSize from "./hooks/useScreenSize.js";
 
 const Root = () => {
