@@ -3,8 +3,9 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const Location = require("../models/location");
 require("dotenv").config();
-const sendEmail = require("../utils/sendEmail");
-const getResetEmailTemplate = require("../utils/resetEmailTemplate");
+const sendEmail = require("../emails/sendEmail");
+const getResetEmailTemplate = require("../emails/resetEmailTemplate");
+const getWelcomeEmailTemplate = require("../emails/welcomeEmailTemplate");
 
 // Registration logic
 const register = async (req, res) => {
@@ -75,6 +76,28 @@ const register = async (req, res) => {
 
     const savedUser = await newUser.save();
 
+    const userAuthor = await User.findById(req.user.id);
+
+    // Send email to notify the user
+    const emailHtml = getWelcomeEmailTemplate(
+      savedUser.firstName,
+      savedUser.lastName,
+      savedUser.username,
+      savedUser.email,
+      savedUser.role,
+      savedUser.role === "regular" && usersLocation !== null
+        ? usersLocation.title
+        : null,
+      `${userAuthor.firstName} ${userAuthor.lastName}`,
+      process.env.CLIENT_URL
+    );
+
+    await sendEmail(
+      savedUser.email,
+      "Welcome to TuulilasiKalenteri",
+      emailHtml
+    );
+
     res.status(201).json({
       _id: savedUser._id,
       username: savedUser.username,
@@ -83,7 +106,7 @@ const register = async (req, res) => {
       email: savedUser.email,
       role: savedUser.role,
       location: savedUser.location,
-      locationTitle: usersLocation.title,
+      locationTitle: usersLocation?.title,
     });
   } catch (error) {
     console.error("Error during registration:", error);

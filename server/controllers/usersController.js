@@ -53,6 +53,19 @@ const updateUser = async (req, res) => {
     updatedUserData.password = await bcrypt.hash(password?.trim(), 10);
   }
 
+  // Check if user with this email already exists
+  if (email) {
+    const existingUserEmail = await User.findOne({ email });
+    if (
+      existingUserEmail &&
+      existingUserEmail._id.toString() !== req.params.id
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Some user is already using this email" });
+    }
+  }
+
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,

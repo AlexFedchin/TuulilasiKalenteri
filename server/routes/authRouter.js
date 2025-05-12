@@ -15,7 +15,12 @@ const validatePassword = require("../middlewares/validatePassword");
 const router = express.Router();
 
 router.post("/login", login);
-router.post("/register", validateUserData(false), register);
+router.post(
+  "/register",
+  authenticate(["admin"]),
+  validateUserData(false),
+  register
+);
 router.post("/logout", authenticate(["admin", "regular"]), logout);
 router.get("/verify-token", authenticate(["admin", "regular"]), verifyToken);
 router.post(
