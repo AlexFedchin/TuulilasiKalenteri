@@ -189,7 +189,7 @@ const Authentication = () => {
         >
           {t("authentication.loginButton")}
         </Button>
-        {/* <Button
+        <Button
           variant="secondary"
           size={isMobile ? "normal" : "large"}
           sx={{
@@ -202,7 +202,7 @@ const Authentication = () => {
           }}
         >
           {t("authentication.forgotPassword")}
-        </Button> */}
+        </Button>
       </form>
 
       {isForgotPasswordOpen && (
