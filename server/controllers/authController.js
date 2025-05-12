@@ -260,7 +260,8 @@ const forgotPassword = async (req, res) => {
 
     const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
     const emailHtml = getResetEmailTemplate(
-      `${user.firstName} ${user.lastName} (${user.username})`,
+      `${user.firstName} ${user.lastName}`,
+      user.username,
       resetLink,
       process.env.CLIENT_URL
     );

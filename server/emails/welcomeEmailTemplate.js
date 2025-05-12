@@ -12,7 +12,7 @@ const getWelcomeEmailTemplate = (
     <img
       src="${clientUrl}/logo.png"
       alt="TuulilasiKalenteri"
-      style="width: 200px; height: auto; margin-bottom: 20px;"
+      style="max-width: 250px; height: auto;"
     />
     <h2 style="color: #2aa4eb;">Welcome to TuulilasiKalenteri!</h2>
     <p style="color: #191919;">Hi <strong>${firstName} ${lastName}</strong>,</p>
@@ -57,7 +57,7 @@ const getWelcomeEmailTemplate = (
     </table>
     <p style="color: #191919;">You can now log in and start using the platform. For safety purposes your password is not sent in this email. Please, ask for the password for your account from ${admin}.</p>
     <a href="${clientUrl}" style="display: inline-block; background-color: #2aa4eb; color: #fcfcfc; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: 550;">Go to TuulilasiKalenteri</a>
-    <p style="margin-top: 20px; color: #191919;">– TuulilasiKalenteri Team</p>
+    <p style="margin-top: 20px; color: #191919; font-style: italic;">– TuulilasiKalenteri Team</p>
   </div>
 `;
 module.exports = getWelcomeEmailTemplate;
