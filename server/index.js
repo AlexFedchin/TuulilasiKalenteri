@@ -25,10 +25,6 @@ if (args.dev) {
 // Serve frontend (in production)
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
-app.get("/api", (req, res) => {
-  res.json({ message: "This is a server for the Tuulilasi Pojat Calendar" });
-});
-
 app.use(express.json());
 app.use("/api/bookings", bookingsRoutes);
 app.use("/api/auth", authRoutes);
