@@ -38,14 +38,6 @@ app.use("/api/notes", notesRoutes);
 app.use("/api/orders", ordersRoutes);
 app.use("/api/invoices", invoicesRoutes);
 
-app.use((req, res, next) => {
-  // If the host is "tuulilasikalenteri.fi", redirect to "www.tuulilasikalenteri.fi"
-  if (req.headers.host === "tuulilasikalenteri.fi") {
-    return res.redirect(301, `https://www.tuulilasikalenteri.fi${req.url}`);
-  }
-  next();
-});
-
 // Catch-all route to show 404 page for unmatched routes
 app.get("/*splat", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
