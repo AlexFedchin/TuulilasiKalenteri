@@ -80,10 +80,9 @@ const InvoicesTab = () => {
   const handleMarkAsSent = async () => {
     if (submitting) return;
     setSubmitting(true);
-    const url =
-      view === "sent"
-        ? "/api/invoices/mark-as-unsent"
-        : "/api/invoices/mark-as-sent";
+    const url = `/api/invoices/change-invoice-status?invoiceMade=${
+      view === "notSent"
+    }`;
 
     try {
       const response = await fetch(url, {
@@ -131,10 +130,7 @@ const InvoicesTab = () => {
     const fetchInvoices = async () => {
       setLoading(true);
       try {
-        const url =
-          view === "sent"
-            ? "/api/invoices/sent-invoices"
-            : "/api/invoices/unsent-invoices";
+        const url = `/api/invoices/?invoiceMade=${view === "sent"}`;
         const response = await fetch(url, {
           method: "GET",
           headers: {
