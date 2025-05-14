@@ -32,8 +32,8 @@ const Bookings = () => {
   const { user, token } = useAuth();
   const { isMobile } = useScreenSize();
   const [bookings, setBookings] = useState([]);
-  const [processedBookings, setProcessedBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState("all");
   const [filter, setFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,30 +42,57 @@ const Bookings = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const [view, setView] = useState("all");
+  const [totalBookings, setTotalBookings] = useState(0);
+  const totalPages = Math.ceil(totalBookings / bookingsPerPage);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    setLoading(true);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setPage(1);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   // Fetch bookings from the API on mount
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const url =
-          view === "all" ? "/api/bookings" : `/api/bookings?userId=${user.id}`;
+        setLoading(true);
 
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+        const params = new URLSearchParams({
+          page,
+          limit: bookingsPerPage,
+          filter,
+          sortOrder,
         });
+
+        if (view === "my") {
+          params.append("userId", user.id);
+        }
+
+        if (debouncedSearch) {
+          params.append("search", debouncedSearch);
+        }
+
+        const response = await fetch(
+          `/api/bookings/bookings-page?${params.toString()}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         const data = await response.json();
 
-        if (!response.ok) {
+        if (!response.ok)
           throw new Error(data.error || t("alert.unexpectedError"));
-        }
 
-        setBookings(data);
+        setBookings(data.bookings);
+        setTotalBookings(data.total);
       } catch (error) {
         console.error("Error fetching bookings:", error);
         alert.error(
@@ -77,7 +104,7 @@ const Bookings = () => {
     };
 
     fetchBookings();
-  }, [token, user, view]);
+  }, [page, filter, sortOrder, view, token, user, debouncedSearch, t]);
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
@@ -138,54 +165,6 @@ const Bookings = () => {
       setOpenDeleteModal(false);
     }
   };
-
-  // Filter, sort, and search bookings
-  useEffect(() => {
-    const processBookings = () => {
-      let processedBookings = [...bookings];
-
-      // Apply filter
-      if (filter === "past") {
-        processedBookings = processedBookings.filter(
-          (booking) => new Date(booking.date) < new Date()
-        );
-      } else if (filter === "upcoming") {
-        processedBookings = processedBookings.filter(
-          (booking) => new Date(booking.date) >= new Date()
-        );
-      }
-
-      // Apply search
-      if (searchTerm) {
-        const lowerCaseTerm = searchTerm.toLowerCase();
-        processedBookings = processedBookings.filter((booking) =>
-          Object.values(booking).some(
-            (value) =>
-              typeof value === "string" &&
-              value.toLowerCase().includes(lowerCaseTerm)
-          )
-        );
-      }
-
-      // Apply sorting
-      processedBookings.sort((a, b) => {
-        if (sortOrder === "newest") {
-          return new Date(b.date) - new Date(a.date);
-        } else {
-          return new Date(a.date) - new Date(b.date);
-        }
-      });
-
-      setProcessedBookings(processedBookings);
-    };
-
-    processBookings();
-  }, [filter, searchTerm, sortOrder, bookings]);
-
-  const paginatedBookings = processedBookings.slice(
-    (page - 1) * bookingsPerPage,
-    page * bookingsPerPage
-  );
 
   return (
     <DefaultContainer>
@@ -322,8 +301,8 @@ const Bookings = () => {
         </Card>
 
         {loading ? (
-          <Loader style={{ marginTop: "29vh" }} />
-        ) : processedBookings.length > 0 ? (
+          <Loader style={{ marginTop: "29vh", marginBottom: "29vh" }} />
+        ) : bookings.length > 0 ? (
           <Box
             sx={{
               maxWidth: "800px",
@@ -334,7 +313,7 @@ const Bookings = () => {
               alignItems: "center",
             }}
           >
-            {paginatedBookings.map((booking) => (
+            {bookings.map((booking) => (
               <BookingCard
                 key={booking._id}
                 booking={booking}
@@ -343,10 +322,10 @@ const Bookings = () => {
               />
             ))}
 
-            {processedBookings.length > bookingsPerPage && (
+            {totalPages > 1 && (
               <Pagination
                 color="primary"
-                count={Math.ceil(processedBookings.length / bookingsPerPage)}
+                count={totalPages}
                 page={page}
                 onChange={(_, value) => setPage(value)}
                 boundaryCount={1}
@@ -363,7 +342,7 @@ const Bookings = () => {
             )}
           </Box>
         ) : (
-          <Typography variant="body2" sx={{ fontStyle: "italic", mt: "29vh" }}>
+          <Typography variant="body2" sx={{ fontStyle: "italic", my: "29vh" }}>
             {t("bookingsPage.noBookings")}
           </Typography>
         )}

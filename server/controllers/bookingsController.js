@@ -9,54 +9,10 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const getAllBookings = async (req, res) => {
-  const {
-    carModel,
-    plateNumber,
-    phoneNumber,
-    eurocode,
-    price,
-    inStock,
-    warehouseLocation,
-    isOrdered,
-    clientType,
-    payerType,
-    insuranceCompany,
-    insuranceNumber,
-    date,
-    startDate,
-    endDate,
-    duration,
-    notes,
-    location,
-    userId,
-    isWorkDone,
-    insuranceCompanyName,
-    invoiceMade,
-  } = req.query;
+  const { date, startDate, endDate, location, userId } = req.query;
 
   let filter = {};
 
-  if (carModel) filter.carModel = new RegExp(carModel, "i");
-  if (isWorkDone !== undefined) filter.isWorkDone = isWorkDone === "true";
-  if (plateNumber) filter.plateNumber = new RegExp(plateNumber, "i");
-  if (phoneNumber) filter.phoneNumber = new RegExp(phoneNumber, "i");
-  if (eurocode) filter.eurocode = new RegExp(eurocode, "i");
-  if (price) filter.price = Number(price);
-  if (inStock !== undefined) filter.inStock = inStock === "true";
-  if (warehouseLocation)
-    filter.warehouseLocation = new RegExp(warehouseLocation, "i");
-  if (isOrdered !== undefined) filter.isOrdered = isOrdered === "true";
-  if (clientType) filter.clientType = new RegExp(clientType, "i");
-  if (payerType) filter.payerType = new RegExp(payerType, "i");
-  if (insuranceCompany)
-    filter.insuranceCompany = new RegExp(insuranceCompany, "i");
-  if (insuranceCompanyName)
-    filter.insuranceCompanyName = new RegExp(insuranceCompanyName, "i");
-  if (invoiceMade) filter.invoiceMade = invoiceMade === "true";
-  if (insuranceNumber)
-    filter.insuranceNumber = new RegExp(insuranceNumber, "i");
-  if (duration) filter.duration = Number(duration);
-  if (notes) filter.notes = new RegExp(notes, "i");
   if (location) filter.location = location;
 
   if (startDate && endDate) {
@@ -104,6 +60,84 @@ const getAllBookings = async (req, res) => {
     res.json(bookings);
   } catch (error) {
     console.error("Error getting all bookings:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getBookingsForBookingsPage = async (req, res) => {
+  const {
+    userId,
+    filter = "all",
+    sortOrder = "newest",
+    page = 1,
+    limit = 5,
+  } = req.query;
+
+  let mongoFilter = {};
+  const now = new Date();
+
+  // Apply user role restrictions
+  if (req.user.role === "admin") {
+    if (userId) {
+      const user = await User.findById(userId);
+      if (!user) return res.status(404).json({ error: "User not found" });
+      mongoFilter.createdBy = user._id;
+    }
+  } else if (req.user.role === "regular") {
+    mongoFilter.createdBy = req.user.id;
+  } else {
+    return res.status(403).json({ error: "Unauthorized" });
+  }
+
+  // Apply time-based filters
+  if (filter === "past") {
+    mongoFilter.date = { ...mongoFilter.date, $lt: now };
+  } else if (filter === "upcoming") {
+    mongoFilter.date = { ...mongoFilter.date, $gte: now };
+  }
+
+  // Apply search filter
+  if (req.query.search) {
+    const searchRegex = new RegExp(req.query.search, "i");
+
+    // Get all string paths from the schema
+    const textFields = Object.entries(Booking.schema.paths)
+      .filter(([_, path]) => path.instance === "String")
+      .map(([key]) => ({ [key]: searchRegex }));
+
+    if (textFields.length > 0) {
+      mongoFilter.$or = textFields;
+    }
+  }
+
+  const sort = sortOrder === "newest" ? { date: -1 } : { date: 1 };
+  const skip = (parseInt(page) - 1) * parseInt(limit);
+
+  try {
+    const total = await Booking.countDocuments(mongoFilter);
+
+    let bookings = await Booking.find(mongoFilter)
+      .sort(sort)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    if (req.user.role === "admin") {
+      bookings = await Promise.all(
+        bookings.map(async (booking) => {
+          const creator = await User.findById(booking.createdBy);
+          return {
+            ...booking.toObject(),
+            creatorName: creator
+              ? `${creator.firstName} ${creator.lastName}`
+              : "Unknown",
+          };
+        })
+      );
+    }
+
+    res.json({ bookings, total });
+  } catch (error) {
+    console.error("Error getting bookings:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -400,6 +434,7 @@ const deleteBooking = async (req, res) => {
 // Export to be used in routes/bookings.js
 module.exports = {
   getAllBookings,
+  getBookingsForBookingsPage,
   getBookingById,
   createBooking,
   updateBooking,

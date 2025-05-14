@@ -6,6 +6,7 @@ const {
   updateBooking,
   changeBookingDateTime,
   deleteBooking,
+  getBookingsForBookingsPage,
 } = require("../controllers/bookingsController");
 const validateBookingData = require("../middlewares/validateBooking");
 const authenticate = require("../middlewares/authenticate");
@@ -14,6 +15,12 @@ const router = express.Router();
 
 // Public Routes (accessible by any authenticated user)
 router.get("/", authenticate(["admin", "regular"]), getAllBookings);
+
+router.get(
+  "/bookings-page",
+  authenticate(["admin", "regular"]),
+  getBookingsForBookingsPage
+);
 
 router.get(
   "/:id",

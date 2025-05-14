@@ -1,8 +1,11 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
+import { useTranslation } from "react-i18next";
+import { alert } from "../utils/alert";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const { t } = useTranslation();
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
@@ -41,29 +44,32 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
+    const verifyToken = async () => {
+      const storedUser = localStorage.getItem("user");
+      const storedToken = localStorage.getItem("token");
 
-    if (storedToken && storedUser) {
-      fetch("/api/auth/verify-token", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-        },
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Token invalid or expired");
-          return res.json();
-        })
-        .then((data) => {
+      if (storedToken && storedUser) {
+        try {
+          const res = await fetch("/api/auth/verify-token", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+
+          if (!res.ok) {
+            throw new Error("Token invalid or expired");
+          }
+
+          const data = await res.json();
+
           setUser(data.user);
           setToken(data.token);
           setIsTokenExpired(false);
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("token", data.token);
           localStorage.setItem("isTokenExpired", false);
-        })
-        .catch(() => {
+        } catch (error) {
           // Clear if invalid/expired
           setUser(null);
           setToken(null);
@@ -71,9 +77,13 @@ export const AuthProvider = ({ children }) => {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
           localStorage.setItem("isTokenExpired", true);
-        });
-    }
-  }, []);
+          alert.error(t("alert.expiredSession"));
+        }
+      }
+    };
+
+    verifyToken();
+  }, [t]);
 
   return (
     <AuthContext.Provider

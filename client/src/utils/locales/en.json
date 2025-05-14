@@ -55,6 +55,7 @@
     "orderMarkedAsUncompleted": "Order marked as uncompleted!",
     "loginSuccess": "You are now logged in as {{username}}",
     "accountDeleteSuccess": "Account deleted successfully!",
+    "expiredSession": "Your session has expired. Please log in again.",
     "resetEmailSent": "An email with reset link has been sent!",
     "resetPasswordSuccess": "Password reset successfully! Please don't forget it this time.",
     "unexpectedError": "An unexpected error occurred. Please try again later."
