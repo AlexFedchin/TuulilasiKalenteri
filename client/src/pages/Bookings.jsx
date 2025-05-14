@@ -105,7 +105,7 @@ const Bookings = () => {
     };
 
     fetchBookings();
-  }, [page, filter, sortOrder, view, token, user, debouncedSearch, t]);
+  }, [page, filter, sortOrder, view, token, user, debouncedSearch]);
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
@@ -315,12 +315,20 @@ const Bookings = () => {
             }}
           >
             {bookings.map((booking) => (
-              <NewBookingCard
-                key={booking._id}
-                booking={booking}
-                onEditClick={handleEditClick}
-                onDeleteClick={handleDeleteClick}
-              />
+              <>
+                <NewBookingCard
+                  key={booking._id}
+                  booking={booking}
+                  onEditClick={handleEditClick}
+                  onDeleteClick={handleDeleteClick}
+                />
+                {/* <BookingCard
+                  key={`old ${booking._id}`}
+                  booking={booking}
+                  onEditClick={handleEditClick}
+                  onDeleteClick={handleDeleteClick}
+                /> */}
+              </>
             ))}
 
             {totalPages > 1 && (

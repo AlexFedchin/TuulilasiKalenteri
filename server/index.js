@@ -88,6 +88,10 @@ const startServer = async () => {
         chalk.cyan("/"),
       "\n"
     );
+
+    console.log(chalk.italic("Your application is ready!"));
+    console.log(chalk.italic("Press Ctrl+C to stop the server\n"));
+    console.log(chalk.italic("Waiting for changes...\n"));
   });
 };
 
