@@ -26,6 +26,7 @@ import ConfirmModal from "../components/ConfirmModal";
 import dayjs from "dayjs";
 import useScreenSize from "../hooks/useScreenSize";
 import { useTranslation } from "react-i18next";
+import NewBookingCard from "../components/bookings/NewBookingCard";
 
 const Bookings = () => {
   const { t } = useTranslation();
@@ -314,7 +315,7 @@ const Bookings = () => {
             }}
           >
             {bookings.map((booking) => (
-              <BookingCard
+              <NewBookingCard
                 key={booking._id}
                 booking={booking}
                 onEditClick={handleEditClick}
