@@ -25,7 +25,94 @@ const getInvoices = async (req, res) => {
     }
 
     res.json(bookings);
-  } catch {
+  } catch (error) {
+    console.error("Error getting bookings:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getInvoicesForInvoicesPage = async (req, res) => {
+  const {
+    invoiceMade,
+    page = 1,
+    limit = 5,
+    filter = "all",
+    sortOrder = "newest",
+  } = req.query;
+
+  if (invoiceMade !== "true" && invoiceMade !== "false") {
+    return res
+      .status(400)
+      .json({ error: "Invalid invoiceMade query parameter" });
+  }
+
+  try {
+    const matchStage = {
+      payerType: "insurance",
+      invoiceMade: invoiceMade === "true",
+    };
+
+    // Add date filter
+    const now = new Date();
+    if (filter === "past") {
+      matchStage.date = { $lt: now };
+    } else if (filter === "upcoming") {
+      matchStage.date = { $gte: now };
+    }
+
+    const sortStage = {
+      date: sortOrder === "newest" ? -1 : 1,
+    };
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const parsedLimit = parseInt(limit);
+
+    const aggregationPipeline = [
+      { $match: matchStage },
+      {
+        $lookup: {
+          from: "locations", // must match the actual collection name in Mongo (case sensitive!)
+          localField: "location",
+          foreignField: "_id",
+          as: "locationDetails",
+        },
+      },
+      {
+        $addFields: {
+          locationTitle: {
+            $ifNull: [{ $arrayElemAt: ["$locationDetails.title", 0] }, null],
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          plateNumber: 1,
+          carModel: 1,
+          insuranceNumber: 1,
+          companyName: 1,
+          insuranceCompany: 1,
+          insuranceCompanyName: 1,
+          invoiceMade: 1,
+          price: 1,
+          deductible: 1,
+          date: 1,
+          location: 1,
+          locationTitle: 1,
+        },
+      },
+      { $sort: sortStage },
+      { $skip: skip },
+      { $limit: parsedLimit },
+    ];
+
+    const [bookings, totalResult] = await Promise.all([
+      Booking.aggregate(aggregationPipeline),
+      Booking.countDocuments(matchStage),
+    ]);
+
+    res.json({ bookings, total: totalResult });
+  } catch (error) {
     console.error("Error getting bookings:", error);
     res.status(500).json({ error: error.message });
   }
@@ -83,5 +170,6 @@ const changeInvoiceStatus = async (req, res) => {
 // Export to be used in routes/bookings.js
 module.exports = {
   getInvoices,
+  getInvoicesForInvoicesPage,
   changeInvoiceStatus,
 };

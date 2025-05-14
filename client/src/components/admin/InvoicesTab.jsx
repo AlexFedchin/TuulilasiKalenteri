@@ -32,6 +32,8 @@ const InvoicesTab = () => {
   const [filter, setFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
   const [submitting, setSubmitting] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+  const bookingsPerPage = 5;
 
   const handleView = (event) => {
     setView(event.target.value);
@@ -51,30 +53,6 @@ const InvoicesTab = () => {
   const handleSortOrderChange = (event) => {
     setSortOrder(event.target.value);
   };
-
-  const bookingsPerPage = 5;
-
-  const filteredBookings = bookings.filter((booking) => {
-    if (filter === "past") {
-      return new Date(booking.date) < new Date();
-    } else if (filter === "upcoming") {
-      return new Date(booking.date) >= new Date();
-    }
-    return true;
-  });
-
-  const sortedBookings = [...filteredBookings].sort((a, b) => {
-    if (sortOrder === "newest") {
-      return new Date(b.date) - new Date(a.date);
-    } else {
-      return new Date(a.date) - new Date(b.date);
-    }
-  });
-
-  const paginatedBookings = sortedBookings.slice(
-    (page - 1) * bookingsPerPage,
-    page * bookingsPerPage
-  );
 
   // Function to handle marking invoices as sent or unsent
   const handleMarkAsSent = async () => {
@@ -130,22 +108,31 @@ const InvoicesTab = () => {
     const fetchInvoices = async () => {
       setLoading(true);
       try {
-        const url = `/api/invoices/?invoiceMade=${view === "sent"}`;
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        const params = new URLSearchParams({
+          invoiceMade: view === "sent",
+          page,
+          limit: bookingsPerPage,
+          filter,
+          sortOrder,
         });
+
+        const response = await fetch(
+          `/api/invoices/invoices-page?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const data = await response.json();
 
         if (!response.ok) {
-          alert.error("Couldn't fetch bookings");
           console.error("Error fetching bookings:", data.error);
-        }
-        if (response.ok) {
-          setBookings(data);
+        } else {
+          setBookings(data.bookings);
+          setTotalPages(Math.ceil(data.total / bookingsPerPage));
         }
       } catch (error) {
         console.error("Error fetching invoices:", error);
@@ -155,7 +142,7 @@ const InvoicesTab = () => {
     };
 
     fetchInvoices();
-  }, [view, token]);
+  }, [view, token, page, filter, sortOrder]);
 
   return (
     <Box
@@ -355,7 +342,7 @@ const InvoicesTab = () => {
             alignItems: "center",
           }}
         >
-          {paginatedBookings.map((booking) => (
+          {bookings.map((booking) => (
             <InvoiceCard
               key={booking._id}
               booking={booking}
@@ -366,7 +353,7 @@ const InvoicesTab = () => {
             />
           ))}
 
-          {filteredBookings.length === 0 ? (
+          {bookings.length === 0 ? (
             <Typography
               variant="body2"
               sx={{ mt: "20vh", fontStyle: "italic", maxWidth: "66%" }}
@@ -375,10 +362,11 @@ const InvoicesTab = () => {
                 ? t("admin.invoices.noSentInvoices")
                 : t("admin.invoices.noUnsentInvoices")}
             </Typography>
-          ) : (
+          ) : totalPages > 1 ? (
             <Pagination
               color="primary"
-              count={Math.ceil(bookings.length / bookingsPerPage)}
+              count={totalPages}
+              defaultPage={1}
               page={page}
               onChange={handlePageChange}
               boundaryCount={1}
@@ -392,7 +380,7 @@ const InvoicesTab = () => {
                 overflow: "hidden",
               }}
             />
-          )}
+          ) : null}
         </Box>
       )}
     </Box>

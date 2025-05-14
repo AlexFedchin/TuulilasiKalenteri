@@ -20,7 +20,6 @@ import DefaultContainer from "../components/DefaultContainer";
 import Loader from "../components/loader/Loader";
 import { useAuth } from "../context/AuthContext";
 import { alert } from "../utils/alert";
-import BookingCard from "../components/bookings/BookingCard";
 import BookingModal from "../components/bookings/BookingModal";
 import ConfirmModal from "../components/ConfirmModal";
 import dayjs from "dayjs";
@@ -315,20 +314,12 @@ const Bookings = () => {
             }}
           >
             {bookings.map((booking) => (
-              <>
-                <NewBookingCard
-                  key={booking._id}
-                  booking={booking}
-                  onEditClick={handleEditClick}
-                  onDeleteClick={handleDeleteClick}
-                />
-                {/* <BookingCard
-                  key={`old ${booking._id}`}
-                  booking={booking}
-                  onEditClick={handleEditClick}
-                  onDeleteClick={handleDeleteClick}
-                /> */}
-              </>
+              <NewBookingCard
+                key={booking._id}
+                booking={booking}
+                onEditClick={handleEditClick}
+                onDeleteClick={handleDeleteClick}
+              />
             ))}
 
             {totalPages > 1 && (
