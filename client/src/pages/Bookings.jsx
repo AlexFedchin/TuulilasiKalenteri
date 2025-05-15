@@ -12,6 +12,7 @@ import {
   Button,
   ToggleButtonGroup,
   ToggleButton,
+  Skeleton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
@@ -26,6 +27,7 @@ import dayjs from "dayjs";
 import useScreenSize from "../hooks/useScreenSize";
 import { useTranslation } from "react-i18next";
 import NewBookingCard from "../components/bookings/NewBookingCard";
+import BookingCardSkeleton from "../components/bookings/BookingCardSkeleton";
 
 const Bookings = () => {
   const { t } = useTranslation();
@@ -166,6 +168,8 @@ const Bookings = () => {
     }
   };
 
+  // <Loader style={{ marginTop: "29vh", marginBottom: "29vh" }} />
+
   return (
     <DefaultContainer>
       <Typography variant="h2">{t("bookingsPage.title")}</Typography>
@@ -176,7 +180,7 @@ const Bookings = () => {
           maxWidth: "1000px",
           display: "flex",
           flexDirection: "column",
-          gap: 4,
+          gap: 2,
           alignItems: "center",
         }}
       >
@@ -301,7 +305,20 @@ const Bookings = () => {
         </Card>
 
         {loading ? (
-          <Loader style={{ marginTop: "29vh", marginBottom: "29vh" }} />
+          <Box
+            sx={{
+              maxWidth: "800px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              width: "100%",
+              alignItems: "center",
+            }}
+          >
+            {[...Array(5)].map((_, index) => (
+              <BookingCardSkeleton key={`skeleton ${index}`} />
+            ))}
+          </Box>
         ) : bookings.length > 0 ? (
           <Box
             sx={{
