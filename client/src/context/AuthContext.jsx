@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("token", data.token);
           localStorage.setItem("isTokenExpired", false);
-        } catch (error) {
+        } catch {
           // Clear if invalid/expired
           setUser(null);
           setToken(null);
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
           localStorage.setItem("isTokenExpired", true);
-          alert.error(t("alert.expiredSession"));
+          alert.info(t("alert.expiredSession"));
         }
       }
     };

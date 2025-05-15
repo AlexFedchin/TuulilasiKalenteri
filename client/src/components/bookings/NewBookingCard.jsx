@@ -101,7 +101,7 @@ const NewBookingCard = ({ booking, onEditClick, onDeleteClick }) => {
     gap: 0.5,
     borderRadius: 1,
     bgcolor: "var(--white-onhover)",
-    p: 1,
+    p: isMobile ? 0.75 : 1,
     flexGrow: 1,
   };
 
@@ -109,7 +109,7 @@ const NewBookingCard = ({ booking, onEditClick, onDeleteClick }) => {
     <Card
       sx={{
         width: "100%",
-        p: 2,
+        p: isMobile ? 1 : 2,
         position: "relative",
         display: "flex",
         flexDirection: "column",
@@ -125,7 +125,12 @@ const NewBookingCard = ({ booking, onEditClick, onDeleteClick }) => {
       {/* Menu button */}
       <IconButton
         onClick={handleMenuOpen}
-        sx={{ position: "absolute", top: 8, right: 8 }}
+        sx={{
+          position: "absolute",
+          p: isMobile ? 0.5 : 1,
+          top: isMobile ? 4 : 8,
+          right: isMobile ? 4 : 8,
+        }}
       >
         <MoreVertIcon fontSize="small" />
       </IconButton>
@@ -174,8 +179,8 @@ const NewBookingCard = ({ booking, onEditClick, onDeleteClick }) => {
       {/* Grid Content */}
       <Box
         display="grid"
-        gridTemplateColumns={isMobile ? "repeat(1, 1fr)" : "repeat(2, 1fr)"}
-        gap={2}
+        gridTemplateColumns="repeat(2, 1fr)"
+        gap={isMobile ? 1 : 2}
       >
         {/* Car Info */}
         <Box sx={cardSectionStyle}>
@@ -255,7 +260,13 @@ const NewBookingCard = ({ booking, onEditClick, onDeleteClick }) => {
         </Box>
 
         {/* Insurance and Notes */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: isMobile ? 1 : 2,
+          }}
+        >
           {/* Insurance Details */}
           <Box sx={cardSectionStyle}>
             <Typography
@@ -282,7 +293,14 @@ const NewBookingCard = ({ booking, onEditClick, onDeleteClick }) => {
                     sx={{ height: 20, width: "auto", mb: "2px" }}
                   />
 
-                  <Typography variant="body2">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      wordBreak: "break-all",
+                      overflowWrap: "break-word",
+                      hyphens: "auto",
+                    }}
+                  >
                     {getInsuranceCompanyName()}
                   </Typography>
                 </Box>
@@ -317,7 +335,13 @@ const NewBookingCard = ({ booking, onEditClick, onDeleteClick }) => {
         </Box>
 
         {/* Booking Status and Creator */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: isMobile ? 1 : 2,
+          }}
+        >
           {/* Booking Status */}
           <Box
             sx={{
@@ -333,7 +357,7 @@ const NewBookingCard = ({ booking, onEditClick, onDeleteClick }) => {
               {t("bookingCard.status")}
             </Typography>
             <Divider />
-            <Box display="flex" alignItems="center" gap={1}>
+            <Box display="flex" alignItems="center" gap={0.5}>
               <CircleIcon
                 color={isWorkDone ? "success" : "error"}
                 sx={{ fontSize: 16, mb: "2px" }}
